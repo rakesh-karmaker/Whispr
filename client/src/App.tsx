@@ -1,35 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import { supabase } from "../supabaseClient";
+import type { Session } from "@supabase/supabase-js";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [session, setSession] = useState<Session | null>(null);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  console.log(session);
+
+  async function signin() {
+    const data = await supabase.auth
+      .signInWithOAuth({
+        provider: "google",
+      })
+      .catch((err) => {
+        console.error("OAuth error:", err);
+      });
+
+    console.log(data);
+  }
+
+  function signout() {
+    supabase.auth.signOut();
+  }
+
+  if (!session) {
+    return (
+      <>
+        <button onClick={signin}>Sign in with Google</button>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <p></p>
+        <button onClick={signout}>Sing out</button>
+      </>
+    );
+  }
 }
 
-export default App
+export default App;
