@@ -8,8 +8,14 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.vite
+.env
+./client/.env.production
+.env*
+.env
 dist
 dist-ssr
+build
 *.local
 
 # Editor directories and files
@@ -22,3 +28,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+server/public/activities/*
+server/public/executives/*
+server/public/members/*
+# Local Netlify folder
+.netlify
