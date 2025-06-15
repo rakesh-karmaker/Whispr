@@ -22,16 +22,14 @@ function App() {
 
   console.log(session);
 
-  async function signin() {
-    const data = await supabase.auth
+  function signin() {
+    supabase.auth
       .signInWithOAuth({
         provider: "google",
       })
       .catch((err) => {
         console.error("OAuth error:", err);
       });
-
-    console.log(data);
   }
 
   function signout() {
