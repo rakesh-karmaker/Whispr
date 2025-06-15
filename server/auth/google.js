@@ -40,7 +40,17 @@ router.get("/callback", async (req, res) => {
   redisClient.set(`temp_user:${user.id}`, JSON.stringify(user));
 
   // Redirect to React app with token (or set cookie)
-  res.redirect(`http://localhost:5173?id=${user.id}`);
+  res.redirect(`http://localhost:5173/profile-select?id=${user.id}`);
+});
+
+router.get("/get-user/:id", async (req, res) => {
+  const id = req.params.id;
+
+  const user = JSON.parse(await redisClient.get(`temp_user:${id}`));
+
+  redisClient.del(`temp_user:${id}`);
+
+  res.send(user);
 });
 
 module.exports = router;

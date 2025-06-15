@@ -2,6 +2,7 @@ import type React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import App from "@/App";
 import Login from "@/pages/login";
+import ProfileSelect from "@/pages/profileSelect";
 
 interface Route {
   path: string;
@@ -16,6 +17,10 @@ const routes: Route[] = [
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/profile-select",
+    element: <ProfileSelect />,
   },
 ];
 
