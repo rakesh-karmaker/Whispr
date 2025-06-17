@@ -37,10 +37,21 @@ router.get("/callback", async (req, res) => {
 
   const user = userInfo.data;
 
-  redisClient.set(`temp_user:${user.id}`, JSON.stringify(user));
+  try {
+    redisClient.set(`temp_user:${user.id}`, JSON.stringify(user));
+    redisClient.expire(`temp_user:${user.id}`, 5 * 60); // 5 minutes
+  } catch (err) {
+    console.log(err);
+  }
 
-  // Redirect to React app with token (or set cookie)
-  res.redirect(`http://localhost:5173/profile-select?id=${user.id}`);
+  // Redirect to React app with redis id
+  // res.redirect(`http://localhost:5173/profile-select?id=${user.id}`);
+  res.send(`
+      <script>
+        window.opener.postMessage({ id: "${user.id}" }, "http://localhost:5173");
+        window.close();
+      </script>
+    `);
 });
 
 router.get("/get-user/:id", async (req, res) => {
@@ -48,7 +59,7 @@ router.get("/get-user/:id", async (req, res) => {
 
   const user = JSON.parse(await redisClient.get(`temp_user:${id}`));
 
-  redisClient.del(`temp_user:${id}`);
+  if (!user) return res.status(404).send({ message: "User not found" });
 
   res.send(user);
 });

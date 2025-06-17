@@ -2,8 +2,18 @@ import axios from "axios";
 import type React from "react";
 import { useEffect, useState } from "react";
 
+interface GoogleAuthResponse {
+  id: string;
+  email: string;
+  verified_email: boolean;
+  name: string;
+  given_name: string;
+  family_name: string;
+  picture: string;
+}
+
 export default function ProfileSelect(): React.ReactNode {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<GoogleAuthResponse | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -16,7 +26,7 @@ export default function ProfileSelect(): React.ReactNode {
         setUser(data.data);
       }
     };
-    fetchUser();
+    if (user == null) fetchUser();
   }, []);
 
   console.log(user);

@@ -1,70 +1,40 @@
 @import "tailwindcss";
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --pure-white: #ffffff;
+  --white: #ecf2f8;
+  --white-2: #f4f6f8;
+  --light-gray: #d1d1d1;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  --pure-black: #000000;
+  --black: #0a0a0a;
+  --dark-gray: #373737;
+  --light-dark-gray: #525252;
+  --gray: #696969;
+  --teal: #4ec6bd;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+@theme inline {
+  --color-pure-white: var(--pure-white);
+  --color-white: var(--white);
+  --color-white-2: var(--white-2);
+  --color-light-gray: var(--light-gray);
+  --color-pure-black: var(--pure-black);
+  --color-black: var(--black);
+  --color-dark-gray: var(--dark-gray);
+  --color-light-dark-gray: var(--light-dark-gray);
+  --color-gray: var(--gray);
+  --color-teal: var(--teal);
+
+  --breakpoint-xs: 25rem; /* 400px */
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
+/* medium-shot-woman-reading-coffee-shop */
+/* 
+position: absolute;
+width: 673px;
+height: 1080px;
+left: 0px;
+top: 0px;
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
+background: linear-gradient(0deg, rgba(0, 0, 0, 0.27), rgba(0, 0, 0, 0.27)), url(medium-shot-woman-reading-coffee-shop.jpg); */

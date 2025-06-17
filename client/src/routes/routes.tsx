@@ -3,10 +3,12 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "@/App";
 import Login from "@/pages/login";
 import ProfileSelect from "@/pages/profileSelect";
+import AuthLayout from "@/layouts/auth";
 
 interface Route {
   path: string;
   element: React.ReactNode;
+  children?: Route[];
 }
 
 const routes: Route[] = [
@@ -21,6 +23,17 @@ const routes: Route[] = [
   {
     path: "/profile-select",
     element: <ProfileSelect />,
+  },
+
+  {
+    path: "/auth",
+    element: <AuthLayout />,
+    children: [
+      {
+        path: "/auth/register",
+        element: <Login />,
+      },
+    ],
   },
 ];
 
