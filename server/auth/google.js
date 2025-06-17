@@ -1,14 +1,15 @@
 const express = require("express");
 const axios = require("axios");
-const jwt = require("jsonwebtoken");
 const redisClient = require("../redis/client");
+const generateId = require("../utils/generateId");
 require("dotenv").config();
 
 const router = express.Router();
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const REDIRECT_URI = "http://localhost:5000/auth/google/callback";
+const REDIRECT_URI = `${process.env.SERVER_URL}/auth/google/callback`;
+const CLIENT_URL = process.env.CLIENT_URL;
 
 router.get("/", (req, res) => {
   const redirect = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=profile email`;
@@ -36,22 +37,15 @@ router.get("/callback", async (req, res) => {
   );
 
   const user = userInfo.data;
-
-  try {
-    redisClient.set(`temp_user:${user.id}`, JSON.stringify(user));
-    redisClient.expire(`temp_user:${user.id}`, 5 * 60); // 5 minutes
-  } catch (err) {
-    console.log(err);
-  }
-
-  // Redirect to React app with redis id
-  // res.redirect(`http://localhost:5173/profile-select?id=${user.id}`);
   res.send(`
-      <script>
-        window.opener.postMessage({ id: "${user.id}" }, "http://localhost:5173");
-        window.close();
-      </script>
-    `);
+  <script>
+    window.opener.postMessage(
+      { user: ${JSON.stringify(user)} },
+      "${CLIENT_URL.toString()}"
+    );
+    window.close();
+  </script>
+`);
 });
 
 router.get("/get-user/:id", async (req, res) => {
