@@ -97,7 +97,7 @@ function GoogleBtn({
         Continue with Google
       </BtnWithIcon>
 
-      <p className="text-center font-medium">
+      <p className="text-center font-medium text-gray">
         Already have an account?{" "}
         <NavLink to="/auth/login" className={"text-teal"}>
           Log in

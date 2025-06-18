@@ -1,15 +1,17 @@
+import AuthProfileFrom from "@/components/auth/profileFrom";
 import Loader from "@/components/ui/Loader/Loader";
+import { AuthForm } from "@/layouts/auth";
 import { getTempUser } from "@/lib/api/auth";
 import { useQuery } from "@tanstack/react-query";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
-type GetTempUserResponse = {
+export type GetTempUserResponse = {
   email: string;
-  firstName: string;
-  lastName: string;
-  avatar: string;
+  firstName?: string;
+  lastName?: string;
+  avatar?: string;
 };
 
 export default function AuthProfile(): React.ReactNode {
@@ -36,9 +38,25 @@ export default function AuthProfile(): React.ReactNode {
     }
   }, [data, isError]);
 
-  if (isLoading) {
+  if (isLoading || !user) {
     return <Loader />;
   } else {
-    return <div>hello</div>;
+    return (
+      <AuthForm
+        title="Set your profile"
+        subtitle="Join Whispr and start connecting with your friends"
+      >
+        <div className="flex flex-col gap-8 items-center">
+          <AuthProfileFrom user={user} id={id as string} />
+
+          <p className="text-center font-medium text-gray">
+            Already have an account?{" "}
+            <NavLink to="/auth/login" className={"text-teal"}>
+              Log in
+            </NavLink>
+          </p>
+        </div>
+      </AuthForm>
+    );
   }
 }
