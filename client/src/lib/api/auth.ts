@@ -1,4 +1,5 @@
 import type { SingUpSchema } from "@/lib/zodSchemas/authSchema";
+import type { RegisterDataType } from "@/types/authTypes";
 import axios from "axios";
 
 const api = axios.create({
@@ -13,5 +14,31 @@ export async function addTempUser(data: SingUpSchema) {
 
 export async function getTempUser(id: string) {
   const { data: response } = await api.get(`/auth/get-temp-user/${id}`);
+  return response;
+}
+
+export async function registerUser(data: RegisterDataType) {
+  const formData = new FormData();
+  (Object.keys(data) as (keyof RegisterDataType)[]).forEach((key) => {
+    if (key === "avatar") {
+      if (typeof data[key] === "string") {
+        formData.append("avatar", data[key] as string);
+      } else if (
+        data[key] instanceof FileList &&
+        data[key]?.[0] !== undefined
+      ) {
+        formData.append("avatar", data[key][0]);
+      }
+      return;
+    }
+
+    formData.append(key, data[key] as string | Blob);
+  });
+
+  const { data: response } = await api.post("/auth/register", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response;
 }

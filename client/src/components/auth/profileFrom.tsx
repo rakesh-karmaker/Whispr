@@ -9,6 +9,10 @@ import { useForm } from "react-hook-form";
 import ImageInput from "../ui/imageInput";
 import TextField from "@mui/material/TextField";
 import { FormSubmitBtn } from "../ui/btns";
+import { useMutation } from "@tanstack/react-query";
+import type { RegisterDataType } from "@/types/authTypes";
+import { registerUser } from "@/lib/api/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function AuthProfileFrom({
   user,
@@ -17,6 +21,8 @@ export default function AuthProfileFrom({
   user: GetTempUserResponse;
   id: string;
 }): React.ReactNode {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -32,12 +38,25 @@ export default function AuthProfileFrom({
     },
   });
 
+  const registerMutation = useMutation({
+    mutationFn: (data: RegisterDataType) => registerUser(data),
+    onSuccess: (data) => {
+      console.log(data);
+      navigate("/auth/login");
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
+
   function onSubmit(data: AuthProfileSchema) {
     if (!data.avatar || data.avatar.length == 0) {
       setError("avatar", { message: "Image is required" });
       return;
     }
-    console.log(data);
+
+    const newData = { ...data, id };
+    registerMutation.mutate(newData);
   }
 
   return (
@@ -86,7 +105,9 @@ export default function AuthProfileFrom({
           />
         </div>
 
-        <FormSubmitBtn isLoading={false}>Save</FormSubmitBtn>
+        <FormSubmitBtn isLoading={registerMutation.isPending}>
+          Save
+        </FormSubmitBtn>
       </div>
     </form>
   );

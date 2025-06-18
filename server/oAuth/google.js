@@ -37,7 +37,7 @@ router.get("/callback", async (req, res) => {
     }
   );
 
-  const response = {
+  let response = {
     email: userInfo.data.email,
     new: false,
   };
@@ -66,7 +66,7 @@ router.get("/callback", async (req, res) => {
 
     userInfo.data.authProvider = "google";
     await redisClient.set(`temp_user:${id}`, JSON.stringify(userInfo.data));
-    await redisClient.expire(`temp_user:${id}`, 24 * 3600); // 24 hours
+    await redisClient.expire(`temp_user:${id}`, 3600); // 1 hour
   }
 
   res.send(`

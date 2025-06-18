@@ -1,5 +1,5 @@
 import type React from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 import { MdEdit } from "react-icons/md";
 
@@ -13,8 +13,17 @@ export default function ImageInput({
   image?: string;
 }): React.ReactNode {
   const labelRef = useRef<HTMLLabelElement | null>(null);
-  const [hasImage, setHasImage] = useState<boolean>(image ? true : false);
+  const [hasImage, setHasImage] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (image) {
+      setHasImage(true);
+      if (labelRef.current) {
+        labelRef.current.style.background = `url(${image}) no-repeat center center / cover`;
+      }
+    }
+  }, [image]);
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length) {
@@ -46,12 +55,7 @@ export default function ImageInput({
         ref={labelRef}
         htmlFor="file"
         className={
-          "cursor-pointer relative w-36 h-36 bg-white-2 flex justify-center items-center py-2.5 px-5 [box-shadow:rgba(0,0,0,0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] rounded-full transition-all duration-200 " +
-          (image
-            ? "[background:url('" +
-              image +
-              "')_no-repeat_center_center_/_cover]"
-            : "")
+          "cursor-pointer relative w-36 h-36 bg-white-2 flex justify-center items-center py-2.5 px-5 [box-shadow:rgba(0,0,0,0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] rounded-full transition-all duration-200"
         }
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

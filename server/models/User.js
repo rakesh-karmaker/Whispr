@@ -7,8 +7,10 @@ const UserSchema = new mongoose.Schema(
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String },
+    salt: { type: String },
     googleId: { type: String },
     avatar: { type: String },
+    imgId: { type: String },
     authProvider: {
       type: String,
       enum: ["google", "local", "both"],
