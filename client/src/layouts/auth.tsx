@@ -33,3 +33,27 @@ function AuthLeft(): React.ReactNode {
     </div>
   );
 }
+
+export function AuthForm({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  children: React.ReactNode;
+}): React.ReactNode {
+  return (
+    <div className="flex flex-col gap-7 items-center justify-center">
+      <div className="flex flex-col gap-2.5 items-center">
+        <h2 className="text-black text-[2.4375em]/[140%] font-semibold">
+          {title}
+        </h2>
+        <p className="text-light-dark-gray text-lg text-center font-medium max-w-[40ch]">
+          {subtitle}
+        </p>
+      </div>
+      {children}
+    </div>
+  );
+}

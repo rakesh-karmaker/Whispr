@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const redisClient = require("../redis/client");
 const generateId = require("../utils/generateId");
+const User = require("../models/User");
 require("dotenv").config();
 
 const router = express.Router();
@@ -36,26 +37,47 @@ router.get("/callback", async (req, res) => {
     }
   );
 
-  const user = userInfo.data;
+  const response = {
+    email: userInfo.data.email,
+    new: false,
+  };
+
+  const user = await User.findOne({ email: userInfo.data.email });
+  if (user) {
+    if (!user.googleId) {
+      user.googleId = userInfo.data.id;
+      user.authProvider = user.password ? "both" : "google";
+      await user.save();
+    }
+
+    response = {
+      ...response,
+      id: user._id,
+      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      avatar: user.avatar,
+    };
+  } else {
+    response.new = true;
+
+    const id = generateId();
+    response.redisId = id;
+
+    userInfo.data.authProvider = "google";
+    await redisClient.set(`temp_user:${id}`, JSON.stringify(userInfo.data));
+    await redisClient.expire(`temp_user:${id}`, 24 * 3600); // 24 hours
+  }
+
   res.send(`
   <script>
     window.opener.postMessage(
-      { user: ${JSON.stringify(user)} },
+      { user: ${JSON.stringify(response)} },
       "${CLIENT_URL.toString()}"
     );
     window.close();
   </script>
 `);
-});
-
-router.get("/get-user/:id", async (req, res) => {
-  const id = req.params.id;
-
-  const user = JSON.parse(await redisClient.get(`temp_user:${id}`));
-
-  if (!user) return res.status(404).send({ message: "User not found" });
-
-  res.send(user);
 });
 
 module.exports = router;

@@ -1,11 +1,20 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const mongoose = require("mongoose");
 
 const app = express();
 app.use(cors());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
-const googleAuth = require("./auth/google");
-app.use("/auth/google", googleAuth);
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error(err));
 
-app.listen(5000, () => console.log("Server running on http://localhost:5000"));
+app.use("/auth", require("./routes/authRoute"));
+
+app.listen(process.env.PORT, () =>
+  console.log(`Server running on port ${process.env.PORT}`)
+);
