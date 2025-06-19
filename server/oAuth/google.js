@@ -3,6 +3,7 @@ const axios = require("axios");
 const redisClient = require("../redis/client");
 const generateId = require("../utils/generateId");
 const User = require("../models/User");
+const { generateSessionId } = require("../utils/generateSesionId");
 require("dotenv").config();
 
 const router = express.Router();
@@ -50,14 +51,22 @@ router.get("/callback", async (req, res) => {
       await user.save();
     }
 
-    response = {
-      ...response,
-      id: user._id,
-      name: user.name,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      avatar: user.avatar,
-    };
+    const sessionId = await generateSessionId();
+
+    // store session data in redis
+    await redisClient.set(
+      `session:${sessionId}`,
+      JSON.stringify({
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+        firstName: user.firstName,
+        authProvider: user.authProvider,
+      })
+    );
+    await redisClient.expire(`session:${sessionId}`, 3600 * 24 * 30); // 30 days
+
+    response.sessionId = sessionId;
   } else {
     response.new = true;
 

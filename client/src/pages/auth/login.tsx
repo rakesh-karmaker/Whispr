@@ -1,34 +1,29 @@
+import GoogleBtn from "@/components/auth/googleBtn";
+import LoginForm from "@/components/auth/loginForm";
+import OrLine from "@/components/ui/orLineBreaker";
+import useGoogleOAuth from "@/hooks/useGoogleOAuth";
+import { AuthForm } from "@/layouts/auth";
 import React from "react";
-
-// const serverURL = import.meta.env.VITE_SERVER_URL as string;
+import { NavLink } from "react-router-dom";
 
 export default function Login(): React.ReactElement {
-  // function login() {
-  //   window.location.href = "http://localhost:5000/auth/google";
-  // }
-
-  // function loginWithPopup() {
-  //   const popup = window.open(
-  //     `${serverURL}/auth/google/`, // new route
-  //     "Google Login",
-  //     "width=500,height=600"
-  //   );
-
-  //   // Listen for message from popup
-  //   window.addEventListener("message", (event) => {
-  //     if (event.origin !== serverURL) return; // important for security
-
-  //     const userId = event.data.user;
-  //     console.log(userId);
-  //     // if (userId) {
-  //     //   window.location.href = `/profile-select?id=${userId}`;
-  //     // }
-  //   });
-  // }
+  const { authFunc, isOAuthLoading } = useGoogleOAuth();
 
   return (
-    <div>
-      <button>Login with google</button>
-    </div>
+    <AuthForm
+      title="Welcome back to Whispr"
+      subtitle="Join Whispr and start connecting with your friends"
+    >
+      <LoginForm />
+
+      <OrLine />
+
+      <GoogleBtn signupWithGoogle={authFunc} isLoading={isOAuthLoading}>
+        Don’t have an account?{" "}
+        <NavLink to="/auth/register" className={"text-teal"}>
+          Sign up
+        </NavLink>
+      </GoogleBtn>
+    </AuthForm>
   );
 }

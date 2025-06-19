@@ -87,7 +87,7 @@ exports.register = async (req, res) => {
     let avatar = null;
     let imgId = null;
     if (req.body.avatar) {
-      avatar = req.body.avatar;
+      avatar = req.body.avatar; // use the avatar url from google
     } else {
       if (!req.file) {
         return res
@@ -156,6 +156,57 @@ exports.register = async (req, res) => {
     return res.status(200).send({ sessionId });
   } catch (err) {
     console.log("Error registering user - ", getDate(), "\n---\n", err);
+    res.status(500).send({ message: "Server error", error: err.message });
+  }
+};
+
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res
+        .status(400)
+        .send({ subject: "request", message: "Invalid request" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .send({ subject: "email", message: "Email not found" });
+    }
+
+    if (!user.password) {
+      return res
+        .status(400)
+        .send({ subject: "noPassword", message: "Password not found" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res
+        .status(400)
+        .send({ subject: "password", message: "Invalid password" });
+    }
+
+    const sessionId = await generateSessionId();
+    const sessionData = {
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      firstName: user.firstName,
+      authProvider: user.authProvider,
+    };
+
+    // store session data in redis
+    await redisClient.set(`session:${sessionId}`, JSON.stringify(sessionData));
+    await redisClient.expire(`session:${sessionId}`, 60 * 60 * 24 * 30); // 30 days
+
+    console.log("User logged in successfully -", getDate(), "\n---\n");
+
+    return res.status(200).send({ sessionId });
+  } catch (err) {
+    console.log("Error logging in user - ", getDate(), "\n---\n", err);
     res.status(500).send({ message: "Server error", error: err.message });
   }
 };

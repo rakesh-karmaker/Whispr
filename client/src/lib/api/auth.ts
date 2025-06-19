@@ -1,4 +1,4 @@
-import type { SingUpSchema } from "@/lib/zodSchemas/authSchema";
+import type { LoginSchema, SingUpSchema } from "@/lib/zodSchemas/authSchema";
 import type { RegisterDataType } from "@/types/authTypes";
 import axios from "axios";
 
@@ -40,5 +40,10 @@ export async function registerUser(data: RegisterDataType) {
       "Content-Type": "multipart/form-data",
     },
   });
+  return response;
+}
+
+export async function loginUser(data: LoginSchema) {
+  const { data: response } = await api.post("/auth/login", data);
   return response;
 }
