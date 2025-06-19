@@ -39,7 +39,6 @@ router.get("/callback", async (req, res) => {
   );
 
   let response = {
-    email: userInfo.data.email,
     new: false,
   };
 
@@ -79,14 +78,14 @@ router.get("/callback", async (req, res) => {
   }
 
   res.send(`
-  <script>
-    window.opener.postMessage(
-      { user: ${JSON.stringify(response)} },
-      "${CLIENT_URL.toString()}"
-    );
-    window.close();
-  </script>
-`);
+    <script>
+      window.opener.postMessage(
+        { user: ${JSON.stringify(response)} },
+        "${CLIENT_URL.toString()}"
+      );
+      window.close();
+    </script>
+  `);
 });
 
 module.exports = router;

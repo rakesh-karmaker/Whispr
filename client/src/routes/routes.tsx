@@ -8,6 +8,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import Loader from "@/components/ui/Loader/Loader";
 import AuthProfile from "@/pages/auth/profile";
+import ForgotPassword from "@/pages/auth/forgotPasword";
 
 const Login = lazy(() => import("@/pages/auth/login"));
 const Register = lazy(() => import("@/pages/auth/register"));
@@ -72,6 +73,14 @@ const routes: Route[] = [
         element: (
           <Suspense fallback={<Loader />}>
             <AuthProfile />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/auth/forgot-password",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ForgotPassword />
           </Suspense>
         ),
       },

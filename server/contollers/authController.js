@@ -5,6 +5,8 @@ const generateId = require("../utils/generateId");
 const { generateSessionId } = require("../utils/generateSesionId");
 const { getDate } = require("../utils/getDate");
 const bcrypt = require("bcrypt");
+const generateOTP = require("../utils/generateOTP");
+const sendEmail = require("../lib/sendEmail");
 
 exports.addTempUser = async (req, res) => {
   try {
@@ -207,6 +209,46 @@ exports.login = async (req, res) => {
     return res.status(200).send({ sessionId });
   } catch (err) {
     console.log("Error logging in user - ", getDate(), "\n---\n", err);
+    res.status(500).send({ message: "Server error", error: err.message });
+  }
+};
+
+exports.sendForgotPasswordOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res
+        .status(400)
+        .send({ subject: "request", message: "Invalid request" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .send({ subject: "email", message: "Email not found" });
+    }
+
+    //delete old otp
+    await redisClient.del(`forgot_password_otp:${email}`);
+
+    const otp = generateOTP();
+    //send email
+    await sendEmail(email, otp);
+
+    //save otp
+    const hashedOTP = await bcrypt.hash(otp, 10);
+    await redisClient.set(`forgot_password_otp:${email}`, hashedOTP);
+    await redisClient.expire(`forgot_password_otp:${email}`, 60 * 60 * 1000); // 1 hour
+
+    res.status(200).send({ message: "OTP sent", email });
+  } catch (err) {
+    console.log(
+      "Error sending forgot password otp - ",
+      getDate(),
+      "\n---\n",
+      err
+    );
     res.status(500).send({ message: "Server error", error: err.message });
   }
 };

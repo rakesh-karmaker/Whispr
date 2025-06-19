@@ -4,14 +4,8 @@ import { useNavigate } from "react-router-dom";
 const serverURL = import.meta.env.VITE_SERVER_URL as string;
 
 type OAuthResponse = {
-  email: string;
   new: boolean;
-  name?: string;
-  avatar?: string;
   redisId?: string;
-  firstName?: string;
-  lastName?: string;
-  id?: string;
   sessionId?: string;
 };
 

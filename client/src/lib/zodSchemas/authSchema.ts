@@ -41,10 +41,22 @@ const loginSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
+const forgotPasswordFormSchema = z.object({
+  email: z.string().email({
+    message: "Please enter a valid email address",
+  }),
+});
+
 // export types
 export type SingUpSchema = z.infer<typeof singUpSchema>;
 export type AuthProfileSchema = z.infer<typeof authProfileSchema>;
 export type LoginSchema = z.infer<typeof loginSchema>;
+export type ForgotPasswordFormSchema = z.infer<typeof forgotPasswordFormSchema>;
 
 // export schemas
-export { singUpSchema, authProfileSchema, loginSchema };
+export {
+  singUpSchema,
+  authProfileSchema,
+  loginSchema,
+  forgotPasswordFormSchema,
+};
