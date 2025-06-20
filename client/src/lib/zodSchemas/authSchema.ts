@@ -47,11 +47,17 @@ const forgotPasswordFormSchema = z.object({
   }),
 });
 
+const resetPasswordSchema = z.object({
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
+});
+
 // export types
 export type SingUpSchema = z.infer<typeof singUpSchema>;
 export type AuthProfileSchema = z.infer<typeof authProfileSchema>;
 export type LoginSchema = z.infer<typeof loginSchema>;
 export type ForgotPasswordFormSchema = z.infer<typeof forgotPasswordFormSchema>;
+export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
 
 // export schemas
 export {
@@ -59,4 +65,5 @@ export {
   authProfileSchema,
   loginSchema,
   forgotPasswordFormSchema,
+  resetPasswordSchema,
 };

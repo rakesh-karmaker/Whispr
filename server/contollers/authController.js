@@ -285,3 +285,39 @@ exports.verifyOtp = async (req, res) => {
     res.status(500).send({ message: "Server error", error: err.message });
   }
 };
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, password, confirmPassword } = req.body;
+    if (!token || !password || !confirmPassword || !req.body.email) {
+      return res
+        .status(400)
+        .send({ subject: "request", message: "Invalid request" });
+    }
+
+    if (password !== confirmPassword) {
+      return res
+        .status(400)
+        .send({ subject: "password", message: "Passwords do not match" });
+    }
+
+    const email = await redisClient.get(`forgot_password_token:${token}`);
+    if (!email || email !== req.body.email) {
+      return res
+        .status(400)
+        .send({ subject: "token", message: "Token not found" });
+    }
+
+    const salt = await bcrypt.genSalt(10); // generate salt of length 10
+    const hash = await bcrypt.hash(password, salt);
+
+    await User.findOneAndUpdate({ email }, { password: hash, salt });
+
+    await redisClient.del(`forgot_password_token:${token}`);
+
+    res.status(200).send({ message: "Password reset successfully" });
+  } catch (err) {
+    console.log("Error resetting password - ", getDate(), "\n---\n", err);
+    res.status(500).send({ message: "Server error", error: err.message });
+  }
+};

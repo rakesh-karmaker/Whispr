@@ -1,6 +1,7 @@
 import type {
   ForgotPasswordFormSchema,
   LoginSchema,
+  ResetPasswordSchema,
   SingUpSchema,
 } from "@/lib/zodSchemas/authSchema";
 import type { RegisterDataType } from "@/types/authTypes";
@@ -59,5 +60,12 @@ export async function sendForgotPasswordEmail(data: ForgotPasswordFormSchema) {
 
 export async function verifyOtp(email: string, otp: string) {
   const { data: response } = await api.post("/auth/verify-otp", { email, otp });
+  return response;
+}
+
+export async function resetPassword(
+  data: ResetPasswordSchema & { email: string; token: string }
+) {
+  const { data: response } = await api.post("/auth/reset-password", data);
   return response;
 }

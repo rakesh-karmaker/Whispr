@@ -1,5 +1,5 @@
 import ForgotPasswordForm from "@/components/auth/forgotPasswordForm";
-import VerifyOtpForm from "@/components/auth/verifyOtp";
+import VerifyOtpForm from "@/components/auth/verifyOtpForm";
 import type React from "react";
 import { useState } from "react";
 
