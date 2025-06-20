@@ -1,5 +1,5 @@
 import { AuthForm } from "@/layouts/auth";
-import { SendForgotPasswordEmail } from "@/lib/api/auth";
+import { sendForgotPasswordEmail } from "@/lib/api/auth";
 import {
   forgotPasswordFormSchema,
   type ForgotPasswordFormSchema,
@@ -31,7 +31,7 @@ export default function ForgotPasswordForm({
 
   const forgotPasswordFormMutation = useMutation({
     mutationFn: (data: ForgotPasswordFormSchema) =>
-      SendForgotPasswordEmail(data),
+      sendForgotPasswordEmail(data),
     onSuccess: (res) => {
       setEmail(res.email);
       setStage(2);

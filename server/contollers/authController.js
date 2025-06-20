@@ -252,3 +252,36 @@ exports.sendForgotPasswordOtp = async (req, res) => {
     res.status(500).send({ message: "Server error", error: err.message });
   }
 };
+
+exports.verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res
+        .status(400)
+        .send({ subject: "request", message: "Invalid request" });
+    }
+
+    const storedOTP = await redisClient.get(`forgot_password_otp:${email}`);
+    if (!storedOTP) {
+      return res.status(400).send({ subject: "otp", message: "OTP not found" });
+    }
+
+    const isOTPValid = await bcrypt.compare(otp, storedOTP);
+    if (!isOTPValid) {
+      return res.status(400).send({ subject: "otp", message: "Invalid OTP" });
+    }
+
+    const token = generateId();
+
+    await redisClient.set(`forgot_password_token:${token}`, email);
+    await redisClient.expire(`forgot_password_token:${token}`, 60 * 60 * 1000); // 1 hour
+
+    await redisClient.del(`forgot_password_otp:${email}`);
+
+    res.status(200).send({ token });
+  } catch (err) {
+    console.log("Error verifying OTP - ", getDate(), "\n---\n", err);
+    res.status(500).send({ message: "Server error", error: err.message });
+  }
+};
