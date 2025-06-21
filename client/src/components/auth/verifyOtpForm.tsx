@@ -25,7 +25,7 @@ export default function VerifyOtpForm({
       verifyOtp(data.email, data.otp),
     onSuccess: (res) => {
       setError(null);
-      setToken(res.data.token);
+      setToken(res.token);
       setStage(3);
     },
     onError: (err) => {

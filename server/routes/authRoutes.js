@@ -6,6 +6,7 @@ const {
   login,
   sendForgotPasswordOtp,
   verifyOtp,
+  resetPassword,
 } = require("../contollers/authController");
 const router = express.Router();
 const upload = require("../middleware/multer");
@@ -19,5 +20,6 @@ router.post("/register", upload.single("avatar"), register);
 router.post("/login", login);
 router.post("/forgot-password", sendForgotPasswordOtp);
 router.post("/verify-otp", verifyOtp);
+router.use("/reset-password", resetPassword);
 
 module.exports = router;

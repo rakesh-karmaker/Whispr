@@ -37,13 +37,15 @@ export default function ResetPasswordForm({
       data: ResetPasswordSchema & { email: string; token: string }
     ) => resetPassword(data),
     onSuccess: () => {
-      setStage(3);
+      setStage(4);
     },
     onError: (err) => {
       const axiosError = err as AxiosError<{ subject?: string }>;
       const subject = axiosError.response?.data?.subject;
       if (subject === "password") {
         setError("confirmPassword", { message: "Passwords do not match" });
+      } else {
+        setError("confirmPassword", { message: "An unknown error occurred" });
       }
     },
   });

@@ -41,6 +41,8 @@ export default function ForgotPasswordForm({
       const subject = axiosError.response?.data?.subject;
       if (subject === "email") {
         setError("email", { message: "Email does not exist" });
+      } else if (subject === "noPassword") {
+        setError("email", { message: "This email is registered with Google" });
       } else {
         console.log(err);
       }

@@ -229,6 +229,12 @@ exports.sendForgotPasswordOtp = async (req, res) => {
         .send({ subject: "email", message: "Email not found" });
     }
 
+    if (!user.password) {
+      return res
+        .status(400)
+        .send({ subject: "noPassword", message: "Password not found" });
+    }
+
     //delete old otp
     await redisClient.del(`forgot_password_otp:${email}`);
 
