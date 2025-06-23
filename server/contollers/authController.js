@@ -133,12 +133,13 @@ exports.register = async (req, res) => {
     } else if (tempUser.authProvider == "google") {
       user = await User.create({
         ...userData,
-        googleId: tempUser.googleId,
+        googleId: tempUser.id,
       });
     }
 
     const sessionId = await generateSessionId();
     const sessionData = {
+      id: sessionId,
       name: user.name,
       email: user.email,
       avatar: user.avatar,
@@ -193,6 +194,7 @@ exports.login = async (req, res) => {
 
     const sessionId = await generateSessionId();
     const sessionData = {
+      id: user._id,
       name: user.name,
       email: user.email,
       avatar: user.avatar,

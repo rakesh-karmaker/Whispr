@@ -18,10 +18,22 @@ export default function ImageInput({
 
   useEffect(() => {
     if (image) {
-      setHasImage(true);
-      if (labelRef.current) {
-        labelRef.current.style.background = `url(${image}) no-repeat center center / cover`;
-      }
+      // Try to preload the image to check if it can be loaded
+      const img = new window.Image();
+      img.onload = () => {
+        setHasImage(true);
+        if (labelRef.current) {
+          labelRef.current.style.background = `url(${image}) no-repeat center center / cover`;
+        }
+      };
+      img.onerror = () => {
+        setHasImage(false);
+        if (labelRef.current) {
+          labelRef.current.style.background = "";
+          labelRef.current.innerHTML = "Image failed to load";
+        }
+      };
+      img.src = image;
     }
   }, [image]);
 
