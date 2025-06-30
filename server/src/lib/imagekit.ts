@@ -1,8 +1,8 @@
 import ImageKit from "imagekit";
 import sharp from "sharp";
-import config from "../config/config.js";
+import config from "@/config/config.js";
 import { Response } from "express";
-import getDate from "../utils/getDate.js";
+import getDate from "@/utils/getDate.js";
 
 const imagekit = new ImageKit({
   publicKey: config.imagekitPublicKey,
@@ -11,11 +11,11 @@ const imagekit = new ImageKit({
 });
 
 // Upload image to ImageKit and return the URL and image ID
-const uploadImage = async (
+export async function uploadImage(
   res: Response,
   file: Express.Multer.File,
   convertToWebp?: boolean
-) => {
+): Promise<{ url: string; imgId: string } | Response> {
   try {
     let resizedImageBuffer = file.buffer;
     if (convertToWebp) {
@@ -34,18 +34,18 @@ const uploadImage = async (
     return { url, imgId: uploadedImage.fileId };
   } catch (err) {
     console.log("Error uploading image - ", getDate(), "\n---\n", err);
-    res
+    return res
       .status(500)
       .send({ subject: "root", message: "Server error", error: err });
   }
-};
+}
 
 // Upload multiple images to ImageKit and return the URLs and image IDs
-const uploadMultipleImages = async (
+export async function uploadMultipleImages(
   res: Response,
   files: Express.Multer.File[],
   convertToWebp?: boolean
-) => {
+): Promise<{ url: string; imgId: string }[] | Response> {
   try {
     const uploadedImages = await Promise.all(
       files.map(async (file) => {
@@ -75,13 +75,16 @@ const uploadMultipleImages = async (
     return gallery;
   } catch (err) {
     console.log("Error uploading images - ", getDate(), "\n---\n", err);
-    res
+    return res
       .status(500)
       .send({ subject: "root", message: "Server error", error: err });
   }
-};
+}
 
-const deleteImage = async (res: Response, imageId: string) => {
+export async function deleteImage(
+  res: Response,
+  imageId: string
+): Promise<void | Response> {
   try {
     await imagekit.deleteFile(imageId, (err, result) => {
       if (err) {
@@ -95,6 +98,4 @@ const deleteImage = async (res: Response, imageId: string) => {
     console.log("Error deleting image - ", getDate(), "\n---\n", err);
     return res.status(500).send({ error: "Failed to delete image." });
   }
-};
-
-module.exports = { uploadImage, uploadMultipleImages, deleteImage };
+}
