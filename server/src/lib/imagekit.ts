@@ -34,9 +34,7 @@ export async function uploadImage(
     return { url, imgId: uploadedImage.fileId };
   } catch (err) {
     console.log("Error uploading image - ", getDate(), "\n---\n", err);
-    return res
-      .status(500)
-      .send({ subject: "root", message: "Server error", error: err });
+    return res.status(500).send({ error: "Failed to upload image." });
   }
 }
 
