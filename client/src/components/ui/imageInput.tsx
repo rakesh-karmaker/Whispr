@@ -15,25 +15,15 @@ export default function ImageInput({
   const labelRef = useRef<HTMLLabelElement | null>(null);
   const [hasImage, setHasImage] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [ImageStyle, setImageStyle] = useState<string>("");
 
   useEffect(() => {
     if (image) {
-      // Try to preload the image to check if it can be loaded
-      const img = new window.Image();
-      img.onload = () => {
-        setHasImage(true);
-        if (labelRef.current) {
-          labelRef.current.style.background = `url(${image}) no-repeat center center / cover`;
-        }
-      };
-      img.onerror = () => {
-        setHasImage(false);
-        if (labelRef.current) {
-          labelRef.current.style.background = "";
-          labelRef.current.innerHTML = "Image failed to load";
-        }
-      };
-      img.src = image;
+      setImageStyle(`url(${image}) no-repeat center center / cover`);
+      setHasImage(true);
+    } else {
+      setImageStyle("");
+      setHasImage(false);
     }
   }, [image]);
 
@@ -42,7 +32,7 @@ export default function ImageInput({
       if (labelRef.current) {
         setHasImage(true);
         const imageUrl = URL.createObjectURL(e.target.files[0]);
-        labelRef.current.style.background = `url(${imageUrl}) no-repeat center center / cover`;
+        setImageStyle(`url(${imageUrl}) no-repeat center center / cover`);
       }
     } else {
       if (labelRef.current) {
@@ -71,6 +61,9 @@ export default function ImageInput({
         }
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        style={{
+          background: ImageStyle,
+        }}
       >
         <MdEdit
           className={

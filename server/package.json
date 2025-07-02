@@ -5,11 +5,11 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "rimraf dist && bun tsc",
+    "build": "rimraf dist && tsup src/server.ts --format esm --dts --out-dir dist",
     "prestart": "bun run build",
-    "start": "bun dist/server.js",
-    "prerestart": "bun run build",
-    "serve": "concurrently \"bun tsc -w\" \"nodemon dist/server.js\""
+    "start": "node dist/server.js",
+    "dev": "tsup src/server.ts --format esm --out-dir dist --watch",
+    "serve": "concurrently \"npm:dev\" \"nodemon dist/server.js\""
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -20,7 +20,8 @@
     "eslint": "^9.30.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "tsup": "^8.5.0"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"

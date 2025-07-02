@@ -1,5 +1,5 @@
-const bcrypt = require("bcrypt");
-const generateId = require("./generateId");
+import bcrypt from "bcrypt";
+import generateId from "./generateId.js";
 
 export default async function generateSessionId(): Promise<string> {
   const id = generateId();

@@ -1,7 +1,6 @@
 import app from "@/app.js";
 import config from "@/config/config.js";
 import mongoose from "mongoose";
-import type {} from "mongoose";
 
 mongoose
   .connect(config.mongoUrl)
