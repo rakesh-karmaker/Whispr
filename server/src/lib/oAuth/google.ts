@@ -5,7 +5,6 @@ import generateId from "@/utils/generateId.js";
 import generateSessionId from "@/utils/generateSessionId.js";
 import config from "@/config/config.js";
 import User from "@/models/user.js";
-import { IUser } from "@/types/userType.js";
 
 const router = express.Router();
 

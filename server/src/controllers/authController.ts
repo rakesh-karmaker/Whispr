@@ -5,22 +5,25 @@ import generateId from "@/utils/generateId.js";
 import generateSessionId from "@/utils/generateSessionId.js";
 import getDate from "@/utils/getDate.js";
 import bcrypt from "bcrypt";
-import { Request, Response } from "express";
+import { Request, Response, RequestHandler } from "express";
 
-export async function addTempUser(req: Request, res: Response) {
+export async function addTempUser(req: Request, res: Response): Promise<void> {
   try {
     const { email, password, confirmPassword } = req.body;
     if (!email || !password || !confirmPassword) {
-      return res.status(400).send({ subject: "Invalid request" });
+      res.status(400).send({ subject: "Invalid request" });
+      return;
     }
 
     if (password !== confirmPassword) {
-      return res.status(400).send({ subject: "password" });
+      res.status(400).send({ subject: "password" });
+      return;
     }
 
     const user = await User.findOne({ email });
     if (user) {
-      return res.status(409).send({ subject: "email" });
+      res.status(409).send({ subject: "email" });
+      return;
     }
 
     const salt = await bcrypt.genSalt(10); // generate salt of length 10
@@ -42,21 +45,24 @@ export async function addTempUser(req: Request, res: Response) {
   }
 }
 
-export async function getTempUser(req: Request, res: Response) {
+export async function getTempUser(req: Request, res: Response): Promise<void> {
   try {
     const { id } = req.params;
     if (!id) {
-      return res.status(400).send({ message: "Invalid request" });
+      res.status(400).send({ message: "Invalid request" });
+      return;
     }
 
     // get the temp user from redis
     const user = JSON.parse((await redisClient.get(`temp_user:${id}`)) || "{}");
     if (!user) {
-      return res.status(404).send({ message: "Temp user not found" });
+      res.status(404).send({ message: "Temp user not found" });
+      return;
     }
 
     if (user.authProvider === "local") {
-      return res.status(200).send({ email: user.email });
+      res.status(200).send({ email: user.email });
+      return;
     }
 
     const response = {
@@ -66,7 +72,7 @@ export async function getTempUser(req: Request, res: Response) {
       avatar: user.picture,
     };
 
-    return res.status(200).send(response);
+    res.status(200).send(response);
   } catch (err) {
     console.log("Error getting temp user - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);
@@ -74,19 +80,17 @@ export async function getTempUser(req: Request, res: Response) {
   }
 }
 
-export async function register(req: Request, res: Response) {
+export async function register(req: Request, res: Response): Promise<void> {
   try {
     if (!req.body) {
-      return res
-        .status(400)
-        .send({ subject: "request", message: "Invalid request" });
+      res.status(400).send({ subject: "request", message: "Invalid request" });
+      return;
     }
 
     const { id, email, firstName, lastName } = req.body;
     if (!id || !email || !firstName || !lastName) {
-      return res
-        .status(400)
-        .send({ subject: "request", message: "Invalid request" });
+      res.status(400).send({ subject: "request", message: "Invalid request" });
+      return;
     }
 
     // get the avatar url of the user
@@ -96,9 +100,10 @@ export async function register(req: Request, res: Response) {
       avatar = req.body.avatar; // use the avatar url from google
     } else {
       if (!req.file) {
-        return res
+        res
           .status(400)
           .send({ subject: "request", message: "Invalid request" });
+        return;
       }
 
       // upload the avatar image
@@ -112,7 +117,8 @@ export async function register(req: Request, res: Response) {
         avatar = data.url;
         imgId = data.imgId;
       } else {
-        return res.status(500).send({ message: "Image upload failed" });
+        res.status(500).send({ message: "Image upload failed" });
+        return;
       }
     }
 
@@ -121,9 +127,8 @@ export async function register(req: Request, res: Response) {
       (await redisClient.get(`temp_user:${id}`)) || "{}"
     );
     if (!tempUser) {
-      return res
-        .status(400)
-        .send({ subject: "request", message: "Invalid request" });
+      res.status(400).send({ subject: "request", message: "Invalid request" });
+      return;
     }
 
     let user = null;
@@ -172,7 +177,7 @@ export async function register(req: Request, res: Response) {
     // delete the temp user from redis
     await redisClient.del(`temp_user:${id}`);
 
-    return res.status(200).send({ sessionId });
+    res.status(200).send({ sessionId });
   } catch (err) {
     console.log("Error registering user - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);
@@ -180,33 +185,33 @@ export async function register(req: Request, res: Response) {
   }
 }
 
-export async function login(req: Request, res: Response) {
+export async function login(req: Request, res: Response): Promise<void> {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res
-        .status(400)
-        .send({ subject: "request", message: "Invalid request" });
+      res.status(400).send({ subject: "request", message: "Invalid request" });
+      return;
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(400)
-        .send({ subject: "email", message: "Email not found" });
+      res.status(400).send({ subject: "email", message: "Email not found" });
+      return;
     }
 
     if (!user.password) {
-      return res
+      res
         .status(400)
         .send({ subject: "noPassword", message: "Password not found" });
+      return;
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res
+      res
         .status(400)
         .send({ subject: "password", message: "Invalid password" });
+      return;
     }
 
     const sessionId = await generateSessionId();
@@ -225,7 +230,7 @@ export async function login(req: Request, res: Response) {
 
     console.log("User logged in successfully -", getDate(), "\n---\n");
 
-    return res.status(200).send({ sessionId });
+    res.status(200).send({ sessionId });
   } catch (err) {
     console.log("Error logging in user - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);

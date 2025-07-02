@@ -1,32 +1,34 @@
 import redisClient from "@/config/redis/client.js";
 import sendEmail from "@/lib/sendEmail.js";
 import User from "@/models/user.js";
-import generateOTP from "@/utils/generateOtp.js";
-import { Request, Response } from "express";
+import generateOTP from "@/utils/generateOTP.js";
+import type { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import getDate from "@/utils/getDate.js";
 import generateId from "@/utils/generateId.js";
 
-export async function sendForgotPasswordOtp(req: Request, res: Response) {
+export async function sendForgotPasswordOtp(
+  req: Request,
+  res: Response
+): Promise<void> {
   try {
     const { email } = req.body;
     if (!email) {
-      return res
-        .status(400)
-        .send({ subject: "request", message: "Invalid request" });
+      res.status(400).send({ subject: "request", message: "Invalid request" });
+      return;
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(400)
-        .send({ subject: "email", message: "Email not found" });
+      res.status(400).send({ subject: "email", message: "Email not found" });
+      return;
     }
 
     if (!user.password) {
-      return res
+      res
         .status(400)
         .send({ subject: "noPassword", message: "Password not found" });
+      return;
     }
 
     //delete old otp
@@ -54,23 +56,24 @@ export async function sendForgotPasswordOtp(req: Request, res: Response) {
   }
 }
 
-export async function verifyOtp(req: Request, res: Response) {
+export async function verifyOtp(req: Request, res: Response): Promise<void> {
   try {
     const { email, otp } = req.body;
     if (!email || !otp) {
-      return res
-        .status(400)
-        .send({ subject: "request", message: "Invalid request" });
+      res.status(400).send({ subject: "request", message: "Invalid request" });
+      return;
     }
 
     const storedOTP = await redisClient.get(`forgot_password_otp:${email}`);
     if (!storedOTP) {
-      return res.status(400).send({ subject: "otp", message: "OTP not found" });
+      res.status(400).send({ subject: "otp", message: "OTP not found" });
+      return;
     }
 
     const isOTPValid = await bcrypt.compare(otp, storedOTP);
     if (!isOTPValid) {
-      return res.status(400).send({ subject: "otp", message: "Invalid OTP" });
+      res.status(400).send({ subject: "otp", message: "Invalid OTP" });
+      return;
     }
 
     const token = generateId();
@@ -88,26 +91,28 @@ export async function verifyOtp(req: Request, res: Response) {
   }
 }
 
-export async function resetPassword(req: Request, res: Response) {
+export async function resetPassword(
+  req: Request,
+  res: Response
+): Promise<void> {
   try {
     const { token, password, confirmPassword } = req.body;
     if (!token || !password || !confirmPassword || !req.body.email) {
-      return res
-        .status(400)
-        .send({ subject: "request", message: "Invalid request" });
+      res.status(400).send({ subject: "request", message: "Invalid request" });
+      return;
     }
 
     if (password !== confirmPassword) {
-      return res
+      res
         .status(400)
         .send({ subject: "password", message: "Passwords do not match" });
+      return;
     }
 
     const email = await redisClient.get(`forgot_password_token:${token}`);
     if (!email || email !== req.body.email) {
-      return res
-        .status(400)
-        .send({ subject: "token", message: "Token not found" });
+      res.status(400).send({ subject: "token", message: "Token not found" });
+      return;
     }
 
     const salt = await bcrypt.genSalt(10); // generate salt of length 10
