@@ -1,25 +1,31 @@
-const express = require("express");
-const axios = require("axios");
-const redisClient = require("../redis/client");
-const generateId = require("../utils/generateId");
-const User = require("../models/User");
-const { generateSessionId } = require("../utils/generateSesionId");
-require("dotenv").config();
+import express, { Request, Response } from "express";
+import axios from "axios";
+import redisClient from "@/config/redis/client.js";
+import generateId from "@/utils/generateId.js";
+import generateSessionId from "@/utils/generateSessionId.js";
+import config from "@/config/config.js";
+import User from "@/models/user.js";
 
 const router = express.Router();
 
-const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const REDIRECT_URI = `${process.env.SERVER_URL}/auth/google/callback`;
-const CLIENT_URL = process.env.CLIENT_URL;
+const CLIENT_ID = config.googleClientId;
+const CLIENT_SECRET = config.googleClientSecret;
+const REDIRECT_URI = `${config.serverUrl}/auth/google/callback`;
+const CLIENT_URL = config.clientUrl;
 
-router.get("/", (req, res) => {
+type AuthResponse = {
+  new: boolean;
+  sessionId?: string;
+  redisId?: string;
+};
+
+router.get("/", (req: Request, res: Response): void => {
   const redirect = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=profile email`;
   res.redirect(redirect);
 });
 
-router.get("/callback", async (req, res) => {
-  const code = req.query.code;
+router.get("/callback", async (req: Request, res: Response): Promise<void> => {
+  const code = req.query.code as string;
 
   const { data } = await axios.post("https://oauth2.googleapis.com/token", {
     code,
@@ -29,7 +35,7 @@ router.get("/callback", async (req, res) => {
     grant_type: "authorization_code",
   });
 
-  const accessToken = data.access_token;
+  const accessToken = data.access_token as string;
 
   const userInfo = await axios.get(
     "https://www.googleapis.com/oauth2/v2/userinfo",
@@ -38,7 +44,7 @@ router.get("/callback", async (req, res) => {
     }
   );
 
-  let response = {
+  let response: AuthResponse = {
     new: false,
   };
 
@@ -88,4 +94,4 @@ router.get("/callback", async (req, res) => {
   `);
 });
 
-module.exports = router;
+export default router;

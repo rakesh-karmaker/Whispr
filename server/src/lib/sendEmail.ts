@@ -1,13 +1,14 @@
-const nodemailer = require("nodemailer");
-const otpDraft = require("../utils/otpDraft");
+import config from "@/config/config.js";
+import otpDraft from "@/utils/otpDraft.js";
+import nodemailer from "nodemailer";
 
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
   secure: false, // true for 465, false for other ports
   auth: {
-    user: process.env.MAIL_ADDRESS,
-    pass: process.env.MAIL_PASS,
+    user: config.mailAddress,
+    pass: config.mailPass,
   },
   tls: {
     rejectUnauthorized: false, // Allow self-signed certificates
@@ -23,10 +24,10 @@ transporter.verify((error, success) => {
   }
 });
 
-const sendEmail = async (email, otp) => {
+export default async function sendEmail(email: string, otp: string) {
   try {
     await transporter.sendMail({
-      from: process.env.MAIL_ADDRESS,
+      from: config.mailAddress,
       to: email,
       subject: "Password Reset OTP",
       html: otpDraft(otp),
@@ -35,6 +36,4 @@ const sendEmail = async (email, otp) => {
   } catch (err) {
     console.log("Error sending email - ", new Date(), "\n---\n", err);
   }
-};
-
-module.exports = sendEmail;
+}

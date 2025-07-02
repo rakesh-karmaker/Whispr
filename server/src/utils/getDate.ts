@@ -1,8 +1,8 @@
-exports.getDate = () => {
+export default function getDate(): string {
   const now = new Date();
 
   // Convert the time to the Asia/Dhaka time zone
-  const options = {
+  const options: Intl.DateTimeFormatOptions = {
     timeZone: "Asia/Dhaka",
     hour: "2-digit",
     minute: "2-digit",
@@ -13,4 +13,4 @@ exports.getDate = () => {
   const bangladeshTime = formatter.format(now);
 
   return bangladeshTime;
-};
+}

@@ -1,17 +1,20 @@
-const multer = require("multer");
-const path = require("path");
+import multer from "multer";
+import path from "path";
+
+const LIMIT: number = 5 * 1024 * 1024; // 5MB
 
 // Configure storage (in memory for processing with Sharp)
 const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
-  fileFilter: (req, file, cb) => {
-    const fileTypes = /jpeg|jpg|png|webp/;
-    const extname = fileTypes.test(
+  fileFilter: (req, file: Express.Multer.File, cb) => {
+    const fileTypes: RegExp = /jpeg|jpg|png|webp/;
+
+    const extname: boolean = fileTypes.test(
       path.extname(file.originalname).toLowerCase()
     );
-    const mimeType = fileTypes.test(file.mimetype);
+    const mimeType: boolean = fileTypes.test(file.mimetype);
 
     if (extname && mimeType) {
       cb(null, true);
@@ -21,8 +24,8 @@ const upload = multer({
     }
   },
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB
+    fileSize: LIMIT,
   },
 });
 
-module.exports = upload;
+export default upload;

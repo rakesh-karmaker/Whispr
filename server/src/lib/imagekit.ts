@@ -1,15 +1,21 @@
-const ImageKit = require("imagekit");
-const sharp = require("sharp");
-const { getDate } = require("../utils/getDate");
+import ImageKit from "imagekit";
+import sharp from "sharp";
+import config from "@/config/config.js";
+import { Response } from "express";
+import getDate from "@/utils/getDate.js";
 
 const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: "https://ik.imagekit.io" + process.env.IMAGEKIT_PUBLIC_KEY,
+  publicKey: config.imagekitPublicKey,
+  privateKey: config.imagekitPrivateKey,
+  urlEndpoint: "https://ik.imagekit.io" + config.imagekitPublicKey,
 });
 
 // Upload image to ImageKit and return the URL and image ID
-const uploadImage = async (res, file, convertToWebp) => {
+export async function uploadImage(
+  res: Response,
+  file: Express.Multer.File,
+  convertToWebp?: boolean
+): Promise<{ url: string; imgId: string } | Response> {
   try {
     let resizedImageBuffer = file.buffer;
     if (convertToWebp) {
@@ -21,7 +27,6 @@ const uploadImage = async (res, file, convertToWebp) => {
     const uploadedImage = await imagekit.upload({
       file: resizedImageBuffer,
       fileName: `${Date.now()}-${file.originalname}`,
-      mimeType: convertToWebp ? "image/webp" : file.mimetype,
     });
 
     const url = uploadedImage.url;
@@ -29,14 +34,16 @@ const uploadImage = async (res, file, convertToWebp) => {
     return { url, imgId: uploadedImage.fileId };
   } catch (err) {
     console.log("Error uploading image - ", getDate(), "\n---\n", err);
-    res
-      .status(500)
-      .send({ subject: "root", message: "Server error", error: err.message });
+    return res.status(500).send({ error: "Failed to upload image." });
   }
-};
+}
 
 // Upload multiple images to ImageKit and return the URLs and image IDs
-const uploadMultipleImages = async (res, files, convertToWebp) => {
+export async function uploadMultipleImages(
+  res: Response,
+  files: Express.Multer.File[],
+  convertToWebp?: boolean
+): Promise<{ url: string; imgId: string }[] | Response> {
   try {
     const uploadedImages = await Promise.all(
       files.map(async (file) => {
@@ -52,7 +59,6 @@ const uploadMultipleImages = async (res, files, convertToWebp) => {
           fileName: `${Date.now()}-${file.originalname}-${Math.floor(
             Math.random() * 1000
           )}`,
-          mimeType: convertToWebp ? "image/webp" : file.mimetype,
         });
 
         return { url: uploadedImage.url, imgId: uploadedImage.fileId };
@@ -67,13 +73,16 @@ const uploadMultipleImages = async (res, files, convertToWebp) => {
     return gallery;
   } catch (err) {
     console.log("Error uploading images - ", getDate(), "\n---\n", err);
-    res
+    return res
       .status(500)
-      .send({ subject: "root", message: "Server error", error: err.message });
+      .send({ subject: "root", message: "Server error", error: err });
   }
-};
+}
 
-const deleteImage = async (res, imageId) => {
+export async function deleteImage(
+  res: Response,
+  imageId: string
+): Promise<void | Response> {
   try {
     await imagekit.deleteFile(imageId, (err, result) => {
       if (err) {
@@ -87,6 +96,4 @@ const deleteImage = async (res, imageId) => {
     console.log("Error deleting image - ", getDate(), "\n---\n", err);
     return res.status(500).send({ error: "Failed to delete image." });
   }
-};
-
-module.exports = { uploadImage, uploadMultipleImages, deleteImage };
+}
