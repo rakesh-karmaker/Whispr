@@ -9,7 +9,7 @@ export interface IUser {
   salt?: string;
   googleId?: string;
   avatar: string;
-  imgId?: string | null;
+  publicId?: string | null;
   authProvider: "google" | "local" | "both";
   groupChats: mongoose.Types.ObjectId[];
   directMessages: mongoose.Types.ObjectId[];

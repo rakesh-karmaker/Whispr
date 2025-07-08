@@ -1,11 +1,11 @@
 import redisClient from "@/config/redis/client.js";
-import { uploadImage } from "@/lib/imagekit.js";
+import { uploadFile } from "@/lib/upload.js";
 import User from "@/models/user.js";
 import generateId from "@/utils/generateId.js";
 import generateSessionId from "@/utils/generateSessionId.js";
 import getDate from "@/utils/getDate.js";
 import bcrypt from "bcrypt";
-import { Request, Response, RequestHandler } from "express";
+import { Request, Response } from "express";
 
 export async function addTempUser(req: Request, res: Response): Promise<void> {
   try {
@@ -95,7 +95,7 @@ export async function register(req: Request, res: Response): Promise<void> {
 
     // get the avatar url of the user
     let avatar = null;
-    let imgId = null;
+    let publicId = null;
     if (req.body.avatar) {
       avatar = req.body.avatar; // use the avatar url from google
     } else {
@@ -107,15 +107,15 @@ export async function register(req: Request, res: Response): Promise<void> {
       }
 
       // upload the avatar image
-      const data = await uploadImage(res, req.file, true);
+      const data = await uploadFile(res, req.file, "avatar", 600, 600);
       if (
         data &&
         typeof data === "object" &&
         "url" in data &&
-        "imgId" in data
+        "publicId" in data
       ) {
         avatar = data.url;
-        imgId = data.imgId;
+        publicId = data.publicId;
       } else {
         res.status(500).send({ message: "Image upload failed" });
         return;
@@ -138,7 +138,7 @@ export async function register(req: Request, res: Response): Promise<void> {
       lastName,
       email,
       avatar,
-      imgId,
+      publicId,
       authProvider: tempUser.authProvider,
     };
 

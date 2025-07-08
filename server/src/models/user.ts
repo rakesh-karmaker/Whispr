@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     salt: { type: String },
     googleId: { type: String },
     avatar: { type: String },
-    imgId: { type: String },
+    publicId: { type: String },
     authProvider: {
       type: String,
       enum: ["google", "local", "both"],
