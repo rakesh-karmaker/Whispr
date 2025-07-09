@@ -1,7 +1,7 @@
-import { IUser } from "@/types/userType.js";
+import { UserType } from "@/types/modelType.js";
 import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema<IUser>(
+const UserSchema = new mongoose.Schema<UserType>(
   {
     name: { type: String, required: true },
     firstName: { type: String, required: true },
@@ -23,6 +23,7 @@ const UserSchema = new mongoose.Schema<IUser>(
         ref: ["User", "GroupChat"],
       },
     ],
+    isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
