@@ -1,11 +1,6 @@
-import metascraper from "metascraper";
-import title from "metascraper-title";
-import image from "metascraper-image";
-import description from "metascraper-description";
 import got from "got";
 import redisClient from "@/config/redis/client.js";
-
-const scraper = metascraper([title(), image(), description()]);
+import scraper from "@/config/scraper.js";
 
 export type URLMetaData = {
   title: string;
