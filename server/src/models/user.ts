@@ -24,6 +24,8 @@ const UserSchema = new mongoose.Schema<UserType>(
       },
     ],
     isActive: { type: Boolean, default: true },
+    socialLinks: [{ type: String, url: String }],
+    bio: { type: String },
   },
   { timestamps: true }
 );

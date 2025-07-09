@@ -20,6 +20,7 @@ const ContactSchema = new mongoose.Schema<ContactType>(
     image: { type: String },
     publicId: { type: String },
     isActive: { type: Boolean, default: true },
+    socialLinks: [{ type: String, url: String }],
   },
   {
     timestamps: true,

@@ -14,6 +14,11 @@ export interface UserType {
   authProvider: "google" | "local" | "both";
   pinnedContacts: mongoose.Types.ObjectId[];
   isActive: boolean;
+  socialLinks: {
+    type: string;
+    url: string;
+  }[];
+  bio?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,6 +32,10 @@ export interface ContactType {
   image: string;
   publicId: string | null;
   isActive: boolean;
+  socialLinks: {
+    type: string;
+    url: string;
+  }[];
   createdAt: Date;
   updatedAt: Date;
 }
