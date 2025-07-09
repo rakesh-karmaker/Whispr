@@ -17,9 +17,12 @@ const UserSchema = new mongoose.Schema<IUser>(
       enum: ["google", "local", "both"],
       default: "google",
     },
-    // Store chat room memberships
-    groupChats: [{ type: mongoose.Schema.Types.ObjectId, ref: "GroupChat" }],
-    directMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: "DMRoom" }],
+    pinnedContacts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: ["User", "GroupChat"],
+      },
+    ],
   },
   { timestamps: true }
 );

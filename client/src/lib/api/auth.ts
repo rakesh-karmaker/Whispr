@@ -1,15 +1,11 @@
-import type {
-  ForgotPasswordFormSchema,
-  LoginSchema,
-  ResetPasswordSchema,
-  SingUpSchema,
-} from "@/lib/zodSchemas/authSchema";
+import type { LoginSchema, SingUpSchema } from "@/lib/zodSchemas/authSchema";
 import type { RegisterDataType } from "@/types/authTypes";
 import axios from "axios";
 
 const api = axios.create({
   baseURL: `${import.meta.env.VITE_SERVER_URL}`,
   headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
 
 export async function addTempUser(data: SingUpSchema) {
@@ -53,19 +49,7 @@ export async function loginUser(data: LoginSchema) {
   return response;
 }
 
-export async function sendForgotPasswordEmail(data: ForgotPasswordFormSchema) {
-  const { data: response } = await api.post("/auth/forgot-password", data);
-  return response;
-}
-
-export async function verifyOtp(email: string, otp: string) {
-  const { data: response } = await api.post("/auth/verify-otp", { email, otp });
-  return response;
-}
-
-export async function resetPassword(
-  data: ResetPasswordSchema & { email: string; token: string }
-) {
-  const { data: response } = await api.post("/auth/reset-password", data);
+export async function getUser() {
+  const { data: response } = await api.get("/auth/get-user");
   return response;
 }

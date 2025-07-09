@@ -1,5 +1,5 @@
 import { AuthForm } from "@/layouts/auth";
-import { sendForgotPasswordEmail } from "@/lib/api/auth";
+import { sendForgotPasswordEmail } from "@/lib/api/forgotPassword";
 import {
   forgotPasswordFormSchema,
   type ForgotPasswordFormSchema,

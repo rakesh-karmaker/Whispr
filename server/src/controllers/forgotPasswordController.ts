@@ -1,6 +1,6 @@
 import redisClient from "@/config/redis/client.js";
 import sendEmail from "@/lib/sendEmail.js";
-import User from "@/models/user.js";
+import User from "@/models/User.js";
 import generateOTP from "@/utils/generateOTP.js";
 import type { Request, Response } from "express";
 import bcrypt from "bcrypt";

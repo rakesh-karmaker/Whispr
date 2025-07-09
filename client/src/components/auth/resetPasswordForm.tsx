@@ -1,5 +1,5 @@
 import { AuthForm } from "@/layouts/auth";
-import { resetPassword } from "@/lib/api/auth";
+import { resetPassword } from "@/lib/api/forgotPassword";
 import {
   resetPasswordSchema,
   type ResetPasswordSchema,

@@ -3,7 +3,7 @@ import { FormSubmitBtn } from "../ui/btns";
 import { AuthForm } from "@/layouts/auth";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { sendForgotPasswordEmail, verifyOtp } from "@/lib/api/auth";
+import { sendForgotPasswordEmail, verifyOtp } from "@/lib/api/forgotPassword";
 import type { AxiosError } from "axios";
 import { NavLink } from "react-router-dom";
 

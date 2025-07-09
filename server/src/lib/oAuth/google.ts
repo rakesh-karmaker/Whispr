@@ -4,7 +4,7 @@ import redisClient from "@/config/redis/client.js";
 import generateId from "@/utils/generateId.js";
 import generateSessionId from "@/utils/generateSessionId.js";
 import config from "@/config/config.js";
-import User from "@/models/user.js";
+import User from "@/models/User.js";
 
 const router = express.Router();
 
@@ -62,11 +62,7 @@ router.get("/callback", async (req: Request, res: Response): Promise<void> => {
     await redisClient.set(
       `session:${sessionId}`,
       JSON.stringify({
-        name: user.name,
-        email: user.email,
-        avatar: user.avatar,
-        firstName: user.firstName,
-        authProvider: user.authProvider,
+        id: user._id,
       })
     );
     await redisClient.expire(`session:${sessionId}`, 3600 * 24 * 30); // 30 days

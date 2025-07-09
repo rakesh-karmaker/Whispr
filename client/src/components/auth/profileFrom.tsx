@@ -10,9 +10,10 @@ import ImageInput from "../ui/imageInput";
 import TextField from "@mui/material/TextField";
 import { FormSubmitBtn } from "../ui/btns";
 import { useMutation } from "@tanstack/react-query";
-import type { RegisterDataType } from "@/types/authTypes";
+import type { RegisterDataType, UserType } from "@/types/authTypes";
 import { registerUser } from "@/lib/api/auth";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "@/contexts/userContext";
 
 export default function AuthProfileFrom({
   user,
@@ -22,6 +23,7 @@ export default function AuthProfileFrom({
   id: string;
 }): React.ReactNode {
   const navigate = useNavigate();
+  const userContext = useUser();
 
   const {
     register,
@@ -40,9 +42,9 @@ export default function AuthProfileFrom({
 
   const registerMutation = useMutation({
     mutationFn: (data: RegisterDataType) => registerUser(data),
-    onSuccess: (data) => {
-      console.log(data);
-      navigate("/auth/login");
+    onSuccess: (data: UserType) => {
+      if (userContext && userContext.setUser) userContext.setUser(data);
+      navigate("/");
     },
     onError: (err) => {
       console.log(err);

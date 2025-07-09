@@ -11,6 +11,7 @@ export interface IUser {
   avatar: string;
   publicId?: string | null;
   authProvider: "google" | "local" | "both";
-  groupChats: mongoose.Types.ObjectId[];
-  directMessages: mongoose.Types.ObjectId[];
+  pinnedContacts: {
+    _id: mongoose.Types.ObjectId | null;
+  }[];
 }

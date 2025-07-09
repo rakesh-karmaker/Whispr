@@ -1,84 +1,12 @@
 import redisClient from "@/config/redis/client.js";
 import { uploadFile } from "@/lib/upload.js";
-import User from "@/models/user.js";
-import generateId from "@/utils/generateId.js";
-import generateSessionId from "@/utils/generateSessionId.js";
+import User from "@/models/User.js";
 import getDate from "@/utils/getDate.js";
+import { signJWTToken } from "@/utils/JWTToken.js";
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 
-export async function addTempUser(req: Request, res: Response): Promise<void> {
-  try {
-    const { email, password, confirmPassword } = req.body;
-    if (!email || !password || !confirmPassword) {
-      res.status(400).send({ subject: "Invalid request" });
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      res.status(400).send({ subject: "password" });
-      return;
-    }
-
-    const user = await User.findOne({ email });
-    if (user) {
-      res.status(409).send({ subject: "email" });
-      return;
-    }
-
-    const salt = await bcrypt.genSalt(10); // generate salt of length 10
-    const hash = await bcrypt.hash(password, salt);
-
-    // store temp user in redis
-    const id = generateId();
-    await redisClient.set(
-      `temp_user:${id}`,
-      JSON.stringify({ email, password: hash, salt, authProvider: "local" })
-    );
-    await redisClient.expire(`temp_user:${id}`, 60 * 60); // expire in 1 hour
-
-    res.status(200).send({ message: "Temp user added successfully", id });
-  } catch (err) {
-    console.log("Error adding temp user - ", getDate(), "\n---\n", err);
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    res.status(500).send({ message: "Server error", error: errorMessage });
-  }
-}
-
-export async function getTempUser(req: Request, res: Response): Promise<void> {
-  try {
-    const { id } = req.params;
-    if (!id) {
-      res.status(400).send({ message: "Invalid request" });
-      return;
-    }
-
-    // get the temp user from redis
-    const user = JSON.parse((await redisClient.get(`temp_user:${id}`)) || "{}");
-    if (!user) {
-      res.status(404).send({ message: "Temp user not found" });
-      return;
-    }
-
-    if (user.authProvider === "local") {
-      res.status(200).send({ email: user.email });
-      return;
-    }
-
-    const response = {
-      email: user.email,
-      firstName: user.given_name,
-      lastName: user.family_name,
-      avatar: user.picture,
-    };
-
-    res.status(200).send(response);
-  } catch (err) {
-    console.log("Error getting temp user - ", getDate(), "\n---\n", err);
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    res.status(500).send({ message: "Server error", error: errorMessage });
-  }
-}
+const MAX_AGE = 1000 * 60 * 60 * 24 * 30; // 1 month
 
 export async function register(req: Request, res: Response): Promise<void> {
   try {
@@ -158,26 +86,30 @@ export async function register(req: Request, res: Response): Promise<void> {
       });
     }
 
-    const sessionId = await generateSessionId();
-    const sessionData = {
-      id: sessionId,
-      name: user?.name,
-      email: user?.email,
-      avatar: user?.avatar,
-      firstName: user?.firstName,
-      authProvider: user?.authProvider,
-    };
+    const userId = user?._id.toString() || "";
 
-    // store session data in redis
-    await redisClient.set(`session:${sessionId}`, JSON.stringify(sessionData));
-    await redisClient.expire(`session:${sessionId}`, 60 * 60 * 24 * 30); // 30 days
-
-    console.log("User registered successfully -", getDate(), "\n---\n");
+    // set the cookie
+    res.cookie("token", signJWTToken({ id: userId }), {
+      maxAge: MAX_AGE,
+      secure: true,
+      sameSite: "none",
+    });
 
     // delete the temp user from redis
     await redisClient.del(`temp_user:${id}`);
 
-    res.status(200).send({ sessionId });
+    console.log("User registered successfully -", getDate(), "\n---\n");
+
+    res.status(201).send({
+      id: userId,
+      name: user?.name,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      email: user?.email,
+      avatar: user?.avatar,
+      pinnedContacts: user?.pinnedContacts,
+      authProvider: user?.authProvider,
+    });
   } catch (err) {
     console.log("Error registering user - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);
@@ -214,25 +146,53 @@ export async function login(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const sessionId = await generateSessionId();
-    const sessionData = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      avatar: user.avatar,
-      firstName: user.firstName,
-      authProvider: user.authProvider,
-    };
-
-    // store session data in redis
-    await redisClient.set(`session:${sessionId}`, JSON.stringify(sessionData));
-    await redisClient.expire(`session:${sessionId}`, 60 * 60 * 24 * 30); // 30 days
+    // set the cookie
+    res.cookie("token", signJWTToken({ id: user._id.toString() }), {
+      maxAge: MAX_AGE,
+      secure: true,
+      sameSite: "none",
+    });
 
     console.log("User logged in successfully -", getDate(), "\n---\n");
 
-    res.status(200).send({ sessionId });
+    res.status(200).send({
+      id: user._id.toString(),
+      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      avatar: user.avatar,
+      pinnedContacts: user.pinnedContacts,
+      authProvider: user.authProvider,
+    });
   } catch (err) {
     console.log("Error logging in user - ", getDate(), "\n---\n", err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    res.status(500).send({ message: "Server error", error: errorMessage });
+  }
+}
+
+export async function getUser(req: Request, res: Response): Promise<void> {
+  try {
+    const id = req.userId;
+    const user = await User.findById(id).select("-password");
+    if (!user) {
+      res.status(404).send({ message: "User not found" });
+      return;
+    }
+
+    res.status(200).send({
+      id: user._id.toString(),
+      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      avatar: user.avatar,
+      pinnedContacts: user.pinnedContacts,
+      authProvider: user.authProvider,
+    });
+  } catch (err) {
+    console.log("Error getting user - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);
     res.status(500).send({ message: "Server error", error: errorMessage });
   }
