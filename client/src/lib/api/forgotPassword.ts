@@ -2,10 +2,11 @@ import type {
   ForgotPasswordFormSchema,
   ResetPasswordSchema,
 } from "@/lib/zodSchemas/authSchema";
+import { SERVER } from "@/utils/constants";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_SERVER_URL}`,
+  baseURL: `${SERVER}`,
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });

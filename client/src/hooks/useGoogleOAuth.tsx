@@ -1,7 +1,8 @@
+import { SERVER } from "@/utils/constants";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const serverURL = import.meta.env.VITE_SERVER_URL as string;
+const serverURL = SERVER;
 
 type OAuthResponse = {
   new: boolean;
