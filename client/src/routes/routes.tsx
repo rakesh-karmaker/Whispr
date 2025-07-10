@@ -1,10 +1,5 @@
 import type React from "react";
 import { createBrowserRouter } from "react-router-dom";
-// import App from "@/App";
-// import Login from "@/pages/auth/login";
-// import ProfileSelect from "@/pages/profileSelect";
-// import AuthLayout from "@/layouts/auth";
-// import Register from "@/pages/auth/register";
 import { lazy, Suspense } from "react";
 import Loader from "@/components/ui/Loader/Loader";
 import AuthProfile from "@/pages/auth/profile";
@@ -31,19 +26,12 @@ const routes: Route[] = [
       </Suspense>
     ),
   },
+
   {
-    path: "/login",
+    path: "/chat/:chatId",
     element: (
       <Suspense fallback={<Loader />}>
-        <Login />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/profile-select",
-    element: (
-      <Suspense fallback={<Loader />}>
-        <ProfileSelect />
+        <App />
       </Suspense>
     ),
   },
