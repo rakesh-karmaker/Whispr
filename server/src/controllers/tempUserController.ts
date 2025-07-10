@@ -1,9 +1,9 @@
-import redisClient from "@/config/redis/client.js";
-import getDate from "@/utils/getDate.js";
+import redisClient from "../config/redis/client.js";
+import getDate from "../utils/getDate.js";
 import { Request, Response } from "express";
-import generateId from "@/utils/generateId.js";
-import bcrypt from "bcrypt";
-import User from "@/models/User.js";
+import generateId from "../utils/generateId.js";
+import bcrypt from "bcryptjs";
+import User from "../models/User.js";
 
 export async function addTempUser(req: Request, res: Response): Promise<void> {
   try {

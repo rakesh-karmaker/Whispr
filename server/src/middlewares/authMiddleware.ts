@@ -1,4 +1,4 @@
-import { verifyJWTToken } from "@/utils/JWTToken.js";
+import { verifyJWTToken } from "../utils/JWTToken.js";
 import { NextFunction, Request, Response } from "express";
 
 // Extend Express Request interface to include userId

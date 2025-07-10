@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import generateId from "./generateId.js";
 
 export default async function generateSessionId(): Promise<string> {

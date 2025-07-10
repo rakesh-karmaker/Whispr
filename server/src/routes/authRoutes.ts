@@ -1,13 +1,13 @@
-import { getUser, login, register } from "@/controllers/authController.js";
+import { getUser, login, register } from "../controllers/authController.js";
 import {
   resetPassword,
   sendForgotPasswordOtp,
   verifyOtp,
-} from "@/controllers/forgotPasswordController.js";
-import { addTempUser, getTempUser } from "@/controllers/tempUserController.js";
-import googleRouter from "@/lib/oAuth/google.js";
-import { verifyToken } from "@/middlewares/authMiddleware.js";
-import upload from "@/middlewares/multer.js";
+} from "../controllers/forgotPasswordController.js";
+import { addTempUser, getTempUser } from "../controllers/tempUserController.js";
+import googleRouter from "../lib/oAuth/google.js";
+import { verifyToken } from "../middlewares/authMiddleware.js";
+import upload from "../middlewares/multer.js";
 import express from "express";
 const authRouter: express.Router = express.Router();
 

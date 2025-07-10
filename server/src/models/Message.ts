@@ -1,4 +1,4 @@
-import { MessageType } from "@/types/modelType.js";
+import { MessageType } from "../types/modelType.js";
 import mongoose from "mongoose";
 
 const MessageSchema = new mongoose.Schema<MessageType>(

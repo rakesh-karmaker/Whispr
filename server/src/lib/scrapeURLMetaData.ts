@@ -1,6 +1,6 @@
 import got from "got";
-import redisClient from "@/config/redis/client.js";
-import scraper from "@/config/scraper.js";
+import redisClient from "../config/redis/client.js";
+import scraper from "../config/scraper.js";
 
 export type URLMetaData = {
   title: string;

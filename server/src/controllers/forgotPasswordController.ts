@@ -1,11 +1,11 @@
-import redisClient from "@/config/redis/client.js";
-import sendEmail from "@/lib/sendEmail.js";
-import User from "@/models/User.js";
-import generateOTP from "@/utils/generateOTP.js";
+import redisClient from "../config/redis/client.js";
+import sendEmail from "../lib/sendEmail.js";
+import User from "../models/User.js";
+import generateOTP from "../utils/generateOTP.js";
 import type { Request, Response } from "express";
-import bcrypt from "bcrypt";
-import getDate from "@/utils/getDate.js";
-import generateId from "@/utils/generateId.js";
+import bcrypt from "bcryptjs";
+import getDate from "../utils/getDate.js";
+import generateId from "../utils/generateId.js";
 
 export async function sendForgotPasswordOtp(
   req: Request,

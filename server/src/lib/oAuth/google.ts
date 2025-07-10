@@ -1,10 +1,10 @@
 import express, { Request, Response } from "express";
 import axios from "axios";
-import redisClient from "@/config/redis/client.js";
-import generateId from "@/utils/generateId.js";
-import generateSessionId from "@/utils/generateSessionId.js";
-import config from "@/config/config.js";
-import User from "@/models/User.js";
+import redisClient from "../../config/redis/client.js";
+import generateId from "../../utils/generateId.js";
+import generateSessionId from "../../utils/generateSessionId.js";
+import config from "../../config/config.js";
+import User from "../../models/User.js";
 
 const router = express.Router();
 

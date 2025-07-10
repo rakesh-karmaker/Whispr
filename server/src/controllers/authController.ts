@@ -1,9 +1,9 @@
-import redisClient from "@/config/redis/client.js";
-import { uploadFile } from "@/lib/upload.js";
-import User from "@/models/User.js";
-import getDate from "@/utils/getDate.js";
-import { signJWTToken } from "@/utils/JWTToken.js";
-import bcrypt from "bcrypt";
+import redisClient from "../config/redis/client.js";
+import { uploadFile } from "../lib/upload.js";
+import User from "../models/User.js";
+import getDate from "../utils/getDate.js";
+import { signJWTToken } from "../utils/JWTToken.js";
+import bcrypt from "bcryptjs";
 import { Request, Response } from "express";
 
 const MAX_AGE = 1000 * 60 * 60 * 24 * 30; // 1 month

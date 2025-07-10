@@ -1,4 +1,4 @@
-import { ContactType } from "@/types/modelType.js";
+import { ContactType } from "../types/modelType.js";
 import mongoose from "mongoose";
 
 const ContactSchema = new mongoose.Schema<ContactType>(

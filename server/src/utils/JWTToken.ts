@@ -1,4 +1,4 @@
-import config from "@/config/config.js";
+import config from "../config/config.js";
 import jwt from "jsonwebtoken";
 
 const MAX_AGE = 1000 * 60 * 60 * 24 * 30; // 1 month

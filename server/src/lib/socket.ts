@@ -1,4 +1,4 @@
-import config from "@/config/config.js";
+import config from "../config/config.js";
 import { Server } from "http";
 import { Server as IOServer, Socket } from "socket.io";
 

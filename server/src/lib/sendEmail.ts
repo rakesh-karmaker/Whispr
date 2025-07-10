@@ -1,6 +1,6 @@
-import config from "@/config/config.js";
-import mailSender from "@/config/mailSender.js";
-import otpDraft from "@/utils/otpDraft.js";
+import config from "../config/config.js";
+import mailSender from "../config/mailSender.js";
+import otpDraft from "../utils/otpDraft.js";
 
 export default async function sendEmail(email: string, otp: string) {
   try {

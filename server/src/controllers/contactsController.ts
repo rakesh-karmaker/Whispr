@@ -1,5 +1,5 @@
-import User from "@/models/User.js";
-import getDate from "@/utils/getDate.js";
+import User from "../models/User.js";
+import getDate from "../utils/getDate.js";
 import { Request, Response } from "express";
 
 export async function searchContacts(
@@ -8,6 +8,7 @@ export async function searchContacts(
 ): Promise<void> {
   try {
     const { searchTerm } = req.body;
+    console.log("searchTerm", searchTerm);
     if (!searchTerm) {
       res.status(400).send({ message: "Please provide a search term" });
       return;
@@ -43,7 +44,7 @@ export async function searchContacts(
           ],
         },
       ],
-    });
+    }).select("name firstName lastName email avatar isActive");
 
     // Remove duplicates
     res.status(200).send([...new Set(contacts)]);
