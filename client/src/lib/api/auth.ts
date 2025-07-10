@@ -1,13 +1,6 @@
+import api from "@/config/axios";
 import type { LoginSchema, SingUpSchema } from "@/lib/zodSchemas/authSchema";
 import type { RegisterDataType } from "@/types/authTypes";
-import { SERVER } from "@/utils/constants";
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: `${SERVER}`,
-  headers: { "Content-Type": "application/json" },
-  withCredentials: true,
-});
 
 export async function addTempUser(data: SingUpSchema) {
   const { data: response } = await api.post("/auth/add-temp-user", data);

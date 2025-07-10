@@ -1,4 +1,4 @@
-import { SERVER } from "@/utils/constants";
+import { SERVER } from "@/config/constants";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 

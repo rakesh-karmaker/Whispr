@@ -1,15 +1,8 @@
+import api from "@/config/axios";
 import type {
   ForgotPasswordFormSchema,
   ResetPasswordSchema,
 } from "@/lib/zodSchemas/authSchema";
-import { SERVER } from "@/utils/constants";
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: `${SERVER}`,
-  headers: { "Content-Type": "application/json" },
-  withCredentials: true,
-});
 
 export async function sendForgotPasswordEmail(data: ForgotPasswordFormSchema) {
   const { data: response } = await api.post("/auth/forgot-password", data);

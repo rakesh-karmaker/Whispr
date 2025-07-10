@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef } from "react";
 import { useUser } from "./userContext";
 import { io, Socket } from "socket.io-client";
-import { SERVER } from "@/utils/constants";
+import { SERVER } from "@/config/constants";
 
 const SocketContext = createContext<Socket | null>(null);
 
