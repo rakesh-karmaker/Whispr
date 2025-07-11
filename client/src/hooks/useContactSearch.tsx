@@ -31,7 +31,6 @@ export default function useContactSearch(
     const fetchData = async () => {
       try {
         const data = await searchContacts(query, pageNumber, cancel);
-        console.log(data);
         setContacts((prevContacts) => {
           const all = [...prevContacts, ...data.contacts];
           const unique = Array.from(
