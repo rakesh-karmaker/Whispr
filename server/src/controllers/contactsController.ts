@@ -52,7 +52,12 @@ export async function searchContacts(
     const hasMore = contacts.length === 10;
 
     // Remove duplicates
-    res.status(200).send({ contacts: [...new Set(contacts)], hasMore });
+    res.status(200).send({
+      contacts: Array.from(
+        new Map(contacts.map((item) => [item._id, item])).values()
+      ),
+      hasMore,
+    });
   } catch (err) {
     console.log("Error searching contacts - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);

@@ -19,27 +19,45 @@ export default function useContactSearch(
   const [hasMore, setHasMore] = useState<boolean>(false);
 
   useEffect(() => {
+    setContacts([]); // Reset contacts when query changes
+  }, [query]);
+
+  useEffect(() => {
     setLoading(true);
     setError(false);
     let cancel: Canceler = () => {};
+    let debounceTimeout: NodeJS.Timeout;
 
     const fetchData = async () => {
       try {
         const data = await searchContacts(query, pageNumber, cancel);
-        setContacts((prevContacts) => [
-          ...new Set([...prevContacts, ...data.contacts]),
-        ]);
+        setContacts((prevContacts) => {
+          const all = [...prevContacts, ...data.contacts];
+          const unique = Array.from(
+            new Map(all.map((item) => [item._id, item])).values()
+          );
+          return unique;
+        });
         setHasMore(data.hasMore);
       } catch (err) {
         if (axios.isCancel(err)) return;
         setError(true);
         console.log(err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchData();
-    setLoading(false);
-    return () => cancel();
+    if (query) {
+      debounceTimeout = setTimeout(fetchData, 300); // 300ms debounce
+    } else {
+      setLoading(false);
+    }
+
+    return () => {
+      clearTimeout(debounceTimeout);
+      cancel();
+    };
   }, [query, pageNumber]);
 
   return { loading, error, contacts, hasMore };

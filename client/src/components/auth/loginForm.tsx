@@ -54,7 +54,7 @@ export default function LoginForm(): React.ReactNode {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-6 w-[29.0625em] items-center"
+      className="flex flex-col gap-6 w-[29.0625em] max-2xl:w-full max-2xl:max-w-[29.0625em] items-center"
     >
       <div className="flex flex-col gap-2 w-full">
         <div className="flex flex-col gap-5 w-full">

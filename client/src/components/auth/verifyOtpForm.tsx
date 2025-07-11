@@ -96,7 +96,7 @@ export default function VerifyOtpForm({
       <div className="flex flex-col gap-3">
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-6 w-[29.0625em] items-center"
+          className="flex flex-col gap-6 w-[29.0625em] max-2xl:w-full max-2xl:max-w-[29.0625em] items-center"
         >
           <div className="w-full">
             <div className="w-full flex gap-2.5 justify-between">

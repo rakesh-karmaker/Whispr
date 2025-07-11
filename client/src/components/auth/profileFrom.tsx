@@ -64,7 +64,7 @@ export default function AuthProfileFrom({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-8 w-[29.0625em] items-center"
+      className="flex flex-col gap-8 w-[29.0625em] max-2xl:w-full max-2xl:max-w-[29.0625em] items-center"
     >
       <ImageInput
         register={{ ...register("avatar") }}
