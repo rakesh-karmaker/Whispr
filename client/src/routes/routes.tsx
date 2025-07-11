@@ -7,8 +7,10 @@ import ForgotPassword from "@/pages/auth/forgotPasword";
 
 const Login = lazy(() => import("@/pages/auth/login"));
 const Register = lazy(() => import("@/pages/auth/register"));
-const ProfileSelect = lazy(() => import("@/pages/profileSelect"));
 const AuthLayout = lazy(() => import("@/layouts/auth"));
+
+const ChatLayout = lazy(() => import("@/layouts/chatLayout"));
+const Chat = lazy(() => import("@/pages/chat/chat"));
 const App = lazy(() => import("@/App"));
 
 interface Route {
@@ -28,12 +30,22 @@ const routes: Route[] = [
   },
 
   {
-    path: "/chat/:chatId",
+    path: "/chat",
     element: (
       <Suspense fallback={<Loader />}>
-        <App />
+        <ChatLayout />
       </Suspense>
     ),
+    children: [
+      {
+        path: "/chat",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Chat />
+          </Suspense>
+        ),
+      },
+    ],
   },
 
   {

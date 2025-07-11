@@ -2,7 +2,7 @@ import type { SearchedContact } from "@/types/contactTypes";
 import type React from "react";
 import UserPreview from "./userPreview";
 
-type Option = {
+export type Option = {
   id: string;
   name: string;
 };
@@ -11,10 +11,12 @@ export default function MultiSelectDropdown({
   data,
   setSelected,
   lastRef,
+  loading,
 }: {
   data: SearchedContact[];
   setSelected: React.Dispatch<React.SetStateAction<Option[]>>;
-  lastRef: React.RefObject<HTMLLabelElement | null>;
+  lastRef: React.RefCallback<HTMLButtonElement>;
+  loading: boolean;
 }): React.ReactNode {
   const toggleOption = (option: SearchedContact) => {
     setSelected((prevSelected: Option[]) => {
@@ -30,26 +32,21 @@ export default function MultiSelectDropdown({
     });
   };
 
-  if (!data) return null;
+  if (data.length === 0) return null;
 
   return (
-    <div className="relative w-full max-w-[28.75em]">
-      <div className="shadow-md absolute top-full left-0 right-0 border-[1px] border-light-gray bg-pure-white z-50 max-h-80 overflow-y-auto">
-        {data.map((option, index) => (
-          <label
-            key={option._id}
-            ref={index === data.length - 1 ? lastRef : null}
-            className="cursor-pointer"
-          >
-            <input
-              type="checkbox"
-              onChange={() => toggleOption(option)}
-              className="hidden"
-            />
-            <UserPreview contactData={option} />
-          </label>
-        ))}
-      </div>
+    <div className="shadow-sm bg-pure-white z-50 max-h-80 overflow-y-auto rounded-xl">
+      {data.map((option, index) => (
+        <button
+          key={option._id}
+          ref={index === data.length - 1 ? lastRef : null}
+          className="cursor-pointer block w-full"
+          onClick={() => toggleOption(option)}
+        >
+          <UserPreview contactData={option} />
+        </button>
+      ))}
+      {loading && <p>Loading...</p>}
     </div>
   );
 }

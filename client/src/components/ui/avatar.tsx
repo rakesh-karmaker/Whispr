@@ -16,7 +16,7 @@ export default function Avatar({
         referrerPolicy="no-referrer"
       />
       {isActive && (
-        <div className="absolute bottom-0.5 right-2.5 w-2 h-2 bg-teal border-[1.5px] border-white rounded-full"></div>
+        <div className="absolute bottom-[0px] right-[4px] w-3 h-3 bg-teal border-[2px] border-white rounded-full"></div>
       )}
     </div>
   );

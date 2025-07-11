@@ -17,7 +17,7 @@ export default function UserPreview({
         />
 
         <div className="flex flex-col">
-          <h4 className="text-lg font-medium">{contactData.name}</h4>
+          <h4 className="text-lg font-medium text-left">{contactData.name}</h4>
           <p className="text-sm text-gray">{contactData.email}</p>
         </div>
       </div>
