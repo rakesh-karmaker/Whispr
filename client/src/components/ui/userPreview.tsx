@@ -8,7 +8,7 @@ export default function UserPreview({
   contactData: SearchedContact;
 }): React.ReactNode {
   return (
-    <div className="w-full h-full flex p-3 items-center transition-all duration-200 hover:bg-white-2">
+    <div className="w-full h-full flex p-3 items-center transition-all duration-200 hover:bg-white-2 focus-within:bg-white-2">
       <div className="flex gap-2.5 items-center relative">
         <Avatar
           src={contactData.avatar}

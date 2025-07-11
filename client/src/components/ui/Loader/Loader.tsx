@@ -1,8 +1,8 @@
 import "./Loader.css";
 
-const Loader = () => {
+const Loader = ({ className }: { className?: string }) => {
   return (
-    <div className="loader col-center">
+    <div className={"loader col-center" + (className ? " " + className : "")}>
       <svg viewBox="25 25 50 50">
         <circle r="20" cy="50" cx="50"></circle>
       </svg>

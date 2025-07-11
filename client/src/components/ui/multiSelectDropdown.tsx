@@ -2,6 +2,8 @@ import type { SearchedContact } from "@/types/contactTypes";
 import type React from "react";
 import UserPreview from "./userPreview";
 import { useRef } from "react";
+import Loader from "./Loader/Loader";
+import EmptyData from "./EmptyData/EmptyData";
 
 export type Option = {
   id: string;
@@ -47,7 +49,7 @@ export default function MultiSelectDropdown({
     }
   });
 
-  if (data.length === 0) return null;
+  if (data.length === 0 && !loading) return null;
 
   return (
     <div
@@ -58,13 +60,13 @@ export default function MultiSelectDropdown({
         <button
           key={option._id}
           ref={index === data.length - 1 ? lastRef : null}
-          className="cursor-pointer block w-full"
+          className="cursor-pointer block w-full focus-within:bg-white-2"
           onClick={() => toggleOption(option)}
         >
           <UserPreview contactData={option} />
         </button>
       ))}
-      {loading && <p>Loading...</p>}
+      {loading && <Loader className="my-2" />}
     </div>
   );
 }

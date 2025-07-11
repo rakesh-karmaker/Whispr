@@ -3,6 +3,7 @@
 
 body {
   font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  overflow-y: scroll !important;
 }
 
 :root {
@@ -39,4 +40,15 @@ body {
 .MuiAutocomplete-popper,
 .MuiAutocomplete-endAdornment {
   display: none;
+}
+
+.MuiAutocomplete-hasPopupIcon.css-o5oj2-MuiAutocomplete-root
+  .MuiOutlinedInput-root,
+.MuiAutocomplete-hasPopupIcon.css-o5oj2-MuiAutocomplete-root
+  .MuiAutocomplete-inputRoot {
+  padding-right: 9px !important;
+}
+
+.css-1g04pbp-MuiModal-root {
+  position: absolute !important;
 }
