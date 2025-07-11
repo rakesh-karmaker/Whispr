@@ -35,3 +35,8 @@ body {
 
   --breakpoint-xs: 25rem; /* 400px */
 }
+
+.MuiAutocomplete-popper,
+.MuiAutocomplete-endAdornment {
+  display: none;
+}

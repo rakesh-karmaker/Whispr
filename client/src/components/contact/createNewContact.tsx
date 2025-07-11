@@ -1,13 +1,22 @@
 import type React from "react";
-import { useState } from "react";
-import { FaSearch } from "react-icons/fa";
+import { useEffect, useState } from "react";
 import type { Option } from "@/components/ui/multiSelectDropdown";
 import SearchContacts from "./searchContacts";
+import { FaSearch } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateNewContact(): React.ReactNode {
+  const navigate = useNavigate();
+
   const [query, setQuery] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [selected, setSelected] = useState<Option[]>([]);
+
+  useEffect(() => {
+    if (selected.length > 0) {
+      navigate(`/chat/${selected[0].id}`);
+    }
+  }, [selected]);
 
   return (
     <SearchContacts
