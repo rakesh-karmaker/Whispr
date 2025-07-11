@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import useContactSearch from "./hooks/useContactSearch";
 import MultiSelectDropdown from "./components/ui/multiSelectDropdown";
+import Avatar from "./components/ui/avatar";
 
 type Option = {
   id: string;

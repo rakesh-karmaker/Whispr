@@ -21,6 +21,8 @@ export const UserProvider = ({
   const { data, error, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: getUser,
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 
   if (error) console.log(error);

@@ -1,5 +1,6 @@
 import type { SearchedContact } from "@/types/contactTypes";
 import type React from "react";
+import UserPreview from "./userPreview";
 
 type Option = {
   id: string;
@@ -32,33 +33,20 @@ export default function MultiSelectDropdown({
   if (!data) return null;
 
   return (
-    <div style={{ position: "relative", width: "200px" }}>
-      <div
-        style={{
-          position: "absolute",
-          top: "100%",
-          left: 0,
-          right: 0,
-          border: "1px solid #ccc",
-          backgroundColor: "#fff",
-          zIndex: 1000,
-          borderRadius: "5px",
-          maxHeight: "150px",
-          overflowY: "auto",
-        }}
-      >
+    <div className="relative w-full max-w-[28.75em]">
+      <div className="shadow-md absolute top-full left-0 right-0 border-[1px] border-light-gray bg-pure-white z-50 max-h-80 overflow-y-auto">
         {data.map((option, index) => (
           <label
             key={option._id}
-            style={{ display: "block", padding: "5px" }}
             ref={index === data.length - 1 ? lastRef : null}
+            className="cursor-pointer"
           >
             <input
               type="checkbox"
               onChange={() => toggleOption(option)}
               className="hidden"
             />
-            {option.name}
+            <UserPreview contactData={option} />
           </label>
         ))}
       </div>
