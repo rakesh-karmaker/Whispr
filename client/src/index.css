@@ -1,11 +1,6 @@
 @import url("./fonts.css");
 @import "tailwindcss";
 
-body {
-  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
-  overflow-y: scroll !important;
-}
-
 :root {
   --pure-white: #ffffff;
   --white: #ecf2f8;
@@ -37,6 +32,15 @@ body {
   --breakpoint-xs: 25rem; /* 400px */
 }
 
+body {
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  overflow-y: scroll !important;
+}
+
+body:has(.chat-layout) {
+  background: var(--white-3);
+}
+
 .MuiAutocomplete-popper,
 .MuiAutocomplete-endAdornment {
   display: none;
@@ -51,4 +55,10 @@ body {
 
 .css-1g04pbp-MuiModal-root {
   position: absolute !important;
+}
+
+@media screen and (max-width: 640px) {
+  .css-4nmryk-MuiBackdrop-root-MuiModal-backdrop {
+    background-color: rgb(255, 255, 255) !important;
+  }
 }

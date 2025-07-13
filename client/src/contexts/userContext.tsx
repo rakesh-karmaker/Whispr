@@ -3,11 +3,11 @@ import type { UserType } from "@/types/authTypes";
 import { useQuery } from "@tanstack/react-query";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-interface UserContextType {
+type UserContextType = {
   user: UserType | null;
   setUser: React.Dispatch<React.SetStateAction<UserType | null>>;
   isLoading: boolean;
-}
+};
 
 const UserContext = createContext<UserContextType | null>(null);
 
@@ -40,12 +40,12 @@ export const UserProvider = ({
   );
 };
 
-export const useUser = (): UserContextType | null => {
+export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
 
   if (context === undefined) {
     throw new Error("useAuth must be used within a AuthProvider");
   }
 
-  return context;
+  return context as UserContextType;
 };

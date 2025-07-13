@@ -32,10 +32,18 @@ export default function CreateGroup(): React.ReactNode {
         onClose={() => setOpen(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        className="flex items-center justify-center h-fit min-h-full absolute"
+        className="flex items-center justify-center h-fit min-h-full absolute max-sm:bg-pure-white"
       >
-        <div className="w-full max-w-[28.75em] min-h-fit p-10 rounded-lg bg-pure-white flex flex-col items-center  gap-3 relative">
-          <h2 className="text-2xl font-semibold">Create a new group</h2>
+        <div className="w-full max-w-[28.75em] max-sm:max-w-full min-h-fit max-sm:min-h-screen p-10 rounded-lg max-sm:rounded-none bg-pure-white flex flex-col items-center max-sm:justify-center gap-3 relative">
+          <span
+            className="absolute hidden top-10 right-10 cursor-pointer text-xl font-extrabold w-10 h-10 max-sm:flex items-center justify-center bg-teal text-pure-white rounded-full"
+            onClick={() => setOpen(false)}
+          >
+            &#10005;
+          </span>
+          <h2 className="text-2xl font-semibold text-center">
+            Create a new group
+          </h2>
           <CreateGroupForm />
         </div>
       </Modal>
@@ -70,13 +78,6 @@ function CreateGroupForm(): React.ReactNode {
     }
 
     console.log(data);
-  }
-
-  function handleAutocompleteChange(
-    event: React.SyntheticEvent,
-    value: Option[]
-  ) {
-    setSelected(value);
   }
 
   return (
@@ -114,7 +115,7 @@ function CreateGroupForm(): React.ReactNode {
                 id="tags-outlined"
                 options={[]}
                 value={selected}
-                onChange={handleAutocompleteChange}
+                onChange={(e, value: Option[]) => setSelected(value)}
                 getOptionLabel={(option: Option) => option.firstName}
                 open={false}
                 filterSelectedOptions

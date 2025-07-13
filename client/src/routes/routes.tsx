@@ -4,6 +4,9 @@ import { lazy, Suspense } from "react";
 import Loader from "@/components/ui/Loader/Loader";
 import AuthProfile from "@/pages/auth/profile";
 import ForgotPassword from "@/pages/auth/forgotPasword";
+import { ContactsProvider } from "@/contexts/contactsContext";
+import { SelectedContactProvider } from "@/contexts/selectedContactContext";
+import { SocketProvider } from "@/contexts/socketContext";
 
 const Login = lazy(() => import("@/pages/auth/login"));
 const Register = lazy(() => import("@/pages/auth/register"));
@@ -33,7 +36,13 @@ const routes: Route[] = [
     path: "/chat",
     element: (
       <Suspense fallback={<Loader />}>
-        <ChatLayout />
+        <ContactsProvider>
+          <SelectedContactProvider>
+            <SocketProvider>
+              <ChatLayout />
+            </SocketProvider>
+          </SelectedContactProvider>
+        </ContactsProvider>
       </Suspense>
     ),
     children: [

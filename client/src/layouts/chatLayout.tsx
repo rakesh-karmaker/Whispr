@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 
 export default function ChatLayout(): React.ReactNode {
   return (
-    <div className="h-screen w-screen flex gap-4 p-4 bg-white-3">
+    <div className="h-screen flex gap-4 p-4 bg-white-3 chat-layout">
       <ChatLeft />
       <Outlet />
     </div>
