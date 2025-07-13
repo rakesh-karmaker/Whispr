@@ -2,7 +2,7 @@ import GoogleBtn from "@/components/auth/googleBtn";
 import LoginForm from "@/components/auth/loginForm";
 import OrLine from "@/components/ui/orLineBreaker";
 import useGoogleOAuth from "@/hooks/useGoogleOAuth";
-import { AuthForm } from "@/layouts/auth";
+import { AuthForm } from "@/layouts/authPageLayout";
 import React from "react";
 import { NavLink } from "react-router-dom";
 

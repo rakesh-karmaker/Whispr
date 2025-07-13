@@ -1,6 +1,6 @@
 import AuthProfileFrom from "@/components/auth/profileFrom";
 import Loader from "@/components/ui/Loader/Loader";
-import { AuthForm } from "@/layouts/auth";
+import { AuthForm } from "@/layouts/authPageLayout";
 import { getTempUser } from "@/lib/api/auth";
 import { useQuery } from "@tanstack/react-query";
 import type React from "react";

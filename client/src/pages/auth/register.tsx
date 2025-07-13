@@ -1,4 +1,4 @@
-import { AuthForm } from "@/layouts/auth";
+import { AuthForm } from "@/layouts/authPageLayout";
 import type React from "react";
 import RegisterForm from "@/components/auth/registerForm";
 import OrLine from "@/components/ui/orLineBreaker";

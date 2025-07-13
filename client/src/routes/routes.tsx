@@ -10,7 +10,7 @@ import { SocketProvider } from "@/contexts/socketContext";
 
 const Login = lazy(() => import("@/pages/auth/login"));
 const Register = lazy(() => import("@/pages/auth/register"));
-const AuthLayout = lazy(() => import("@/layouts/auth"));
+const AuthPageLayout = lazy(() => import("@/layouts/authPageLayout"));
 
 const ChatLayout = lazy(() => import("@/layouts/chatLayout"));
 const Chat = lazy(() => import("@/pages/chat/chat"));
@@ -36,13 +36,7 @@ const routes: Route[] = [
     path: "/chat",
     element: (
       <Suspense fallback={<Loader />}>
-        <ContactsProvider>
-          <SelectedContactProvider>
-            <SocketProvider>
-              <ChatLayout />
-            </SocketProvider>
-          </SelectedContactProvider>
-        </ContactsProvider>
+        <ChatLayout />
       </Suspense>
     ),
     children: [
@@ -59,7 +53,7 @@ const routes: Route[] = [
 
   {
     path: "/auth",
-    element: <AuthLayout />,
+    element: <AuthPageLayout />,
     children: [
       {
         path: "/auth/register",

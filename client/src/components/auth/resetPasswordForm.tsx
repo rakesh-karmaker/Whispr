@@ -1,4 +1,4 @@
-import { AuthForm } from "@/layouts/auth";
+import { AuthForm } from "@/layouts/authPageLayout";
 import { resetPassword } from "@/lib/api/forgotPassword";
 import {
   resetPasswordSchema,

@@ -3,11 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/lib/api/auth";
 import { useUserStore } from "@/stores/useUserStore";
 
-export const AuthInitializer = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["user"],
     queryFn: getUser,
@@ -22,9 +18,14 @@ export const AuthInitializer = ({
     setIsLoading(isLoading);
   }, [isLoading]);
 
+  console.log(data);
+
   useEffect(() => {
     if (data) setUser(data);
-    if (error) setUser(null); // optional
+    if (error) {
+      console.log(error);
+      setUser(null);
+    } // optional
   }, [data, error]);
 
   return <>{children}</>;

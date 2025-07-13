@@ -1,7 +1,7 @@
 import type React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 
-export default function AuthLayout(): React.ReactNode {
+export default function AuthPageLayout(): React.ReactNode {
   return (
     <main className="w-screen h-screen min-h-full flex">
       <AuthLeft />
