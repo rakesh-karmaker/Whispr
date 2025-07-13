@@ -14,32 +14,21 @@ export async function searchContacts(
     }
 
     const sanitizedSearchTerm = (searchTerm as string).replace(
-      "/[.*+?^${}()|[\]\\]/g",
+      /[.*+?^${}()|[\]\\]/g,
       "\\$&"
     );
 
-    const regex = new RegExp(sanitizedSearchTerm, "i");
+    const includesRegex = new RegExp(sanitizedSearchTerm, "i");
 
-    // Search for contacts except for the current user
-    const contacts = await User.find({
+    const allContacts = await User.find({
       $and: [
-        {
-          _id: { $ne: req.userId },
-        },
+        { _id: { $ne: req.userId } },
         {
           $or: [
-            {
-              name: { $regex: regex },
-            },
-            {
-              firstName: { $regex: regex },
-            },
-            {
-              lastName: { $regex: regex },
-            },
-            {
-              email: { $regex: regex },
-            },
+            { name: { $regex: includesRegex } },
+            { firstName: { $regex: includesRegex } },
+            { lastName: { $regex: includesRegex } },
+            { email: { $regex: includesRegex } },
           ],
         },
       ],
@@ -48,14 +37,10 @@ export async function searchContacts(
       .limit(10)
       .skip(((pageNumber as unknown as number) - 1) * 10);
 
-    // check if there is more contacts to load
-    const hasMore = contacts.length === 10;
+    const hasMore = allContacts.length === 10;
 
-    // Remove duplicates
     res.status(200).send({
-      contacts: Array.from(
-        new Map(contacts.map((item) => [item._id, item])).values()
-      ),
+      contacts: allContacts,
       hasMore,
     });
   } catch (err) {

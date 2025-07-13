@@ -125,7 +125,7 @@ export async function login(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate("pinnedContacts");
     if (!user) {
       res.status(400).send({ subject: "email", message: "Email not found" });
       return;
