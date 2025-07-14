@@ -1,12 +1,17 @@
 import ChatLeft from "@/components/chat/chatLeft";
+import { useContacts } from "@/hooks/useContacts";
 import { useUser } from "@/hooks/useUser";
+import { getAllContacts } from "@/lib/api/contacts";
 import { useSocketStore } from "@/stores/useSocketStore";
+import { useQuery } from "@tanstack/react-query";
 import type React from "react";
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 
 export default function ChatLayout(): React.ReactNode {
   const { user } = useUser();
+
+  // set up socket
   const connect = useSocketStore((s) => s.connect);
   const disconnect = useSocketStore((s) => s.disconnect);
 

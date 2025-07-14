@@ -25,7 +25,7 @@ export default function CreateNewContact(): React.ReactNode {
       query={query}
       pageNumber={pageNumber}
       setPageNumber={setPageNumber}
-      className="w-full h-fit absolute top-28"
+      className="w-full h-fit absolute top-28 z-50"
     >
       <div className="w-full max-w-[22.0625em] flex relative items-center">
         <input

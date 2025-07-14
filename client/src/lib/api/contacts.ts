@@ -14,7 +14,10 @@ export async function searchContacts(
   return response;
 }
 
-export async function getAllContacts() {
-  const { data: response } = await api.get("/contact/get-all-contacts");
+export async function getAllContacts(pageNumber: number, cancel: Canceler) {
+  const { data: response } = await api.get("/contact/get-all-contacts", {
+    params: { pageNumber },
+    cancelToken: new axios.CancelToken((c) => (cancel = c)),
+  });
   return response;
 }

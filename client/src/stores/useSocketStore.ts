@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { io, Socket } from "socket.io-client";
 import { SERVER } from "@/config/constants";
+import { useContactsStore } from "./useContactsStore";
 
 interface SocketState {
   socket: Socket | null;
@@ -26,8 +27,10 @@ export const useSocketStore = create<SocketState>((set) => ({
     socket.on(
       "updateUserActiveStatus",
       (data: { contactId: string; isActive: boolean }) => {
-        console.log("User active status changed:", data);
-        // Optionally call another zustand store method if needed
+        const changeActiveContact =
+          useContactsStore.getState().changeActiveContact;
+
+        changeActiveContact(data.contactId, data.isActive);
       }
     );
   },

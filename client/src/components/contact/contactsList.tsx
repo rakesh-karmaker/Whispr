@@ -1,0 +1,69 @@
+import { useContacts } from "@/hooks/useContacts";
+import useGetAllContacts from "@/hooks/useGetAllContacts";
+import type { QueriedContact } from "@/types/contactTypes";
+import type React from "react";
+import { useCallback, useRef, useState } from "react";
+import ContactPreview from "../ui/contactPreview";
+
+export default function ContactsList(): React.ReactNode {
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const { isLoading, hasMore } = useGetAllContacts(pageNumber);
+  const { contacts, pinnedContacts } = useContacts();
+
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastElementRef = useCallback(
+    (node: HTMLButtonElement) => {
+      if (isLoading) return;
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPageNumber((prevPageNumber) => prevPageNumber + 1);
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, hasMore]
+  );
+
+  return (
+    <div className="w-full h-full relative bg-pure-white rounded-xl flex-1 flex flex-col gap-5">
+      <ContentsSection title="Pinned" contacts={pinnedContacts} />
+      <ContentsSection
+        title="All"
+        contacts={contacts}
+        lastElementRef={lastElementRef}
+      />
+    </div>
+  );
+}
+
+function ContentsSection({
+  title,
+  contacts,
+  lastElementRef,
+}: {
+  title: string;
+  contacts: QueriedContact[];
+  lastElementRef?: React.Ref<HTMLButtonElement>;
+}): React.ReactNode {
+  return (
+    <div className="w-full h-fit flex flex-col gap-2.5">
+      <h3 className="pt-[1.375em] pl-[1.375em] font-medium text-light-dark-gray">
+        {title}
+      </h3>
+      <div className="flex flex-col">
+        {contacts.map((contact: QueriedContact, index: number) => {
+          if (index === contacts.length - 1) {
+            return (
+              <ContactPreview contactData={contact} ref={lastElementRef} />
+            );
+          } else {
+            return <ContactPreview contactData={contact} />;
+          }
+        })}
+      </div>
+    </div>
+  );
+}

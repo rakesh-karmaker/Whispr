@@ -18,8 +18,6 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(isLoading);
   }, [isLoading]);
 
-  console.log(data);
-
   useEffect(() => {
     if (data) setUser(data);
     if (error) {
