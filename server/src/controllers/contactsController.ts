@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Contact from "../models/Contact.js";
 import User from "../models/User.js";
 import getDate from "../utils/getDate.js";
@@ -57,14 +58,18 @@ export async function getAllContacts(
 ): Promise<void> {
   try {
     const userId = req.userId;
-    const pageNumber = req.query.pageNumber;
-    if (!pageNumber) {
-      res.status(400).send({ message: "Please provide a page number" });
+    const page = parseInt(req.query.pageNumber as string, 10);
+    if (isNaN(page) || page < 1) {
+      res.status(400).send({ message: "Invalid page number" });
       return;
     }
 
+    const objectUserId = new mongoose.Types.ObjectId(userId);
+
     // get pinned contacts' ids
-    const user = await User.findById(userId).select("pinnedContacts").lean();
+    const user = await User.findById(objectUserId)
+      .select("pinnedContacts")
+      .lean();
     if (!user) {
       res.status(404).send({ message: "User not found" });
       return;
@@ -72,14 +77,10 @@ export async function getAllContacts(
     const pinnedContactIds = user.pinnedContacts || [];
     let pinnedContactsWithMessages = [];
 
-    if ((pageNumber as unknown as number) === 1) {
-      // get pinned contacts
+    // Only fetch pinned contacts on page 1
+    if (page === 1) {
       pinnedContactsWithMessages = await Contact.aggregate([
-        {
-          $match: {
-            _id: { $in: pinnedContactIds },
-          },
-        },
+        { $match: { _id: { $in: pinnedContactIds } } },
         {
           $lookup: {
             from: "messages",
@@ -87,6 +88,7 @@ export async function getAllContacts(
             pipeline: [
               { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
               { $sort: { createdAt: -1 } },
+              { $limit: 10 },
               {
                 $lookup: {
                   from: "users",
@@ -114,20 +116,25 @@ export async function getAllContacts(
         },
         {
           $project: {
+            _id: 1,
+            name: 1,
+            image: 1,
             isGroup: 1,
+            updatedAt: 1,
             isActive: 1,
             lastMessages: 1,
           },
         },
+        { $sort: { updatedAt: -1 } },
       ]);
     }
 
-    // get all contacts except pinned contacts
+    // Get non-pinned contacts with messages
     const allContacts = await Contact.aggregate([
       {
         $match: {
           $and: [
-            { $or: [{ participants: userId }, { admins: userId }] },
+            { $or: [{ participants: objectUserId }, { admins: objectUserId }] },
             { _id: { $nin: pinnedContactIds } },
           ],
         },
@@ -139,7 +146,7 @@ export async function getAllContacts(
           pipeline: [
             { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
             { $sort: { createdAt: -1 } },
-            { $limit: 10, $skip: ((pageNumber as unknown as number) - 1) * 10 },
+            { $limit: 10 },
             {
               $lookup: {
                 from: "users",
@@ -153,8 +160,6 @@ export async function getAllContacts(
               $project: {
                 content: 1,
                 messageType: 1,
-                files: 1,
-                link: 1,
                 seenBy: 1,
                 summary: 1,
                 createdAt: 1,
@@ -169,16 +174,26 @@ export async function getAllContacts(
       },
       {
         $project: {
+          _id: 1,
+          name: 1,
+          image: 1,
           isActive: 1,
           isGroup: 1,
+          updatedAt: 1,
           lastMessages: 1,
         },
       },
+      { $sort: { updatedAt: -1 } },
+      { $skip: (page - 1) * 10 },
+      { $limit: 10 },
     ]);
+
+    const hasMore = allContacts.length === 10;
 
     res.status(200).send({
       pinnedContacts: pinnedContactsWithMessages,
       contacts: allContacts,
+      hasMore,
     });
   } catch (err) {
     console.log("Error getting all contacts - ", getDate(), "\n---\n", err);
