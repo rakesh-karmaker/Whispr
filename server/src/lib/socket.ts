@@ -52,12 +52,8 @@ const updateUserActiveStatus = async (
 ) => {
   await User.updateOne({ _id: userId }, { $set: { isActive } });
   const dms = await Contact.find({
-    $and: [
-      {
-        "participants._id": userId,
-      },
-      { isGroup: false },
-    ],
+    participants: userId,
+    isGroup: false,
   })
     .populate("participants", "_id name avatar isActive")
     .sort({ updatedAt: -1 })
