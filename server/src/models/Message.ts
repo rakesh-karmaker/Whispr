@@ -7,14 +7,14 @@ const MessageSchema = new mongoose.Schema<MessageType>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Chat",
     },
-    senderId: {
+    sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
     content: { type: String },
     messageType: {
       type: String,
-      enum: ["text", "file", "link"],
+      enum: ["text", "file", "link", "announcement"],
       default: "text",
     },
     files: [
@@ -38,6 +38,7 @@ const MessageSchema = new mongoose.Schema<MessageType>(
     summary: {
       type: String,
     },
+    announcer: { type: String },
   },
   {
     timestamps: true,

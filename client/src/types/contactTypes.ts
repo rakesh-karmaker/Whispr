@@ -10,10 +10,10 @@ export type SearchedContact = {
 
 export type QueriedContact = {
   _id: string;
-  name: string;
+  contactName: string;
   isGroup: boolean;
   isActive: boolean;
-  image: string;
+  contactImage: string;
   updatedAt: Date;
   lastMessages: {
     content: string;
@@ -21,6 +21,7 @@ export type QueriedContact = {
     seenBy: string[];
     createdAt: Date;
     summary: string;
+    announcer: string;
     sender: {
       _id: string;
     };

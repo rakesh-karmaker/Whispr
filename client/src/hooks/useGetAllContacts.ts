@@ -9,7 +9,7 @@ export default function useGetAllContacts(pageNumber: number): {
   error: boolean;
   hasMore: boolean;
 } {
-  const { contacts, setContacts, setPinnedContacts, isLoading, setIsLoading } =
+  const { setContacts, setPinnedContacts, isLoading, setIsLoading } =
     useContacts();
   const [error, setError] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(false);
@@ -27,12 +27,14 @@ export default function useGetAllContacts(pageNumber: number): {
           setPinnedContacts(data.pinnedContacts);
         }
 
-        const all = [...contacts, ...data.contacts];
-        const unique = Array.from(
-          new Map(all.map((item) => [item._id, item])).values()
-        );
+        setContacts((prev) => {
+          const all = [...prev, ...data.contacts];
+          const unique = Array.from(
+            new Map(all.map((item) => [item._id, item])).values()
+          );
+          return unique;
+        });
 
-        setContacts(unique);
         setHasMore(data.hasMore);
       } catch (err) {
         if (axios.isCancel(err)) return;

@@ -3,7 +3,9 @@ import { create } from "zustand";
 
 export type ContactsStateType = {
   contacts: QueriedContact[];
-  setContacts: (contacts: QueriedContact[]) => void;
+  setContacts: (
+    contacts: QueriedContact[] | ((prev: QueriedContact[]) => QueriedContact[])
+  ) => void;
   pinnedContacts: QueriedContact[];
   setPinnedContacts: (contacts: QueriedContact[]) => void;
   changeActiveContact: (contactId: string, activeStatus: boolean) => void;
@@ -13,7 +15,13 @@ export type ContactsStateType = {
 
 export const useContactsStore = create<ContactsStateType>((set) => ({
   contacts: [],
-  setContacts: (contacts) => set({ contacts }),
+  setContacts: (contactsOrFn) =>
+    set((state) => ({
+      contacts:
+        typeof contactsOrFn === "function"
+          ? contactsOrFn(state.contacts)
+          : contactsOrFn,
+    })),
   pinnedContacts: [],
   setPinnedContacts: (contacts) => set({ pinnedContacts: contacts }),
   changeActiveContact: (contactId, activeStatus) =>

@@ -2,7 +2,7 @@ import Modal from "@mui/material/Modal";
 import type React from "react";
 import { useState } from "react";
 import { GoPlus } from "react-icons/go";
-import ImageInput from "../ui/imageInput";
+import ImageInput from "@/components/ui/imageInput";
 import { useForm } from "react-hook-form";
 import {
   createGroupFormSchema,
@@ -11,10 +11,10 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import TextField from "@mui/material/TextField";
 import { useNavigate } from "react-router-dom";
-import type { Option } from "../ui/multiSelectDropdown";
+import type { Option } from "@/components/ui/multiSelectDropdown";
 import SearchContacts from "./searchContacts";
 import Autocomplete from "@mui/material/Autocomplete";
-import { FormSubmitBtn } from "../ui/btns";
+import { FormSubmitBtn } from "@/components/ui/btns";
 
 export default function CreateGroup(): React.ReactNode {
   const [open, setOpen] = useState(false);
@@ -22,7 +22,7 @@ export default function CreateGroup(): React.ReactNode {
   return (
     <>
       <button
-        className="w-[51px] h-[51px] rounded-full bg-teal border-none outline-none flex items-center justify-center cursor-pointer text-pure-white transition-all duration-300 hover:bg-white-2 hover:text-black"
+        className="min-w-[51px] min-h-[51px] rounded-full bg-teal border-none outline-none flex items-center justify-center cursor-pointer text-pure-white transition-all duration-300 hover:bg-white-2 hover:text-black"
         onClick={() => setOpen(true)}
       >
         <GoPlus className="text-4xl" />

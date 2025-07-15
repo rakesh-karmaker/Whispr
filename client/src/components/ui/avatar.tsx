@@ -12,7 +12,7 @@ export default function Avatar({
       <img
         src={src}
         alt={`Pic of ${name}`}
-        className="w-[51px] h-[51px] rounded-full object-cover object-center"
+        className="min-w-[51px] min-h-[51px] max-w-[51px] max-h-[51px] rounded-full object-cover object-center"
         referrerPolicy="no-referrer"
       />
       {isActive && (

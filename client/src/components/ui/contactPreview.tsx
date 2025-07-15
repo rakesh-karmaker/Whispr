@@ -3,44 +3,71 @@ import type { QueriedContact } from "@/types/contactTypes";
 import type React from "react";
 import moment from "moment";
 import Avatar from "./avatar";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function ContactPreview({
   contactData,
   ref,
 }: {
   contactData: QueriedContact;
-  ref?: React.Ref<HTMLButtonElement>;
+  ref?: React.Ref<HTMLAnchorElement>;
 }): React.ReactNode {
   if (!contactData) return null;
+
+  const [showLine, setShowLine] = useState<boolean>(true);
 
   const { user } = useUser();
   const unseen = contactData.lastMessages.filter(
     (message) => !message.seenBy.includes(user?.id as string)
   ).length;
-  const lastMessage =
-    contactData.lastMessages[0]?.messageType === "text"
-      ? contactData.lastMessages[0]?.content
-      : contactData.lastMessages[0]?.summary;
+
+  const renderLastMessage = (contactData: QueriedContact) => {
+    const lastMessage = contactData.lastMessages[0];
+    if (lastMessage) {
+      switch (lastMessage.messageType) {
+        case "text":
+          return lastMessage.content;
+        case "file":
+          return lastMessage.summary;
+        case "link":
+          return lastMessage.summary;
+        case "announcement":
+          const announcer = contactData.lastMessages[0]?.announcer;
+          return announcer == user?.firstName
+            ? "You " + contactData.lastMessages[0]?.summary
+            : contactData.lastMessages[0]?.announcer +
+                " " +
+                contactData.lastMessages[0]?.summary;
+      }
+    }
+  };
+
+  const lastMessage = renderLastMessage(contactData);
+  console.log(contactData.isActive);
 
   //TODO: Add selected contact state
 
   return (
-    <button
+    <NavLink
       ref={ref ? ref : null}
-      className="w-full h-[5.5em] relative flex justify-center items-center border-none outline-none p-[1.375em] bg-pure-white hover:bg-white-2 transition-all duration-200"
+      className="w-full h-fit relative flex justify-center items-center border-none outline-none p-[1.375em] bg-pure-white hover:bg-white-2 transition-all duration-200 cursor-pointer"
+      to={`/chat/${contactData._id}`}
+      onMouseEnter={() => setShowLine(false)}
+      onMouseLeave={() => setShowLine(true)}
     >
-      <div className="w-full h-fit flex gap-2.5">
+      <div className="w-full h-fit flex gap-2.5 relative">
         <Avatar
-          src={contactData.image}
-          name={contactData.name}
+          src={contactData.contactImage}
+          name={contactData.contactName}
           isActive={contactData.isGroup ? false : contactData.isActive}
         />
-        <div className="flex flex-col">
-          <div className="flex justify-between gap-2.5">
+        <div className="w-full flex flex-col">
+          <div className="flex justify-between items-center gap-2.5">
             <h4 className="font-medium text-lg">
-              {contactData.name.length > 17
-                ? contactData.name.slice(0, 17) + "..."
-                : contactData.name}
+              {contactData.contactName && contactData.contactName.length > 17
+                ? contactData.contactName.slice(0, 17) + "..."
+                : contactData.contactName}
             </h4>
             <p className="font-medium text-xs text-gray">
               {moment(contactData.lastMessages[0]?.createdAt).format("LT")}
@@ -48,7 +75,7 @@ export default function ContactPreview({
           </div>
           <p className="flex justify-between gap-2.5">
             <span className="text-sm text-gray">
-              {lastMessage.length > 35
+              {lastMessage && lastMessage.length > 35
                 ? lastMessage.slice(0, 35) + "..."
                 : lastMessage}
             </span>
@@ -59,8 +86,13 @@ export default function ContactPreview({
             )}
           </p>
         </div>
+        <div
+          className={
+            "absolute -bottom-[22px] w-full h-[1px] bg-[#D8D8D8]/70 transition-all duration-200" +
+            (showLine ? "" : " opacity-0")
+          }
+        />
       </div>
-      <div className="absolute bottom-0 w-full h-[1px] bg-[#D8D8D8]/70" />
-    </button>
+    </NavLink>
   );
 }

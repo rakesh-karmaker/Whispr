@@ -1,4 +1,5 @@
 import {
+  createNewContact,
   getAllContacts,
   searchContacts,
 } from "../controllers/contactsController.js";
@@ -9,5 +10,7 @@ const contactsRouter = express.Router();
 
 contactsRouter.get("/search-contacts", verifyToken, searchContacts);
 contactsRouter.get("/get-all-contacts", verifyToken, getAllContacts);
+
+contactsRouter.post("/create-new-contact", verifyToken, createNewContact);
 
 export default contactsRouter;

@@ -4,6 +4,9 @@ import type { Option } from "@/components/ui/multiSelectDropdown";
 import SearchContacts from "./searchContacts";
 import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { createNewContact } from "@/lib/api/contacts";
+import { useContacts } from "@/hooks/useContacts";
 
 export default function CreateNewContact(): React.ReactNode {
   const navigate = useNavigate();
@@ -11,10 +14,25 @@ export default function CreateNewContact(): React.ReactNode {
   const [query, setQuery] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [selected, setSelected] = useState<Option[]>([]);
+  const { contacts, setContacts } = useContacts();
+
+  const contactMutation = useMutation({
+    mutationFn: (data: Option) => createNewContact(data),
+    onSuccess: (res) => {
+      if (res.chatId) {
+        navigate(`/chat/${res.chatId}`);
+      } else if (res.contactData) {
+        setContacts([res.contactData, ...contacts]);
+      }
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
 
   useEffect(() => {
     if (selected.length > 0) {
-      navigate(`/chat/${selected[0].id}`);
+      contactMutation.mutate(selected[0]);
     }
   }, [selected]);
 
@@ -27,7 +45,7 @@ export default function CreateNewContact(): React.ReactNode {
       setPageNumber={setPageNumber}
       className="w-full h-fit absolute top-28 z-50"
     >
-      <div className="w-full max-w-[22.0625em] flex relative items-center">
+      <div className="w-full flex relative items-center">
         <input
           type="text"
           name="contact-search"

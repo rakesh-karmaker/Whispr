@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 const ContactSchema = new mongoose.Schema<ContactType>(
   {
-    name: { type: String, required: true },
+    name: { type: String },
     isGroup: { type: Boolean, default: false },
     participants: [
       {

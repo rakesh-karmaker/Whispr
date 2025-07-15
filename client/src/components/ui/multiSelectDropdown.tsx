@@ -3,7 +3,6 @@ import type React from "react";
 import UserPreview from "./userPreview";
 import { useRef } from "react";
 import Loader from "./Loader/Loader";
-import EmptyData from "./EmptyData/EmptyData";
 
 export type Option = {
   id: string;

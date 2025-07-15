@@ -3,7 +3,7 @@ import useGetAllContacts from "@/hooks/useGetAllContacts";
 import type { QueriedContact } from "@/types/contactTypes";
 import type React from "react";
 import { useCallback, useRef, useState } from "react";
-import ContactPreview from "../ui/contactPreview";
+import ContactPreview from "@/components/ui/contactPreview";
 
 export default function ContactsList(): React.ReactNode {
   const [pageNumber, setPageNumber] = useState<number>(1);
@@ -12,7 +12,7 @@ export default function ContactsList(): React.ReactNode {
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastElementRef = useCallback(
-    (node: HTMLButtonElement) => {
+    (node: HTMLAnchorElement) => {
       if (isLoading) return;
       if (observer.current) observer.current.disconnect();
 
@@ -26,7 +26,6 @@ export default function ContactsList(): React.ReactNode {
     },
     [isLoading, hasMore]
   );
-
   return (
     <div className="w-full h-full relative bg-pure-white rounded-xl flex-1 flex flex-col gap-5">
       <ContentsSection title="Pinned" contacts={pinnedContacts} />
@@ -46,7 +45,7 @@ function ContentsSection({
 }: {
   title: string;
   contacts: QueriedContact[];
-  lastElementRef?: React.Ref<HTMLButtonElement>;
+  lastElementRef?: React.Ref<HTMLAnchorElement>;
 }): React.ReactNode {
   return (
     <div className="w-full h-fit flex flex-col gap-2.5">
@@ -57,10 +56,14 @@ function ContentsSection({
         {contacts.map((contact: QueriedContact, index: number) => {
           if (index === contacts.length - 1) {
             return (
-              <ContactPreview contactData={contact} ref={lastElementRef} />
+              <ContactPreview
+                key={contact._id}
+                contactData={contact}
+                ref={lastElementRef}
+              />
             );
           } else {
-            return <ContactPreview contactData={contact} />;
+            return <ContactPreview key={contact._id} contactData={contact} />;
           }
         })}
       </div>

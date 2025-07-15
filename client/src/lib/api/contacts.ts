@@ -1,3 +1,4 @@
+import type { Option } from "@/components/ui/multiSelectDropdown";
 import api from "@/config/axios";
 import axios from "axios";
 import type { Canceler } from "axios";
@@ -19,5 +20,13 @@ export async function getAllContacts(pageNumber: number, cancel: Canceler) {
     params: { pageNumber },
     cancelToken: new axios.CancelToken((c) => (cancel = c)),
   });
+  return response;
+}
+
+export async function createNewContact(data: Option) {
+  const { data: response } = await api.post(
+    "/contact/create-new-contact",
+    data
+  );
   return response;
 }

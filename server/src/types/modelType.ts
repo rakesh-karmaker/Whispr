@@ -43,9 +43,9 @@ export interface ContactType {
 export interface MessageType {
   _id: mongoose.Types.ObjectId;
   chatId: mongoose.Types.ObjectId;
-  senderId: mongoose.Types.ObjectId;
+  sender: mongoose.Types.ObjectId;
   content?: string;
-  messageType: "text" | "file" | "link";
+  messageType: "text" | "file" | "link" | "announcement";
   files?: {
     url: string;
     publicId: string;
@@ -58,6 +58,7 @@ export interface MessageType {
   };
   seenBy: mongoose.Types.ObjectId[];
   summary?: string;
+  announcer?: string;
   createdAt: Date;
   updatedAt: Date;
 }
