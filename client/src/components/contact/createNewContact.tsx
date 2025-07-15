@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { createNewContact } from "@/lib/api/contacts";
 import { useContacts } from "@/hooks/useContacts";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 export default function CreateNewContact(): React.ReactNode {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export default function CreateNewContact(): React.ReactNode {
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [selected, setSelected] = useState<Option[]>([]);
   const { contacts, setContacts } = useContacts();
+  const socket = useSocketStore((s) => s.socket);
 
   const contactMutation = useMutation({
     mutationFn: (data: Option) => createNewContact(data),
@@ -22,6 +24,9 @@ export default function CreateNewContact(): React.ReactNode {
       if (res.chatId) {
         navigate(`/chat/${res.chatId}`);
       } else if (res.contactData) {
+        if (socket) {
+          socket.emit("add-contact", res.contactData);
+        }
         setContacts([res.contactData, ...contacts]);
       }
     },

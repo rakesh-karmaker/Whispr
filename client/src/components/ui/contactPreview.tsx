@@ -3,7 +3,7 @@ import type { QueriedContact } from "@/types/contactTypes";
 import type React from "react";
 import moment from "moment";
 import Avatar from "./avatar";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useState } from "react";
 
 export default function ContactPreview({
@@ -44,7 +44,6 @@ export default function ContactPreview({
   };
 
   const lastMessage = renderLastMessage(contactData);
-  console.log(contactData.isActive);
 
   //TODO: Add selected contact state
 

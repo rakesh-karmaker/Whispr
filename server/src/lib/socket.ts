@@ -40,6 +40,31 @@ const setUpSocket = (server: Server) => {
       console.log("No user ID provided");
     }
 
+    socket.on("add-contact", async (contactData) => {
+      const contact = await Contact.findById(contactData._id);
+
+      if (contact) {
+        const participants =
+          contact.admins && contact.admins.length > 0
+            ? [...contact.participants, ...contact.admins]
+            : contact.participants;
+        participants.forEach(async (participant) => {
+          const socketId = userSocketMap.get(participant.toString());
+          if (!contact.isGroup) {
+            const user = await User.findById(userId);
+            if (user) {
+              contactData.contactName = user.name;
+              contactData.contactImage = user.avatar;
+            }
+          }
+
+          if (socketId && socketId !== socket.id) {
+            socket.to(socketId).emit("add-contact", contactData);
+          }
+        });
+      }
+    });
+
     socket.on("disconnect", () => disconnect(socket));
   });
 };

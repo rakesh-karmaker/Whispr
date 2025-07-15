@@ -115,7 +115,12 @@ function CreateGroupForm(): React.ReactNode {
                 id="tags-outlined"
                 options={[]}
                 value={selected}
-                onChange={(e, value: Option[]) => setSelected(value)}
+                onChange={(e, value: Option[]) => {
+                  setSelected(value);
+                  setPageNumber(1);
+                  setQuery("");
+                  e.preventDefault();
+                }}
                 getOptionLabel={(option: Option) => option.firstName}
                 open={false}
                 filterSelectedOptions
