@@ -186,7 +186,10 @@ export async function getAllContacts(
     const allContacts = await Contact.aggregate([
       {
         $match: {
-          $or: [{ participants: objectUserId }, { admins: objectUserId }],
+          $and: [
+            { $or: [{ participants: objectUserId }, { admins: objectUserId }] },
+            { _id: { $nin: pinnedContactIds } },
+          ],
         },
       },
       // Get participant user info
@@ -206,8 +209,6 @@ export async function getAllContacts(
           pipeline: [
             { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
             { $sort: { createdAt: -1 } },
-            { $limit: 10 },
-            { $skip: (page - 1) * 10 },
             {
               $lookup: {
                 from: "users",
@@ -280,6 +281,8 @@ export async function getAllContacts(
           lastMessages: 1,
         },
       },
+      { $skip: (page - 1) * 10 },
+      { $limit: 10 },
       { $sort: { updatedAt: -1 } },
     ]);
 

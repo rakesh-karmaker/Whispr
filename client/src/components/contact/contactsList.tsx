@@ -4,6 +4,7 @@ import type { QueriedContact } from "@/types/contactTypes";
 import type React from "react";
 import { useCallback, useRef, useState } from "react";
 import ContactPreview from "@/components/ui/contactPreview";
+import ContactPreviewSkeleton from "../ui/skeletons/contactPreviewSkeleton";
 
 export default function ContactsList(): React.ReactNode {
   const [pageNumber, setPageNumber] = useState<number>(1);
@@ -18,6 +19,7 @@ export default function ContactsList(): React.ReactNode {
 
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
+          console.log("intersecting");
           setPageNumber((prevPageNumber) => prevPageNumber + 1);
         }
       });
@@ -27,13 +29,21 @@ export default function ContactsList(): React.ReactNode {
     [isLoading, hasMore]
   );
   return (
-    <div className="w-full h-full relative bg-pure-white rounded-xl flex-1 flex flex-col gap-5">
-      <ContentsSection title="Pinned" contacts={pinnedContacts} />
-      <ContentsSection
-        title="All"
-        contacts={contacts}
-        lastElementRef={lastElementRef}
-      />
+    <div className="w-full h-full relative overflow-y-hidden bg-pure-white rounded-xl flex-1">
+      <div className="w-full h-full relative overflow-y-auto flex flex-col gap-5">
+        <ContentsSection
+          title="Pinned"
+          contacts={pinnedContacts}
+          isLoading={contacts.length === 0}
+        />
+        <ContentsSection
+          title="All"
+          contacts={contacts}
+          lastElementRef={lastElementRef}
+          isLoading={isLoading}
+        />
+      </div>
+      <div className="absolute bottom-0 w-full h-30 bg-[linear-gradient(180deg,_rgba(255,_255,_255,_0)_37.97%,_#FFFFFF_100%)] pointer-events-none" />
     </div>
   );
 }
@@ -42,10 +52,12 @@ function ContentsSection({
   title,
   contacts,
   lastElementRef,
+  isLoading,
 }: {
   title: string;
   contacts: QueriedContact[];
   lastElementRef?: React.Ref<HTMLAnchorElement>;
+  isLoading?: boolean;
 }): React.ReactNode {
   return (
     <div className="w-full h-fit flex flex-col gap-2.5">
@@ -66,6 +78,12 @@ function ContentsSection({
             return <ContactPreview key={contact._id} contactData={contact} />;
           }
         })}
+        {isLoading ? (
+          <>
+            <ContactPreviewSkeleton />
+            <ContactPreviewSkeleton />
+          </>
+        ) : null}
       </div>
     </div>
   );

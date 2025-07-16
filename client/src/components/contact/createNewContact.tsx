@@ -28,6 +28,7 @@ export default function CreateNewContact(): React.ReactNode {
           socket.emit("add-contact", res.contactData);
         }
         setContacts([res.contactData, ...contacts]);
+        setSelected([]);
       }
     },
     onError: (err) => {

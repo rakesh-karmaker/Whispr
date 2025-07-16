@@ -3,6 +3,7 @@ import type React from "react";
 import UserPreview from "./userPreview";
 import { useRef } from "react";
 import Loader from "./Loader/Loader";
+import UserPreviewSkeleton from "./skeletons/userPreviewSkeleton";
 
 export type Option = {
   id: string;
@@ -65,7 +66,12 @@ export default function MultiSelectDropdown({
           <UserPreview contactData={option} />
         </button>
       ))}
-      {loading && <Loader className="my-2" />}
+      {loading ? (
+        <>
+          <UserPreviewSkeleton />
+          <UserPreviewSkeleton />
+        </>
+      ) : null}
     </div>
   );
 }
