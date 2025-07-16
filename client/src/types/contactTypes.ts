@@ -1,3 +1,5 @@
+import type { Option } from "@/components/ui/multiSelectDropdown";
+
 export type SearchedContact = {
   _id: string;
   name: string;
@@ -26,4 +28,10 @@ export type QueriedContact = {
       _id: string;
     };
   }[];
+};
+
+export type CreateNewGroupMutationProps = {
+  name: string;
+  groupImage: FileList;
+  selectedUsers: Option[];
 };

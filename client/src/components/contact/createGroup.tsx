@@ -15,6 +15,11 @@ import type { Option } from "@/components/ui/multiSelectDropdown";
 import SearchContacts from "./searchContacts";
 import Autocomplete from "@mui/material/Autocomplete";
 import { FormSubmitBtn } from "@/components/ui/btns";
+import { useMutation } from "@tanstack/react-query";
+import type { CreateNewGroupMutationProps } from "@/types/contactTypes";
+import { createNewGroup } from "@/lib/api/contacts";
+import { useContacts } from "@/hooks/useContacts";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 export default function CreateGroup(): React.ReactNode {
   const [open, setOpen] = useState(false);
@@ -44,19 +49,38 @@ export default function CreateGroup(): React.ReactNode {
           <h2 className="text-2xl font-semibold text-center">
             Create a new group
           </h2>
-          <CreateGroupForm />
+          <CreateGroupForm setOpen={setOpen} />
         </div>
       </Modal>
     </>
   );
 }
 
-function CreateGroupForm(): React.ReactNode {
+function CreateGroupForm({
+  setOpen,
+}: {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}): React.ReactNode {
   const navigate = useNavigate();
 
   const [query, setQuery] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [selected, setSelected] = useState<Option[]>([]);
+  const { setContacts } = useContacts();
+  const socket = useSocketStore((e) => e.socket);
+
+  const createGroupMutation = useMutation({
+    mutationFn: (data: CreateNewGroupMutationProps) => createNewGroup(data),
+    onSuccess: (res) => {
+      if (res.groupData) {
+        if (socket) {
+          socket.emit("add-contact", res.groupData);
+        }
+        setContacts((prev) => [res.groupData, ...prev]);
+        setOpen(false);
+      }
+    },
+  });
 
   const {
     register,
@@ -77,7 +101,18 @@ function CreateGroupForm(): React.ReactNode {
       return;
     }
 
-    console.log(data);
+    if (selected.length === 0) {
+      setError("root", {
+        message: "At least one contact is required",
+      });
+      return;
+    }
+
+    createGroupMutation.mutate({
+      name: data.name,
+      groupImage: data.groupImage,
+      selectedUsers: selected,
+    });
   }
 
   return (
@@ -129,7 +164,7 @@ function CreateGroupForm(): React.ReactNode {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Search"
+                    label="Search Contacts"
                     className="w-full flex relative items-center"
                     value={query}
                     onChange={(e) => {
@@ -143,8 +178,11 @@ function CreateGroupForm(): React.ReactNode {
           </div>
         </div>
 
-        <div className="w-full flex justify-center">
-          <FormSubmitBtn isLoading={false}>Create Group</FormSubmitBtn>
+        <div className="w-full flex flex-col gap-1.5 justify-center">
+          <FormSubmitBtn isLoading={createGroupMutation.isPending}>
+            Create Group
+          </FormSubmitBtn>
+          {errors.root && <p className="text-red-500">{errors.root.message}</p>}
         </div>
       </form>
     </>

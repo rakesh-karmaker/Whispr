@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import getDate from "../utils/getDate.js";
 import { Request, Response } from "express";
 import Message from "../models/Message.js";
+import { uploadFile } from "../lib/upload.js";
 
 export async function searchContacts(
   req: Request,
@@ -360,6 +361,87 @@ export async function createNewContact(
     });
   } catch (err) {
     console.log("Error creating new contact - ", getDate(), "\n---\n", err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    res.status(500).send({ message: "Server error", error: errorMessage });
+  }
+}
+
+export async function createNewGroup(
+  req: Request,
+  res: Response
+): Promise<void> {
+  try {
+    const { name, selectedUsers } = req.body;
+    const groupImage = req.file;
+    if (
+      !name ||
+      !groupImage ||
+      !selectedUsers ||
+      JSON.parse(selectedUsers).length === 0
+    ) {
+      res.status(400).send({ message: "Invalid request" });
+      return;
+    }
+
+    const participants = JSON.parse(selectedUsers).map((id: string) => {
+      return new mongoose.Types.ObjectId(id);
+    });
+
+    const objectUserId = new mongoose.Types.ObjectId(req.userId);
+    const user = await User.findById(objectUserId).select("firstName");
+    if (!user) {
+      res.status(404).send({ message: "User not found" });
+      return;
+    }
+
+    // upload the image
+    let image, publicId;
+    const data = await uploadFile(res, groupImage, "groups", 400, 400);
+    if (
+      data &&
+      typeof data === "object" &&
+      "url" in data &&
+      "publicId" in data
+    ) {
+      image = data.url;
+      publicId = data.publicId;
+    } else {
+      res.status(500).send({ message: "Image upload failed" });
+      return;
+    }
+
+    // create a new group
+    const newGroupContact = await Contact.create({
+      name,
+      image,
+      publicId,
+      participants,
+      admins: [objectUserId],
+      isGroup: true,
+      isActive: true,
+    });
+
+    const createdMessage = await Message.create({
+      chatId: newGroupContact._id,
+      sender: objectUserId,
+      messageType: "announcement",
+      summary: "created a new contact",
+      announcer: user.firstName,
+    });
+
+    res.status(200).send({
+      groupData: {
+        _id: newGroupContact._id.toString(),
+        contactName: newGroupContact.name,
+        contactImage: newGroupContact.image,
+        isGroup: newGroupContact.isGroup,
+        isActive: newGroupContact.isActive,
+        updatedAt: newGroupContact.updatedAt,
+        lastMessages: [createdMessage],
+      },
+    });
+  } catch (err) {
+    console.log("Error creating new group - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);
     res.status(500).send({ message: "Server error", error: errorMessage });
   }
