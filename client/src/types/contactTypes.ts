@@ -30,6 +30,25 @@ export type QueriedContact = {
   }[];
 };
 
+export type SelectedContact = {
+  _id: string;
+  name: string;
+  isGroup: boolean;
+  image: string;
+  socialLinks: { type: string; url: string }[];
+  createdAt: Date;
+  participants: {
+    _id: string;
+    name: string;
+    avatar: string;
+  }[];
+  admins: {
+    _id: string;
+    name: string;
+    avatar: string;
+  }[];
+};
+
 export type CreateNewGroupMutationProps = {
   name: string;
   groupImage: FileList;

@@ -45,6 +45,14 @@ const routes: Route[] = [
           </Suspense>
         ),
       },
+      {
+        path: "/chat/:chatId",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Chat />
+          </Suspense>
+        ),
+      },
     ],
   },
 

@@ -4,7 +4,8 @@ import type React from "react";
 import moment from "moment";
 import Avatar from "./avatar";
 import { NavLink } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelectedContact } from "@/hooks/useSelectContact";
 
 export default function ContactPreview({
   contactData,
@@ -16,6 +17,7 @@ export default function ContactPreview({
   if (!contactData) return null;
 
   const [showLine, setShowLine] = useState<boolean>(true);
+  const [isActive, setIsActive] = useState<boolean>(false);
 
   const { user } = useUser();
   const unseen = contactData.lastMessages.filter(
@@ -45,15 +47,31 @@ export default function ContactPreview({
 
   const lastMessage = renderLastMessage(contactData);
 
-  //TODO: Add selected contact state
+  const { selectedContact } = useSelectedContact();
+  useEffect(() => {
+    if (selectedContact?._id === contactData._id) {
+      setIsActive(true);
+      setShowLine(false);
+    } else {
+      setIsActive(false);
+      setShowLine(true);
+    }
+  }, [selectedContact]);
 
   return (
     <NavLink
       ref={ref ? ref : null}
-      className="w-full h-fit relative flex justify-center items-center border-none outline-none p-[1.375em] bg-pure-white hover:bg-white-2 transition-all duration-200 cursor-pointer"
+      className={
+        "w-full h-fit relative flex justify-center items-center border-none outline-none p-[1.375em] bg-pure-white hover:bg-white-2 transition-all duration-200 cursor-pointer" +
+        (isActive ? " bg-white-2" : "")
+      }
       to={`/chat/${contactData._id}`}
-      onMouseEnter={() => setShowLine(false)}
-      onMouseLeave={() => setShowLine(true)}
+      onMouseEnter={() => {
+        !isActive && setShowLine(false);
+      }}
+      onMouseLeave={() => {
+        !isActive && setShowLine(true);
+      }}
     >
       <div className="w-full h-fit flex gap-2.5 relative">
         <Avatar

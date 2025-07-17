@@ -17,7 +17,6 @@ export default function ChatLayout(): React.ReactNode {
   const { setContacts } = useContacts();
 
   useEffect(() => {
-    console.log("user.id", user?.id);
     if (user?.id) {
       connect(user.id);
     }

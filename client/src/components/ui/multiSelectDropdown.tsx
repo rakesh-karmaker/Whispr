@@ -2,7 +2,6 @@ import type { SearchedContact } from "@/types/contactTypes";
 import type React from "react";
 import UserPreview from "./userPreview";
 import { useRef } from "react";
-import Loader from "./Loader/Loader";
 import UserPreviewSkeleton from "./skeletons/userPreviewSkeleton";
 
 export type Option = {

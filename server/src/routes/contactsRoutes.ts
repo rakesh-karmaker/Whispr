@@ -2,6 +2,7 @@ import {
   createNewContact,
   createNewGroup,
   getAllContacts,
+  getContact,
   searchContacts,
 } from "../controllers/contactsController.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
@@ -12,6 +13,7 @@ const contactsRouter = express.Router();
 
 contactsRouter.get("/search-contacts", verifyToken, searchContacts);
 contactsRouter.get("/get-all-contacts", verifyToken, getAllContacts);
+contactsRouter.get("/get-contact", verifyToken, getContact);
 
 contactsRouter.post("/create-new-contact", verifyToken, createNewContact);
 contactsRouter.post(

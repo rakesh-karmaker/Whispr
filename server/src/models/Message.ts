@@ -25,9 +25,6 @@ const MessageSchema = new mongoose.Schema<MessageType>(
     ],
     link: {
       url: String,
-      ogImageURL: String,
-      ogTitle: String,
-      ogDescription: String,
     },
     seenBy: [
       {

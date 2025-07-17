@@ -24,6 +24,13 @@ export async function getAllContacts(pageNumber: number, cancel: Canceler) {
   return response;
 }
 
+export async function getContact(chatId: string) {
+  const { data: response } = await api.get("/contact/get-contact", {
+    params: { chatId },
+  });
+  return response;
+}
+
 export async function createNewContact(data: Option) {
   const { data: response } = await api.post(
     "/contact/create-new-contact",

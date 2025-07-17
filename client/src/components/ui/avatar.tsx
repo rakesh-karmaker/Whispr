@@ -7,6 +7,7 @@ export default function Avatar({
   isActive: boolean;
   name: string;
 }) {
+  if (!src) return null;
   return (
     <div className="relative">
       <img

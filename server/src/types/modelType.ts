@@ -52,9 +52,9 @@ export interface MessageType {
   }[];
   link?: {
     url: string;
-    ogImageURL: string;
-    ogTitle: string;
-    ogDescription: string;
+    ogImageURL?: string;
+    ogTitle?: string;
+    ogDescription?: string;
   };
   seenBy: mongoose.Types.ObjectId[];
   summary?: string;

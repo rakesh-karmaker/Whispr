@@ -5,6 +5,8 @@ import getDate from "../utils/getDate.js";
 import { Request, Response } from "express";
 import Message from "../models/Message.js";
 import { uploadFile } from "../lib/upload.js";
+import addImageMetaTag from "../utils/addImageMetaTag.js";
+import { ContactType, MessageType } from "../types/modelType.js";
 
 export async function searchContacts(
   req: Request,
@@ -104,6 +106,7 @@ export async function getAllContacts(
             pipeline: [
               { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
               { $sort: { createdAt: -1 } },
+              { $limit: 10 },
               {
                 $lookup: {
                   from: "users",
@@ -209,6 +212,7 @@ export async function getAllContacts(
           pipeline: [
             { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
             { $sort: { createdAt: -1 } },
+            { $limit: 10 },
             {
               $lookup: {
                 from: "users",
@@ -287,7 +291,6 @@ export async function getAllContacts(
     ]);
 
     const hasMore = allContacts.length === 10;
-
     res.status(200).send({
       pinnedContacts: pinnedContactsWithMessages,
       contacts: allContacts,
@@ -295,6 +298,93 @@ export async function getAllContacts(
     });
   } catch (err) {
     console.log("Error getting all contacts - ", getDate(), "\n---\n", err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    res.status(500).send({ message: "Server error", error: errorMessage });
+  }
+}
+
+export async function getContact(req: Request, res: Response): Promise<void> {
+  try {
+    const { chatId } = req.query;
+    if (!chatId) {
+      res.status(400).send({ message: "Invalid request" });
+      return;
+    }
+    const objectChatId = new mongoose.Types.ObjectId(chatId as string);
+    const contact = await Contact.aggregate([
+      { $match: { _id: objectChatId } },
+      // get the 1st 4 participants
+      {
+        $lookup: {
+          from: "users",
+          localField: "participants",
+          foreignField: "_id",
+          as: "participants",
+          pipeline: [
+            { $limit: 4 },
+            { $project: { _id: 1, name: 1, avatar: 1 } },
+          ],
+        },
+      },
+      // get all admins
+      {
+        $lookup: {
+          from: "users",
+          localField: "admins",
+          foreignField: "_id",
+          as: "admins",
+          pipeline: [{ $project: { _id: 1, name: 1, avatar: 1 } }],
+        },
+      },
+      // get last 15 messages
+      {
+        $lookup: {
+          from: "messages",
+          let: { chatId: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
+            { $sort: { createdAt: -1 } },
+            { $limit: 15 },
+          ],
+          as: "lastMessages",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          isGroup: 1,
+          image: 1,
+          socialLinks: 1,
+          createdAt: 1,
+          participants: 1,
+          admins: 1,
+          lastMessages: 1,
+        },
+      },
+    ]);
+    if (!contact) {
+      res.status(404).send({ message: "Contact not found" });
+      return;
+    }
+
+    contact[0].lastMessages = await addImageMetaTag(contact[0].lastMessages);
+
+    res.status(200).send({
+      contactData: {
+        _id: contact[0]._id.toString(),
+        name: contact[0].name,
+        isGroup: contact[0].isGroup,
+        image: contact[0].image,
+        socialLinks: contact[0].socialLinks,
+        createdAt: contact[0].createdAt,
+        participant: contact[0].participants,
+        admin: contact[0].admins,
+      },
+      lastMessages: contact[0].lastMessages,
+    });
+  } catch (err) {
+    console.log("Error getting contact - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);
     res.status(500).send({ message: "Server error", error: errorMessage });
   }

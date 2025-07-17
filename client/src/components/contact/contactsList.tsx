@@ -19,7 +19,6 @@ export default function ContactsList(): React.ReactNode {
 
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          console.log("intersecting");
           setPageNumber((prevPageNumber) => prevPageNumber + 1);
         }
       });
@@ -82,6 +81,11 @@ function ContentsSection({
           <>
             <ContactPreviewSkeleton />
             <ContactPreviewSkeleton />
+            {lastElementRef ? (
+              <>
+                <ContactPreviewSkeleton />
+              </>
+            ) : null}
           </>
         ) : null}
       </div>
