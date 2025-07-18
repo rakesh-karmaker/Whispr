@@ -9,6 +9,18 @@ export const useSelectedContact = () => {
   );
   const isLoading = useSelectedContactStore((state) => state.isLoading);
   const setIsLoading = useSelectedContactStore((state) => state.setIsLoading);
+  const isNewSelectedContact = useSelectedContactStore(
+    (state) => state.isNewSelectedContact
+  );
+  const setIsNewSelectedContact = useSelectedContactStore(
+    (state) => state.setIsNewSelectedContact
+  );
+  const newSelectedContact = useSelectedContactStore(
+    (state) => state.newSelectedContact
+  );
+  const setNewSelectedContact = useSelectedContactStore(
+    (state) => state.setNewSelectedContact
+  );
   const images = useSelectedContactStore((state) => state.images);
   const setImages = useSelectedContactStore((state) => state.setImages);
   const files = useSelectedContactStore((state) => state.files);
@@ -21,6 +33,10 @@ export const useSelectedContact = () => {
     setSelectedContact,
     isLoading,
     setIsLoading,
+    isNewSelectedContact,
+    setIsNewSelectedContact,
+    newSelectedContact,
+    setNewSelectedContact,
     images,
     setImages,
     files,

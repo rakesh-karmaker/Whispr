@@ -8,6 +8,8 @@ export type Option = {
   id: string;
   name: string;
   firstName: string;
+  isActive: boolean;
+  image: string;
 };
 
 export default function MultiSelectDropdown({
@@ -27,6 +29,8 @@ export default function MultiSelectDropdown({
         id: option._id,
         name: option.name,
         firstName: option.firstName,
+        isActive: option.isActive,
+        image: option.avatar,
       };
       if (!prevSelected.some((selected) => selected.id === option._id)) {
         return [...prevSelected, filteredData];

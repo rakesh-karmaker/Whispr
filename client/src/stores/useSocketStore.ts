@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { io, Socket } from "socket.io-client";
 import { SERVER } from "@/config/constants";
 import { useContactsStore } from "./useContactsStore";
+import { useSelectedContactStore } from "./useSelectedContactStore";
 
 interface SocketState {
   socket: Socket | null;
@@ -29,6 +30,17 @@ export const useSocketStore = create<SocketState>((set) => ({
       (data: { contactId: string; isActive: boolean }) => {
         const changeActiveContact =
           useContactsStore.getState().changeActiveContact;
+        const selectedContact =
+          useSelectedContactStore.getState().selectedContact;
+
+        if (selectedContact && selectedContact._id === data.contactId) {
+          useSelectedContactStore
+            .getState()
+            .setSelectedContact({
+              ...selectedContact,
+              isActive: data.isActive,
+            });
+        }
 
         changeActiveContact(data.contactId, data.isActive);
       }

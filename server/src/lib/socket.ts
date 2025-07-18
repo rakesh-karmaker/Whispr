@@ -3,6 +3,12 @@ import { Server } from "http";
 import { Server as IOServer, Socket } from "socket.io";
 import User from "../models/User.js";
 import Contact from "../models/Contact.js";
+import {
+  AddContactFunctionProps,
+  UpdateGroupFunctionProps,
+} from "../types/socketFunctionTypes.js";
+
+const userSocketMap = new Map<string, string>();
 
 const setUpSocket = (server: Server) => {
   const io = new IOServer(server, {
@@ -12,8 +18,6 @@ const setUpSocket = (server: Server) => {
       credentials: true,
     },
   });
-
-  const userSocketMap = new Map<string, string>();
 
   const disconnect = async (socket: Socket) => {
     console.log(`User disconnected: ${socket.id}`);
@@ -40,33 +44,64 @@ const setUpSocket = (server: Server) => {
       console.log("No user ID provided");
     }
 
-    socket.on("add-contact", async (contactData) => {
-      const contact = await Contact.findById(contactData._id);
+    socket.on("add-contact", async (contactData) =>
+      addContact(contactData, socket, userId)
+    );
 
-      if (contact) {
-        const participants =
-          contact.admins && contact.admins.length > 0
-            ? [...contact.participants, ...contact.admins]
-            : contact.participants;
-        participants.forEach(async (participant) => {
-          const socketId = userSocketMap.get(participant.toString());
-          if (!contact.isGroup) {
-            const user = await User.findById(userId);
-            if (user) {
-              contactData.contactName = user.name;
-              contactData.contactImage = user.avatar;
-            }
-          }
-
-          if (socketId && socketId !== socket.id) {
-            socket.to(socketId).emit("add-contact", contactData);
-          }
-        });
-      }
-    });
+    socket.on("group-update", (updatedContact) =>
+      groupUpdate(updatedContact, socket)
+    );
 
     socket.on("disconnect", () => disconnect(socket));
   });
+};
+
+const addContact = async (
+  contactData: AddContactFunctionProps,
+  socket: Socket,
+  userId: string
+) => {
+  const contact = await Contact.findById(contactData._id);
+
+  if (contact) {
+    const participants =
+      contact.admins && contact.admins.length > 0
+        ? [...contact.participants, ...contact.admins]
+        : contact.participants;
+    participants.forEach(async (participant) => {
+      const socketId = userSocketMap.get(participant.toString());
+      if (!contact.isGroup) {
+        const user = await User.findById(userId);
+        if (user) {
+          contactData.contactName = user.name;
+          contactData.contactImage = user.avatar;
+        }
+      }
+
+      if (socketId && socketId !== socket.id) {
+        socket.to(socketId).emit("add-contact", contactData);
+      }
+    });
+  }
+};
+
+const groupUpdate = async (
+  updatedContact: UpdateGroupFunctionProps,
+  socket: Socket
+) => {
+  const contact = await Contact.findById(updatedContact._id);
+  if (contact) {
+    const participants =
+      contact.admins && contact.admins.length > 0
+        ? [...contact.participants, ...contact.admins]
+        : contact.participants;
+    participants.forEach(async (participant) => {
+      const socketId = userSocketMap.get(participant.toString());
+      if (socketId && socketId !== socket.id) {
+        socket.to(socketId).emit("group-update", updatedContact);
+      }
+    });
+  }
 };
 
 const updateUserActiveStatus = async (

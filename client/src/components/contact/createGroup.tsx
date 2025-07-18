@@ -29,6 +29,8 @@ export default function CreateGroup(): React.ReactNode {
       <button
         className="min-w-[51px] min-h-[51px] rounded-full bg-teal border-none outline-none flex items-center justify-center cursor-pointer text-pure-white transition-all duration-300 hover:bg-white-2 hover:text-black"
         onClick={() => setOpen(true)}
+        type="button"
+        aria-label="Create a new group"
       >
         <GoPlus className="text-4xl" />
       </button>

@@ -33,7 +33,7 @@ export default function ContactsList(): React.ReactNode {
         <ContentsSection
           title="Pinned"
           contacts={pinnedContacts}
-          isLoading={contacts.length === 0}
+          isLoading={contacts.length === 0 && isLoading}
         />
         <ContentsSection
           title="All"
@@ -65,7 +65,7 @@ function ContentsSection({
       </h3>
       <div className="flex flex-col">
         {contacts.map((contact: QueriedContact, index: number) => {
-          if (index === contacts.length - 1) {
+          if (index === contacts.length - 1 && lastElementRef) {
             return (
               <ContactPreview
                 key={contact._id}

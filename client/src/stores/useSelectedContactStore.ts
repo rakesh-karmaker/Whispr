@@ -1,4 +1,4 @@
-import type { SelectedContact } from "@/types/contactTypes";
+import type { NewSelectedContact, SelectedContact } from "@/types/contactTypes";
 import type { FileMessageType, LinkMessageType } from "@/types/messageTypes";
 import { create } from "zustand";
 
@@ -8,6 +8,12 @@ export type SelectedContactStateType = {
 
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
+
+  isNewSelectedContact: boolean;
+  setIsNewSelectedContact: (isNewSelectedContact: boolean) => void;
+
+  newSelectedContact: NewSelectedContact;
+  setNewSelectedContact: (newSelectedContact: NewSelectedContact) => void;
 
   images: FileMessageType[];
   setImages: (
@@ -32,6 +38,13 @@ export const useSelectedContactStore = create<SelectedContactStateType>(
 
     isLoading: false,
     setIsLoading: (isLoading) => set({ isLoading }),
+
+    isNewSelectedContact: false,
+    setIsNewSelectedContact: (isNewSelectedContact) =>
+      set({ isNewSelectedContact }),
+
+    newSelectedContact: {} as NewSelectedContact,
+    setNewSelectedContact: (newSelectedContact) => set({ newSelectedContact }),
 
     images: [],
     setImages: (imagesOrFn) =>

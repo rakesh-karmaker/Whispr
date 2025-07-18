@@ -6,7 +6,6 @@ import { Request, Response } from "express";
 import Message from "../models/Message.js";
 import { uploadFile } from "../lib/upload.js";
 import addImageMetaTag from "../utils/addImageMetaTag.js";
-import { ContactType, MessageType } from "../types/modelType.js";
 
 export async function searchContacts(
   req: Request,
@@ -174,7 +173,7 @@ export async function getAllContacts(
           $project: {
             _id: 1,
             isGroup: 1,
-            isActive: 1,
+            isActive: "$otherParticipant.isActive",
             updatedAt: 1,
             contactName: 1,
             contactImage: 1,
@@ -278,7 +277,7 @@ export async function getAllContacts(
         $project: {
           _id: 1,
           isGroup: 1,
-          isActive: 1,
+          isActive: "$otherParticipant.isActive",
           updatedAt: 1,
           contactName: 1,
           contactImage: 1,
@@ -322,7 +321,7 @@ export async function getContact(req: Request, res: Response): Promise<void> {
           as: "participants",
           pipeline: [
             { $limit: 4 },
-            { $project: { _id: 1, name: 1, avatar: 1 } },
+            { $project: { _id: 1, name: 1, avatar: 1, isActive: 1 } },
           ],
         },
       },
@@ -333,7 +332,7 @@ export async function getContact(req: Request, res: Response): Promise<void> {
           localField: "admins",
           foreignField: "_id",
           as: "admins",
-          pipeline: [{ $project: { _id: 1, name: 1, avatar: 1 } }],
+          pipeline: [{ $project: { _id: 1, name: 1, avatar: 1, isActive: 1 } }],
         },
       },
       // get last 15 messages
@@ -352,23 +351,41 @@ export async function getContact(req: Request, res: Response): Promise<void> {
       {
         $project: {
           _id: 1,
-          name: 1,
           isGroup: 1,
-          image: 1,
           socialLinks: 1,
           createdAt: 1,
           participants: 1,
           admins: 1,
+          isActive: 1,
           lastMessages: 1,
+          name: 1,
+          image: 1,
         },
       },
     ]);
-    if (!contact) {
+    if (contact.length === 0) {
       res.status(404).send({ message: "Contact not found" });
       return;
     }
 
+    const participantsCount = await Contact.find({ _id: objectChatId });
     contact[0].lastMessages = await addImageMetaTag(contact[0].lastMessages);
+    if (!contact[0].isGroup) {
+      contact[0].participants.forEach(
+        (participant: {
+          _id: string;
+          name: string;
+          avatar: string;
+          isActive: boolean;
+        }) => {
+          if (participant._id.toString() !== req.userId) {
+            contact[0].name = participant.name;
+            contact[0].image = participant.avatar;
+            contact[0].isActive = participant.isActive;
+          }
+        }
+      );
+    }
 
     res.status(200).send({
       contactData: {
@@ -380,6 +397,12 @@ export async function getContact(req: Request, res: Response): Promise<void> {
         createdAt: contact[0].createdAt,
         participant: contact[0].participants,
         admin: contact[0].admins,
+        isActive: contact[0].isActive,
+        participantsCount:
+          participantsCount[0].participants.length +
+          (participantsCount[0].admins && participantsCount[0].admins.length
+            ? participantsCount[0].admins.length
+            : 0),
       },
       lastMessages: contact[0].lastMessages,
     });
@@ -535,6 +558,56 @@ export async function createNewGroup(
     });
   } catch (err) {
     console.log("Error creating new group - ", getDate(), "\n---\n", err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    res.status(500).send({ message: "Server error", error: errorMessage });
+  }
+}
+
+export async function updateGroup(req: Request, res: Response): Promise<void> {
+  try {
+    const { chatId, name, socials } = req.body;
+    if (!chatId || !name) {
+      res.status(400).send({ message: "Invalid request" });
+      return;
+    }
+
+    const group = await Contact.findById(chatId);
+    if (!group) {
+      res.status(404).send({ message: "Group not found" });
+      return;
+    }
+
+    if (req.file) {
+      // upload the image
+      const data = await uploadFile(res, req.file, "avatar", 600, 600);
+      if (
+        data &&
+        typeof data === "object" &&
+        "url" in data &&
+        "publicId" in data
+      ) {
+        group.image = data.url;
+        group.publicId = data.publicId;
+      } else {
+        res.status(500).send({ message: "Image upload failed" });
+        return;
+      }
+    }
+
+    group.name = name;
+    group.socialLinks = socials;
+    await group.save();
+
+    res.status(200).send({
+      updatedContact: {
+        _id: group._id.toString(),
+        name: group.name,
+        image: group.image,
+        socialLinks: group.socialLinks,
+      },
+    });
+  } catch (err) {
+    console.log("Error updating group - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);
     res.status(500).send({ message: "Server error", error: errorMessage });
   }

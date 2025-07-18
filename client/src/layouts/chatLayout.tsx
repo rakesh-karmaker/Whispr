@@ -1,8 +1,10 @@
 import ChatLeft from "@/components/chat/chatLeft";
 import { useContacts } from "@/hooks/useContacts";
+import { useSelectedContact } from "@/hooks/useSelectContact";
 import { useUser } from "@/hooks/useUser";
 import { useSocketStore } from "@/stores/useSocketStore";
 import type { QueriedContact } from "@/types/contactTypes";
+import type { UpdatedGroupData } from "@/types/socketActionTypes";
 import type React from "react";
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
@@ -15,6 +17,7 @@ export default function ChatLayout(): React.ReactNode {
   const disconnect = useSocketStore((s) => s.disconnect);
   const socket = useSocketStore((s) => s.socket);
   const { setContacts } = useContacts();
+  const { selectedContact, setSelectedContact } = useSelectedContact();
 
   useEffect(() => {
     if (user?.id) {
@@ -29,6 +32,22 @@ export default function ChatLayout(): React.ReactNode {
     if (socket) {
       socket.on("add-contact", (contactData: QueriedContact) => {
         setContacts((prevContacts) => [contactData, ...prevContacts]);
+      });
+
+      socket.on("group-update", (updatedContact: UpdatedGroupData) => {
+        setContacts((prevContacts) => {
+          const updatedContacts = prevContacts.map((contact) => {
+            if (contact._id === updatedContact._id) {
+              return { ...contact, ...updatedContact };
+            }
+            return contact;
+          });
+          return updatedContacts;
+        });
+
+        if (updatedContact._id === selectedContact?._id) {
+          setSelectedContact({ ...selectedContact, ...updatedContact });
+        }
       });
     }
   }, [socket]);

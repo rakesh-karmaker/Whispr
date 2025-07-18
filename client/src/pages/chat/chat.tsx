@@ -1,3 +1,4 @@
+import ChatSidebar from "@/components/chat/chatSidebar";
 import ChatWindow from "@/components/chat/chatWindow";
 import { useContacts } from "@/hooks/useContacts";
 import { useSelectedContact } from "@/hooks/useSelectContact";
@@ -9,8 +10,12 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function Chat(): React.ReactNode {
   const navigate = useNavigate();
 
-  const { selectedContact, setSelectedContact, setIsLoading } =
-    useSelectedContact();
+  const {
+    selectedContact,
+    setSelectedContact,
+    setIsLoading,
+    setIsNewSelectedContact,
+  } = useSelectedContact();
   const getContactMutation = useMutation({
     mutationFn: (id: string) => getContact(id),
     onSuccess: (res) => {
@@ -19,7 +24,7 @@ export default function Chat(): React.ReactNode {
         (!selectedContact || res.contactData._id !== selectedContact._id)
       ) {
         setSelectedContact(res.contactData);
-        console.log(res.contactData);
+        setIsNewSelectedContact(false);
       }
     },
     onSettled: () => {
@@ -41,9 +46,11 @@ export default function Chat(): React.ReactNode {
       getContactMutation.mutate(chatId);
     }
   }, [chatId, pinnedContacts, contacts, navigate]);
+
   return (
     <div className="w-full h-full flex-1 flex gap-4">
       <ChatWindow />
+      <ChatSidebar />
     </div>
   );
 }
