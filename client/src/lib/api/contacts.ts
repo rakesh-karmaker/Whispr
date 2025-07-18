@@ -41,6 +41,13 @@ export async function pinContact(chatId: string) {
   return response;
 }
 
+export async function unpinContact(chatId: string) {
+  const { data: response } = await api.post("/contact/unpin-contact", {
+    chatId,
+  });
+  return response;
+}
+
 export async function createNewContact(data: Option) {
   const { data: response } = await api.post(
     "/contact/create-new-contact",

@@ -48,7 +48,7 @@ const setUpSocket = (server: Server) => {
       addContact(contactData, socket, userId)
     );
 
-    socket.on("group-update", (updatedContact) =>
+    socket.on("update-group", (updatedContact) =>
       groupUpdate(updatedContact, socket)
     );
 
@@ -98,7 +98,7 @@ const groupUpdate = async (
     participants.forEach(async (participant) => {
       const socketId = userSocketMap.get(participant.toString());
       if (socketId && socketId !== socket.id) {
-        socket.to(socketId).emit("group-update", updatedContact);
+        socket.to(socketId).emit("update-group", updatedContact);
       }
     });
   }

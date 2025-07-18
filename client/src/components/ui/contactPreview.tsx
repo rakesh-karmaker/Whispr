@@ -97,8 +97,8 @@ export default function ContactPreview({
                 : lastMessage}
             </span>
             {unseen > 0 && (
-              <span className="w-5 h-5 flex items-center justify-center bg-teal text-pure-white text-xs rounded-full">
-                {unseen}
+              <span className="w-5 h-5 flex items-center justify-center bg-teal text-pure-white text-[0.625em] rounded-full">
+                {unseen > 9 ? "9+" : unseen}
               </span>
             )}
           </p>

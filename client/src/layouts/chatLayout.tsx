@@ -16,7 +16,7 @@ export default function ChatLayout(): React.ReactNode {
   const connect = useSocketStore((s) => s.connect);
   const disconnect = useSocketStore((s) => s.disconnect);
   const socket = useSocketStore((s) => s.socket);
-  const { setContacts } = useContacts();
+  const { setContacts, setPinnedContacts } = useContacts();
   const { selectedContact, setSelectedContact } = useSelectedContact();
 
   useEffect(() => {
@@ -34,15 +34,42 @@ export default function ChatLayout(): React.ReactNode {
         setContacts((prevContacts) => [contactData, ...prevContacts]);
       });
 
-      socket.on("group-update", (updatedContact: UpdatedGroupData) => {
+      socket.on("update-group", (updatedContact: UpdatedGroupData) => {
         setContacts((prevContacts) => {
+          console.log("update-group", updatedContact);
           const updatedContacts = prevContacts.map((contact) => {
             if (contact._id === updatedContact._id) {
-              return { ...contact, ...updatedContact };
+              return {
+                ...contact,
+                lastMessages: [
+                  ...contact.lastMessages,
+                  updatedContact.updatedMessage,
+                ],
+                contactName: updatedContact.name,
+                contactImage: updatedContact.image,
+              };
             }
             return contact;
           });
           return updatedContacts;
+        });
+
+        setPinnedContacts((prevPinnedContacts) => {
+          const updatedPinnedContacts = prevPinnedContacts.map((contact) => {
+            if (contact._id === updatedContact._id) {
+              return {
+                ...contact,
+                lastMessages: [
+                  ...contact.lastMessages,
+                  updatedContact.updatedMessage,
+                ],
+                contactName: updatedContact.name,
+                contactImage: updatedContact.image,
+              };
+            }
+            return contact;
+          });
+          return updatedPinnedContacts;
         });
 
         if (updatedContact._id === selectedContact?._id) {

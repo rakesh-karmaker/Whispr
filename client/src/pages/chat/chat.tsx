@@ -1,4 +1,4 @@
-import ChatSidebar from "@/components/chat/chatSidebar";
+import ChatSidebar from "@/components/chat/chatSidebar/chatSidebar";
 import ChatWindow from "@/components/chat/chatWindow";
 import { useContacts } from "@/hooks/useContacts";
 import { useSelectedContact } from "@/hooks/useSelectContact";

@@ -7,7 +7,9 @@ export type ContactsStateType = {
     contacts: QueriedContact[] | ((prev: QueriedContact[]) => QueriedContact[])
   ) => void;
   pinnedContacts: QueriedContact[];
-  setPinnedContacts: (contacts: QueriedContact[]) => void;
+  setPinnedContacts: (
+    contacts: QueriedContact[] | ((prev: QueriedContact[]) => QueriedContact[])
+  ) => void;
   changeActiveContact: (contactId: string, activeStatus: boolean) => void;
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
@@ -23,7 +25,13 @@ export const useContactsStore = create<ContactsStateType>((set) => ({
           : contactsOrFn,
     })),
   pinnedContacts: [],
-  setPinnedContacts: (contacts) => set({ pinnedContacts: contacts }),
+  setPinnedContacts: (contactsOrFn) =>
+    set((state) => ({
+      pinnedContacts:
+        typeof contactsOrFn === "function"
+          ? contactsOrFn(state.pinnedContacts)
+          : contactsOrFn,
+    })),
   changeActiveContact: (contactId, activeStatus) =>
     set((state) => ({
       contacts: state.contacts.map((contact) => ({

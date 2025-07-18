@@ -413,6 +413,60 @@ export async function getContact(req: Request, res: Response): Promise<void> {
   }
 }
 
+export async function pinContact(req: Request, res: Response): Promise<void> {
+  try {
+    const { chatId } = req.body;
+    if (!chatId) {
+      res.status(400).send({ message: "Invalid request" });
+      return;
+    }
+
+    const contact = await Contact.findOne({ _id: chatId });
+    if (!contact) {
+      res.status(404).send({ message: "Contact not found" });
+      return;
+    }
+
+    const objectChatId = new mongoose.Types.ObjectId(chatId);
+    await User.updateOne(
+      { _id: req.userId },
+      { $push: { pinnedContacts: objectChatId } }
+    );
+    res.status(200).send({ contactId: chatId, pinned: true });
+  } catch (err) {
+    console.log("Error pinning contact - ", getDate(), "\n---\n", err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    res.status(500).send({ message: "Server error", error: errorMessage });
+  }
+}
+
+export async function unpinContact(req: Request, res: Response): Promise<void> {
+  try {
+    const { chatId } = req.body;
+    if (!chatId) {
+      res.status(400).send({ message: "Invalid request" });
+      return;
+    }
+
+    const contact = await Contact.findOne({ _id: chatId });
+    if (!contact) {
+      res.status(404).send({ message: "Contact not found" });
+      return;
+    }
+
+    const objectChatId = new mongoose.Types.ObjectId(chatId);
+    await User.updateOne(
+      { _id: req.userId },
+      { $pull: { pinnedContacts: objectChatId } }
+    );
+    res.status(200).send({ contactId: chatId, pinned: false });
+  } catch (err) {
+    console.log("Error unpinning contact - ", getDate(), "\n---\n", err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    res.status(500).send({ message: "Server error", error: errorMessage });
+  }
+}
+
 export async function createNewContact(
   req: Request,
   res: Response
@@ -607,12 +661,37 @@ export async function updateGroup(req: Request, res: Response): Promise<void> {
     });
     await group.save();
 
+    const user = await User.findById(req.userId).select("firstName");
+    if (!user) {
+      res.status(404).send({ message: "User not found" });
+      return;
+    }
+
+    const updatedMessage = await Message.create({
+      chatId: group._id,
+      sender: req.userId,
+      messageType: "announcement",
+      summary: "updated the group info",
+      announcer: user.firstName,
+    });
+
     res.status(200).send({
       updatedContact: {
         _id: group._id.toString(),
         name: group.name,
         image: group.image,
         socialLinks: group.socialLinks,
+        updatedMessage: {
+          content: updatedMessage.content,
+          messageType: updatedMessage.messageType,
+          seenBy: updatedMessage.seenBy,
+          createdAt: updatedMessage.createdAt,
+          summary: updatedMessage.summary,
+          announcer: updatedMessage.announcer,
+          sender: {
+            _id: updatedMessage.sender.toString(),
+          },
+        },
       },
     });
   } catch (err) {
