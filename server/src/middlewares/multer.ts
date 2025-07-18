@@ -10,7 +10,6 @@ const upload = multer({
   storage,
   fileFilter: (req, file: Express.Multer.File, cb) => {
     const fileTypes: RegExp = /jpeg|jpg|png|webp/;
-    console.log(file.mimetype);
 
     const extname: boolean = fileTypes.test(
       path.extname(file.originalname).toLowerCase()

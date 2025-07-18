@@ -16,7 +16,7 @@ export interface UserType {
   isActive: boolean;
   socialLinks: {
     type: string;
-    url: string;
+    link: string;
   }[];
   bio?: string;
   createdAt: Date;
@@ -34,7 +34,7 @@ export interface ContactType {
   isActive: boolean;
   socialLinks: {
     type: string;
-    url: string;
+    link: string;
   }[];
   createdAt: Date;
   updatedAt: Date;

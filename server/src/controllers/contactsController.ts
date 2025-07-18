@@ -4,7 +4,7 @@ import User from "../models/User.js";
 import getDate from "../utils/getDate.js";
 import { Request, Response } from "express";
 import Message from "../models/Message.js";
-import { uploadFile } from "../lib/upload.js";
+import { deleteFile, uploadFile } from "../lib/upload.js";
 import addImageMetaTag from "../utils/addImageMetaTag.js";
 
 export async function searchContacts(
@@ -586,6 +586,9 @@ export async function updateGroup(req: Request, res: Response): Promise<void> {
         "url" in data &&
         "publicId" in data
       ) {
+        if (group.publicId) {
+          await deleteFile(res, group.publicId);
+        }
         group.image = data.url;
         group.publicId = data.publicId;
       } else {
@@ -594,8 +597,14 @@ export async function updateGroup(req: Request, res: Response): Promise<void> {
       }
     }
 
+    const socialLinks = JSON.parse(socials) as { type: string; link: string }[];
     group.name = name;
-    group.socialLinks = socials;
+    group.socialLinks = socialLinks.map((link) => {
+      return {
+        type: link.type,
+        link: link.link,
+      };
+    });
     await group.save();
 
     res.status(200).send({

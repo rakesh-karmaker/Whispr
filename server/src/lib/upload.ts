@@ -136,7 +136,7 @@ export async function deleteFile(
 ): Promise<void | Response> {
   try {
     await cloudinary.uploader.destroy(publicId, {
-      resource_type: "auto",
+      invalidate: true,
     });
     console.log("File deleted successfully -", getDate(), "\n---\n");
   } catch (err) {

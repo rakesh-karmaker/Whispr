@@ -36,7 +36,7 @@ export type SelectedContact = {
   name: string;
   isGroup: boolean;
   image: string;
-  socialLinks: { type: string; url: string }[];
+  socialLinks: { type: string; link: string }[];
   createdAt: Date;
   isActive: boolean;
   participantsCount: number;
@@ -69,6 +69,6 @@ export type CreateNewGroupMutationProps = {
 export type UpdateGroupMutationProps = {
   name: string;
   groupImage?: string | FileList;
-  socials: UpdateGroupFormSchema["socials"];
+  socials?: UpdateGroupFormSchema["socials"];
   chatId: string;
 };

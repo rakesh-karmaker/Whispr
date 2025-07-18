@@ -57,13 +57,13 @@ export default function CreateNewContact(): React.ReactNode {
           name="contact-search"
           id="contact-search"
           placeholder="Search"
-          className="w-full h-[51px] rounded-4xl border-[0.5px] border-light-gray pl-10 placeholder:text-gray text-[1em] outline-none"
+          className="w-full h-[44px] rounded-4xl border-[0.5px] border-light-gray pl-10 placeholder:text-gray text-sm outline-none"
           onChange={(e) => {
             setQuery(e.target.value);
             setPageNumber(1);
           }}
         />
-        <FaSearch className="absolute left-4 text-dark-gray" />
+        <FaSearch className="absolute left-4 text-gray text-md" />
       </div>
     </SearchContacts>
   );

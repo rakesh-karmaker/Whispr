@@ -15,7 +15,7 @@ interface Contact {
   admins: User[];
   image: string;
   isActive: boolean;
-  socialLinks: { type: string; url: string }[];
+  socialLinks: { type: string; link: string }[];
   createdAt: Date;
 }
 

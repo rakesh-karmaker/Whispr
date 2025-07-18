@@ -13,11 +13,13 @@ export default function Avatar({
       <img
         src={src}
         alt={`Pic of ${name}`}
-        className="min-w-[51px] min-h-[51px] max-w-[51px] max-h-[51px] rounded-full object-cover object-center"
+        className={
+          "min-w-11 min-h-11 max-w-11 max-h-11 rounded-full object-cover object-center"
+        }
         referrerPolicy="no-referrer"
       />
       {isActive && (
-        <div className="absolute bottom-[0px] right-[4px] w-3 h-3 bg-teal border-[2px] border-white rounded-full"></div>
+        <div className="absolute bottom-[0px] right-[5%] w-3 h-3 bg-teal border-[2px] border-white rounded-full"></div>
       )}
     </div>
   );

@@ -4,7 +4,7 @@ import CreateGroup from "./createGroup";
 
 export default function ContactsHeader(): React.ReactNode {
   return (
-    <div className="relative w-full min-h-24 p-[1.375em] bg-pure-white rounded-xl flex gap-3 items-center justify-center">
+    <div className="relative w-full p-[1.375em] bg-pure-white rounded-xl flex gap-3 items-center justify-center">
       <CreateNewContact />
       <CreateGroup />
     </div>

@@ -26,7 +26,7 @@ import { RxCross2 } from "react-icons/rx";
 
 export default function ChatSidebar(): React.ReactNode {
   return (
-    <div className="w-full h-full max-w-[28.75em] rounded-xl bg-pure-white p-4 flex flex-col gap-[71px]">
+    <div className="w-full h-full max-w-[27.75em] rounded-xl bg-pure-white p-4 flex flex-col gap-[71px]">
       <ChatSidebarHeader />
     </div>
   );
@@ -95,7 +95,7 @@ function UpdateGroupForm({
       groupImage: selectedContact.image,
       socials:
         selectedContact.socialLinks.length === 0
-          ? [{ type: "", url: "" }]
+          ? [{ type: "", link: "" }]
           : selectedContact.socialLinks,
     },
   });
@@ -111,7 +111,11 @@ function UpdateGroupForm({
         setContacts((prevContacts) => {
           const updatedContacts = prevContacts.map((contact) => {
             if (contact._id === res.updatedContact._id) {
-              return { ...contact, ...res.updatedContact };
+              return {
+                ...contact,
+                contactName: res.updatedContact.name,
+                contactImage: res.updatedContact.image,
+              };
             }
             return contact;
           });
@@ -142,9 +146,13 @@ function UpdateGroupForm({
       return;
     }
 
-    // updateGroupMutation.mutate(data);
     console.log(data);
+
+    updateGroupMutation.mutate(data);
+    // console.log(data);
   };
+
+  console.log(errors);
 
   return (
     <>
@@ -184,7 +192,7 @@ function UpdateGroupForm({
                       variant="outlined"
                       label="Type"
                       error={!!errors.socials?.[index]?.type}
-                      defaultValue=""
+                      defaultValue={field.type}
                     >
                       {allowedSocialTypes.map((type) => (
                         <MenuItem key={type} value={type}>

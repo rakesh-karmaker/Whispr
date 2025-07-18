@@ -10,19 +10,19 @@ import type { Canceler } from "axios";
 export async function searchContacts(
   searchTerm: string,
   pageNumber: number,
-  cancel: Canceler
+  _cancel: Canceler
 ) {
   const { data: response } = await api.get("/contact/search-contacts", {
     params: { searchTerm, pageNumber },
-    cancelToken: new axios.CancelToken((c) => (cancel = c)),
+    cancelToken: new axios.CancelToken((c) => (_cancel = c)),
   });
   return response;
 }
 
-export async function getAllContacts(pageNumber: number, cancel: Canceler) {
+export async function getAllContacts(pageNumber: number, _cancel: Canceler) {
   const { data: response } = await api.get("/contact/get-all-contacts", {
     params: { pageNumber },
-    cancelToken: new axios.CancelToken((c) => (cancel = c)),
+    cancelToken: new axios.CancelToken((c) => (_cancel = c)),
   });
   return response;
 }
@@ -30,6 +30,13 @@ export async function getAllContacts(pageNumber: number, cancel: Canceler) {
 export async function getContact(chatId: string) {
   const { data: response } = await api.get("/contact/get-contact", {
     params: { chatId },
+  });
+  return response;
+}
+
+export async function pinContact(chatId: string) {
+  const { data: response } = await api.post("/contact/pin-contact", {
+    chatId,
   });
   return response;
 }
@@ -79,13 +86,18 @@ export async function updateGroup(data: UpdateGroupMutationProps) {
   (Object.keys(data) as (keyof UpdateGroupMutationProps)[]).forEach((key) => {
     if (key === "groupImage") {
       if (typeof data[key] === "string") {
-        formData.append("avatar", data[key] as string);
+        formData.append("groupImage", data[key] as string);
       } else if (
         data[key] instanceof FileList &&
         data[key]?.[0] !== undefined
       ) {
-        formData.append("avatar", data[key][0]);
+        formData.append("groupImage", data[key][0]);
       }
+      return;
+    }
+
+    if (key === "socials") {
+      formData.append("socials", JSON.stringify(data[key]));
       return;
     }
 

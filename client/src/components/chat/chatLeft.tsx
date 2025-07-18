@@ -5,7 +5,7 @@ import UserInfo from "@/components/ui/userInfo";
 
 export default function ChatLeft(): React.ReactNode {
   return (
-    <section className="w-full max-w-[28.75em] flex flex-col gap-4">
+    <section className="w-full max-w-[25.75em] flex flex-col gap-4">
       <ContactsHeader />
       <ContactsList />
       <UserInfo />

@@ -11,7 +11,7 @@ export default function ChatHeader(): React.ReactNode {
   const { setIsSidebarOpen } = usePreferences();
 
   return (
-    <div className="w-full min-h-24 max-h-24 p-[1.375em] bg-pure-white rounded-xl flex-1 flex justify-between items-center gap-5">
+    <div className="w-full min-h-14 max-h-[5.5em] p-[1.375em] bg-pure-white rounded-xl flex-1 flex justify-between items-center gap-5">
       <ChatHeaderInfo
         selectedContact={selectedContact}
         isNewSelectedContact={isNewSelectedContact}
@@ -21,13 +21,13 @@ export default function ChatHeader(): React.ReactNode {
         <div className="flex gap-4 items-center">
           <button
             type="button"
-            className="font-medium text-lg text-pure-white w-32 h-[51px] rounded-4xl bg-black flex items-center justify-center cursor-pointer hover:bg-white-2 hover:text-black transition-all duration-200"
+            className="font-medium text-lg text-pure-white w-27 h-[44px] rounded-4xl bg-black flex items-center justify-center cursor-pointer hover:bg-white-2 hover:text-black transition-all duration-200"
           >
             Pin
           </button>
           <button
             type="button"
-            className="text-2xl text-pure-white bg-teal w-[51px] h-[51px] rounded-full flex items-center justify-center cursor-pointer hover:bg-white-2 hover:text-black transition-all duration-200"
+            className="text-2xl text-pure-white bg-teal w-[44px] h-[44px] rounded-full flex items-center justify-center cursor-pointer hover:bg-white-2 hover:text-black transition-all duration-200"
             onClick={() => setIsSidebarOpen(true)}
           >
             <BsThreeDots />
@@ -51,7 +51,7 @@ function ChatHeaderInfo({
   const isActive = isNewSelectedContact
     ? newSelectedContact.isActive
     : selectedContact.isGroup
-    ? true
+    ? false
     : selectedContact.isActive;
   const subHeading = isNewSelectedContact
     ? newSelectedContact.isActive
@@ -64,10 +64,10 @@ function ChatHeaderInfo({
     : "Offline";
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2.5">
       <Avatar src={data.image || ""} name={data.name} isActive={isActive} />
       <div className="flex flex-col">
-        <h2 className="font-medium text-[1.375em]">{data.name}</h2>
+        <h2 className="font-medium text-[1.275em]">{data.name}</h2>
         <p className="text-sm text-gray">{subHeading}</p>
       </div>
     </div>

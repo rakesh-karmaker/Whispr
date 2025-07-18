@@ -46,15 +46,17 @@ const updateGroupFormSchema = z.object({
         }MB and must be a valid image file (JPG, JPEG, PNG or WebP).`,
       }
     ),
-  socials: z.array(
-    z.object({
-      type: z.string(),
-      link: z
-        .string()
-        .url("Enter a valid URL (include https://)")
-        .min(1, "Link is required"),
-    })
-  ),
+  socials: z
+    .array(
+      z.object({
+        type: z.string(),
+        link: z
+          .string()
+          .url("Enter a valid URL (include https://)")
+          .min(1, "Link is required"),
+      })
+    )
+    .optional(),
 });
 
 // Infer the type

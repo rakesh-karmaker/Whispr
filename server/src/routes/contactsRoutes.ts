@@ -4,6 +4,7 @@ import {
   getAllContacts,
   getContact,
   searchContacts,
+  updateGroup,
 } from "../controllers/contactsController.js";
 import { verifyToken } from "../middlewares/authMiddleware.js";
 import express from "express";
@@ -21,6 +22,12 @@ contactsRouter.post(
   upload.single("groupImage"),
   verifyToken,
   createNewGroup
+);
+contactsRouter.patch(
+  "/update-group",
+  upload.single("groupImage"),
+  verifyToken,
+  updateGroup
 );
 
 export default contactsRouter;

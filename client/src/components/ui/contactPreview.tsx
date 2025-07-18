@@ -62,7 +62,7 @@ export default function ContactPreview({
     <NavLink
       ref={ref ? ref : null}
       className={
-        "w-full h-fit relative flex justify-center items-center border-none outline-none p-[1.375em] bg-pure-white hover:bg-white-2 transition-all duration-200 cursor-pointer" +
+        "w-full h-fit relative flex justify-center items-center border-none outline-none px-[1.375em] py-4.5 bg-pure-white hover:bg-white-2 transition-all duration-200 cursor-pointer" +
         (isActive ? " bg-white-2" : "")
       }
       to={`/chat/${contactData._id}`}
@@ -81,7 +81,7 @@ export default function ContactPreview({
         />
         <div className="w-full flex flex-col">
           <div className="flex justify-between items-center gap-2.5">
-            <h4 className="font-medium text-lg">
+            <h4 className="font-medium text-md">
               {contactData.contactName && contactData.contactName.length > 17
                 ? contactData.contactName.slice(0, 17) + "..."
                 : contactData.contactName}
@@ -105,7 +105,7 @@ export default function ContactPreview({
         </div>
         <div
           className={
-            "absolute -bottom-[22px] w-full h-[1px] bg-[#D8D8D8]/70 transition-all duration-200" +
+            "absolute -bottom-[40%] w-full h-[1px] bg-[#D8D8D8]/70 transition-all duration-200" +
             (showLine ? "" : " opacity-0")
           }
         />
