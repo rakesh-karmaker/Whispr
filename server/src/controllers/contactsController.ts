@@ -395,8 +395,8 @@ export async function getContact(req: Request, res: Response): Promise<void> {
         image: contact[0].image,
         socialLinks: contact[0].socialLinks,
         createdAt: contact[0].createdAt,
-        participant: contact[0].participants,
-        admin: contact[0].admins,
+        participants: contact[0].participants,
+        admins: contact[0].admins,
         isActive: contact[0].isActive,
         participantsCount:
           participantsCount[0].participants.length +
