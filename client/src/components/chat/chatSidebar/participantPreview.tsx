@@ -6,6 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import { useSelectedContact } from "@/hooks/useSelectContact";
 import { useUser } from "@/hooks/useUser";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 export default function ParticipantPreview({
   participant,
@@ -62,6 +63,7 @@ function ParticipantDropdown({
 }): React.ReactNode {
   const { selectedContact } = useSelectedContact();
   const { user } = useUser();
+  const socket = useSocketStore((s) => s.socket);
 
   const isUserAdmin = selectedContact.admins?.some(
     (admin) => admin._id === user?.id
@@ -73,7 +75,14 @@ function ParticipantDropdown({
     setAnchorEl(null);
   };
 
-  const handleAdminClick = () => {
+  const handleAdminClick = (makeAdmin: boolean) => {
+    if (socket) {
+      socket.emit("make-admin", {
+        makeAdmin,
+        participantId: participant._id,
+        contactId: selectedContact._id,
+      });
+    }
     setAnchorEl(null);
   };
 
@@ -115,15 +124,27 @@ function ParticipantDropdown({
       transformOrigin={{ horizontal: "right", vertical: "top" }}
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
-      <MenuItem onClick={handleClose}>Message</MenuItem>
-      {isUserAdmin && [
-        <MenuItem onClick={handleAdminClick} key={1}>
+      <MenuItem onClick={handleClose} className="!pr-16" key={0}>
+        Message
+      </MenuItem>
+
+      {isUserAdmin && participant._id !== user?.id && (
+        <MenuItem onClick={() => handleAdminClick(!isAdmin)} key={1}>
           {isAdmin ? "Make member" : "Make admin"}
-        </MenuItem>,
+        </MenuItem>
+      )}
+
+      {isUserAdmin && participant._id === user?.id && (
         <MenuItem onClick={handleClose} key={2}>
+          Leave
+        </MenuItem>
+      )}
+
+      {isUserAdmin && participant._id !== user?.id && (
+        <MenuItem onClick={handleClose} key={3}>
           Remove
-        </MenuItem>,
-      ]}
+        </MenuItem>
+      )}
     </Menu>
   );
 }

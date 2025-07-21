@@ -1,10 +1,16 @@
 import ChatLeft from "@/components/chat/chatLeft";
-import { useContacts } from "@/hooks/useContacts";
-import { useSelectedContact } from "@/hooks/useSelectContact";
 import { useUser } from "@/hooks/useUser";
+import {
+  addContact,
+  makeAdmin,
+  updateContact,
+} from "@/lib/socket/contactActions";
 import { useSocketStore } from "@/stores/useSocketStore";
 import type { QueriedContact } from "@/types/contactTypes";
-import type { UpdatedGroupData } from "@/types/socketActionTypes";
+import type {
+  MakeAdminFunctionProps,
+  UpdatedGroupData,
+} from "@/types/socketActionTypes";
 import type React from "react";
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
@@ -16,8 +22,6 @@ export default function ChatLayout(): React.ReactNode {
   const connect = useSocketStore((s) => s.connect);
   const disconnect = useSocketStore((s) => s.disconnect);
   const socket = useSocketStore((s) => s.socket);
-  const { setContacts, setPinnedContacts } = useContacts();
-  const { selectedContact, setSelectedContact } = useSelectedContact();
 
   useEffect(() => {
     if (user?.id) {
@@ -30,51 +34,16 @@ export default function ChatLayout(): React.ReactNode {
 
   useEffect(() => {
     if (socket) {
-      socket.on("add-contact", (contactData: QueriedContact) => {
-        setContacts((prevContacts) => [contactData, ...prevContacts]);
-      });
+      socket.on("add-contact", (contactData: QueriedContact) =>
+        addContact(contactData)
+      );
 
-      socket.on("update-group", (updatedContact: UpdatedGroupData) => {
-        setContacts((prevContacts) => {
-          console.log("update-group", updatedContact);
-          const updatedContacts = prevContacts.map((contact) => {
-            if (contact._id === updatedContact._id) {
-              return {
-                ...contact,
-                lastMessages: [
-                  ...contact.lastMessages,
-                  updatedContact.updatedMessage,
-                ],
-                contactName: updatedContact.name,
-                contactImage: updatedContact.image,
-              };
-            }
-            return contact;
-          });
-          return updatedContacts;
-        });
+      socket.on("update-group", (updatedContact: UpdatedGroupData) =>
+        updateContact(updatedContact)
+      );
 
-        setPinnedContacts((prevPinnedContacts) => {
-          const updatedPinnedContacts = prevPinnedContacts.map((contact) => {
-            if (contact._id === updatedContact._id) {
-              return {
-                ...contact,
-                lastMessages: [
-                  ...contact.lastMessages,
-                  updatedContact.updatedMessage,
-                ],
-                contactName: updatedContact.name,
-                contactImage: updatedContact.image,
-              };
-            }
-            return contact;
-          });
-          return updatedPinnedContacts;
-        });
-
-        if (updatedContact._id === selectedContact?._id) {
-          setSelectedContact({ ...selectedContact, ...updatedContact });
-        }
+      socket.on("make-admin", (data: MakeAdminFunctionProps) => {
+        makeAdmin(data);
       });
     }
   }, [socket]);

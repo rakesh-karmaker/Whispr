@@ -35,3 +35,9 @@ export type UpdateGroupFunctionProps = {
     };
   };
 };
+
+export type MakeAdminFunctionProps = {
+  makeAdmin: boolean;
+  participantId: string;
+  contactId: string;
+};

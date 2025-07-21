@@ -17,12 +17,12 @@ export type QueriedContact = {
   isGroup: boolean;
   isActive: boolean;
   contactImage: string;
-  updatedAt: Date;
+  updatedAt: string;
   lastMessages: {
     content: string;
     messageType: string;
     seenBy: string[];
-    createdAt: Date;
+    createdAt: string;
     summary: string;
     announcer: string;
     sender: {
@@ -37,7 +37,7 @@ export type SelectedContact = {
   isGroup: boolean;
   image: string;
   socialLinks: { type: string; link: string }[];
-  createdAt: Date;
+  createdAt: string;
   isActive: boolean;
   participantsCount: number;
   participants: {

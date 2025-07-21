@@ -36,10 +36,22 @@ const MessageSchema = new mongoose.Schema<MessageType>(
       type: String,
     },
     announcer: { type: String },
+    createdAt: {
+      type: String,
+      set: (v = new Date()) => new Date(v).toISOString(),
+    },
   },
   {
-    timestamps: true,
+    timestamps: {
+      createdAt: true,
+      updatedAt: true,
+    },
   }
 );
+
+MessageSchema.pre("save", function (next) {
+  this.updatedAt = new Date().toISOString();
+  next();
+});
 
 export default mongoose.model("Message", MessageSchema);

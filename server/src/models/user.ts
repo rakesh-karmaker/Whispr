@@ -33,9 +33,21 @@ const UserSchema = new mongoose.Schema<UserType>(
         { _id: false }
       ),
     ],
-    bio: { type: String },
+    createdAt: {
+      type: String,
+      set: (v = new Date()) => new Date(v).toISOString(),
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: {
+      createdAt: true,
+      updatedAt: true,
+    },
+  }
 );
 
+UserSchema.pre("save", function (next) {
+  this.updatedAt = new Date().toISOString();
+  next();
+});
 export default mongoose.model("User", UserSchema);

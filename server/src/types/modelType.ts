@@ -18,9 +18,8 @@ export interface UserType {
     type: string;
     link: string;
   }[];
-  bio?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ContactType {
@@ -28,7 +27,7 @@ export interface ContactType {
   name: string;
   isGroup: boolean;
   participants: mongoose.Types.ObjectId[];
-  admins?: mongoose.Types.ObjectId[];
+  admins: mongoose.Types.ObjectId[];
   image: string;
   publicId: string | null;
   isActive: boolean;
@@ -36,8 +35,8 @@ export interface ContactType {
     type: string;
     link: string;
   }[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface MessageType {
@@ -59,6 +58,6 @@ export interface MessageType {
   seenBy: mongoose.Types.ObjectId[];
   summary?: string;
   announcer?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }

@@ -15,6 +15,7 @@ const ContactSchema = new mongoose.Schema<ContactType>(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+        default: [],
       },
     ],
     image: { type: String },
@@ -29,10 +30,22 @@ const ContactSchema = new mongoose.Schema<ContactType>(
         { _id: false }
       ),
     ],
+    createdAt: {
+      type: String,
+      set: (v = new Date()) => new Date(v).toISOString(),
+    },
   },
   {
-    timestamps: true,
+    timestamps: {
+      createdAt: true,
+      updatedAt: true,
+    },
   }
 );
+
+ContactSchema.pre("save", function (next) {
+  this.updatedAt = new Date().toISOString();
+  next();
+});
 
 export default mongoose.model("Contact", ContactSchema);

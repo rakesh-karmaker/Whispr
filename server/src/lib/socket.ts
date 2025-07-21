@@ -5,8 +5,11 @@ import User from "../models/User.js";
 import Contact from "../models/Contact.js";
 import {
   AddContactFunctionProps,
+  MakeAdminFunctionProps,
   UpdateGroupFunctionProps,
 } from "../types/socketFunctionTypes.js";
+import mongoose from "mongoose";
+import Message from "../models/Message.js";
 
 const userSocketMap = new Map<string, string>();
 
@@ -35,7 +38,7 @@ const setUpSocket = (server: Server) => {
     const userId = socket.handshake.query.userId as string;
 
     if (userId) {
-      userSocketMap.set(userId, socket.id);
+      userSocketMap.set(userId, socket.id.toString());
       await updateUserActiveStatus(socket, userSocketMap, userId, true);
       console.log(
         `"User connected:", userId: ${userId}, socketId: ${socket.id}`
@@ -51,6 +54,8 @@ const setUpSocket = (server: Server) => {
     socket.on("update-group", (updatedContact) =>
       groupUpdate(updatedContact, socket)
     );
+
+    socket.on("make-admin", (data) => makeAdmin(data, io, userId));
 
     socket.on("disconnect", () => disconnect(socket));
   });
@@ -98,10 +103,89 @@ const groupUpdate = async (
     participants.forEach(async (participant) => {
       const socketId = userSocketMap.get(participant.toString());
       if (socketId && socketId !== socket.id) {
-        socket.to(socketId).emit("update-group", updatedContact);
+        socket.to(socketId).emit("update-group", {
+          ...updatedContact,
+          updatedAt: contact.updatedAt,
+        });
       }
     });
   }
+};
+
+const makeAdmin = async (
+  data: MakeAdminFunctionProps,
+  io: IOServer,
+  userId: string
+) => {
+  const contact = await Contact.findById(data.contactId);
+  if (!contact) return;
+
+  if (data.makeAdmin && contact) {
+    contact.participants.splice(
+      contact.participants.findIndex(
+        (participant) => participant._id.toString() === data.participantId
+      ),
+      1
+    );
+    contact.admins.push(new mongoose.Types.ObjectId(data.participantId));
+    await contact.save();
+  } else if (!data.makeAdmin && contact) {
+    contact.admins.splice(
+      contact.admins.findIndex(
+        (admin) => admin._id.toString() === data.participantId.toString()
+      ),
+      1
+    );
+    contact.participants.push(new mongoose.Types.ObjectId(data.participantId));
+  }
+
+  await contact.save();
+  await contact.populate("participants", "_id name avatar");
+  await contact.populate("admins", "_id name avatar");
+
+  const participants =
+    contact.admins && contact.admins.length > 0
+      ? [...contact.participants, ...contact.admins]
+      : contact.participants;
+
+  const participantData = await User.findById(data.participantId).select(
+    "_id name avatar"
+  );
+  const user = await User.findById(userId);
+
+  // create a new announcement
+  const announcement = await Message.create({
+    chatId: new mongoose.Types.ObjectId(data.contactId),
+    sender: userId,
+    messageType: "announcement",
+    announcer: user?.firstName,
+    summary: data.makeAdmin
+      ? `added ${participantData?.name} as admin`
+      : `removed ${participantData?.name} as admin`,
+  });
+
+  participants.forEach(async (participant) => {
+    const socketId = userSocketMap.get(participant._id.toString());
+    if (socketId) {
+      io.to(socketId).emit("make-admin", {
+        participantData,
+        makeAdmin: data.makeAdmin,
+        contactId: data.contactId,
+        updatedAt: contact.updatedAt,
+        announcement: {
+          content: announcement.content,
+          messageType: announcement.messageType,
+          seenBy: announcement.seenBy,
+          createdAt: announcement.createdAt,
+          summary: announcement.summary,
+          announcer: announcement.announcer,
+          sender: {
+            _id: announcement.sender,
+          },
+        },
+      });
+    }
+  });
 };
 
 const updateUserActiveStatus = async (
