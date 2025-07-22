@@ -3,20 +3,23 @@ import { useUser } from "@/hooks/useUser";
 import {
   addContact,
   makeAdmin,
+  removeParticipant,
   updateContact,
 } from "@/lib/socket/contactActions";
 import { useSocketStore } from "@/stores/useSocketStore";
 import type { QueriedContact } from "@/types/contactTypes";
 import type {
   MakeAdminFunctionProps,
+  RemoveParticipantFunctionProps,
   UpdatedGroupData,
 } from "@/types/socketActionTypes";
 import type React from "react";
 import { useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export default function ChatLayout(): React.ReactNode {
   const { user } = useUser();
+  const navigate = useNavigate();
 
   // set up socket
   const connect = useSocketStore((s) => s.connect);
@@ -45,6 +48,20 @@ export default function ChatLayout(): React.ReactNode {
       socket.on("make-admin", (data: MakeAdminFunctionProps) => {
         makeAdmin(data);
       });
+
+      socket.on(
+        "remove-participant",
+        (data: RemoveParticipantFunctionProps) => {
+          const nextSelectedContact = removeParticipant(data);
+
+          if (
+            nextSelectedContact !== undefined &&
+            nextSelectedContact !== null
+          ) {
+            navigate(`/chat/${nextSelectedContact._id}`, { replace: true });
+          }
+        }
+      );
     }
   }, [socket]);
 

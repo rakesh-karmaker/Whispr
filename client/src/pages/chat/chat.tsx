@@ -4,12 +4,15 @@ import { useContacts } from "@/hooks/useContacts";
 import { useSelectedContact } from "@/hooks/useSelectContact";
 import { getContact } from "@/lib/api/contacts";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
+import type { AxiosError } from "axios";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function Chat(): React.ReactNode {
   const navigate = useNavigate();
+  const [showChat, setShowChat] = useState(false);
 
+  const { pinnedContacts, contacts } = useContacts();
   const {
     selectedContact,
     setSelectedContact,
@@ -25,6 +28,13 @@ export default function Chat(): React.ReactNode {
       ) {
         setSelectedContact(res.contactData);
         setIsNewSelectedContact(false);
+        setShowChat(true);
+      }
+    },
+    onError: (err) => {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      if (axiosError.status === 403 && axiosError.response?.data?.message) {
+        setShowChat(false);
       }
     },
     onSettled: () => {
@@ -32,7 +42,6 @@ export default function Chat(): React.ReactNode {
     },
   });
 
-  const { pinnedContacts, contacts } = useContacts();
   const chatId = useParams().chatId;
   useEffect(() => {
     if (!chatId) {
@@ -40,12 +49,16 @@ export default function Chat(): React.ReactNode {
         navigate(`/chat/${pinnedContacts[0]._id}`);
       } else if (contacts.length > 0) {
         navigate(`/chat/${contacts[0]._id}`);
+      } else {
+        setShowChat(false);
       }
     } else {
       setIsLoading(true);
       getContactMutation.mutate(chatId);
     }
   }, [chatId, pinnedContacts, contacts, navigate]);
+
+  if (!showChat) return null;
 
   return (
     <div className="w-full h-full flex-1 flex gap-4">

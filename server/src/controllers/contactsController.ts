@@ -368,6 +368,17 @@ export async function getContact(req: Request, res: Response): Promise<void> {
       return;
     }
 
+    const userId = new mongoose.Types.ObjectId(req.userId as string);
+    const isUserPresent = [
+      ...contact[0].participants,
+      ...contact[0].admins,
+    ].some((participant) => participant._id.toString() === userId.toString());
+
+    if (!isUserPresent) {
+      res.status(403).send({ message: "Forbidden" });
+      return;
+    }
+
     const participantsCount = await Contact.find({ _id: objectChatId });
     contact[0].lastMessages = await addImageMetaTag(contact[0].lastMessages);
     if (!contact[0].isGroup) {

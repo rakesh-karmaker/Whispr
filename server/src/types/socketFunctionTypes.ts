@@ -41,3 +41,8 @@ export type MakeAdminFunctionProps = {
   participantId: string;
   contactId: string;
 };
+
+export type RemoveParticipantFunctionProps = {
+  participantId: string;
+  contactId: string;
+};

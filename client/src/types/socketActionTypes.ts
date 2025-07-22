@@ -30,3 +30,8 @@ export type MakeAdminFunctionProps = {
   };
   announcement: Announcement;
 };
+
+export type RemoveParticipantFunctionProps = Omit<
+  MakeAdminFunctionProps,
+  "makeAdmin"
+>;

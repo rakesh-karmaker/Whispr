@@ -1,8 +1,10 @@
 import { useContactsStore } from "@/stores/useContactsStore";
 import { useSelectedContactStore } from "@/stores/useSelectedContactStore";
-import type { QueriedContact } from "@/types/contactTypes";
+import { useUserStore } from "@/stores/useUserStore";
+import type { QueriedContact, SelectedContact } from "@/types/contactTypes";
 import type {
   MakeAdminFunctionProps,
+  RemoveParticipantFunctionProps,
   UpdatedGroupData,
 } from "@/types/socketActionTypes";
 
@@ -122,4 +124,87 @@ export function makeAdmin(data: MakeAdminFunctionProps) {
       ? [updatedContact, ...filteredContacts]
       : prevPinnedContacts;
   });
+}
+
+export function removeParticipant(data: RemoveParticipantFunctionProps) {
+  const setContacts = useContactsStore.getState().setContacts;
+  const setPinnedContacts = useContactsStore.getState().setPinnedContacts;
+  const selectedContact = useSelectedContactStore.getState().selectedContact;
+  const setSelectedContact =
+    useSelectedContactStore.getState().setSelectedContact;
+  const pinnedContacts = useContactsStore.getState().pinnedContacts;
+  const contacts = useContactsStore.getState().contacts;
+  const user = useUserStore.getState().user;
+
+  let nextSelectedContact: QueriedContact | undefined;
+
+  if (data.participantData._id.toString() === user?.id.toString()) {
+    setContacts((prevContacts) =>
+      prevContacts.filter((c) => c._id !== data.contactId)
+    );
+    if (
+      selectedContact &&
+      selectedContact._id.toString() === data.contactId.toString()
+    ) {
+      setSelectedContact({} as SelectedContact);
+      nextSelectedContact = [...pinnedContacts, ...contacts].find(
+        (c) => c._id.toString() !== data.contactId.toString()
+      );
+    }
+
+    return nextSelectedContact;
+  } else {
+    if (selectedContact._id === data.contactId) {
+      const updatedSelectedContact = selectedContact;
+      updatedSelectedContact.participants =
+        updatedSelectedContact.participants.filter(
+          (participant) =>
+            participant._id.toString() !== data.participantData._id.toString()
+        );
+      updatedSelectedContact.admins = updatedSelectedContact.admins.filter(
+        (admin) => admin._id.toString() !== data.participantData._id.toString()
+      );
+      setSelectedContact(updatedSelectedContact);
+    }
+
+    setContacts((prevContacts) => {
+      let updatedContact: (typeof prevContacts)[number] | null = null;
+
+      const filteredContacts = prevContacts.filter((contact) => {
+        if (contact._id === data.contactId) {
+          updatedContact = {
+            ...contact,
+            updatedAt: data.updatedAt,
+            lastMessages: [data.announcement, ...contact.lastMessages],
+          };
+          return false; // remove it, we'll move it to the top
+        }
+        return true;
+      });
+
+      return updatedContact
+        ? [updatedContact, ...filteredContacts]
+        : prevContacts;
+    });
+
+    setPinnedContacts((prevPinnedContacts) => {
+      let updatedContact: (typeof prevPinnedContacts)[number] | null = null;
+
+      const filteredContacts = prevPinnedContacts.filter((contact) => {
+        if (contact._id === data.contactId) {
+          updatedContact = {
+            ...contact,
+            updatedAt: data.updatedAt,
+            lastMessages: [data.announcement, ...contact.lastMessages],
+          };
+          return false; // remove it, we'll move it to the top
+        }
+        return true;
+      });
+
+      return updatedContact
+        ? [updatedContact, ...filteredContacts]
+        : prevPinnedContacts;
+    });
+  }
 }

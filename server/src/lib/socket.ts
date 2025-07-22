@@ -6,6 +6,7 @@ import Contact from "../models/Contact.js";
 import {
   AddContactFunctionProps,
   MakeAdminFunctionProps,
+  RemoveParticipantFunctionProps,
   UpdateGroupFunctionProps,
 } from "../types/socketFunctionTypes.js";
 import mongoose from "mongoose";
@@ -56,6 +57,10 @@ const setUpSocket = (server: Server) => {
     );
 
     socket.on("make-admin", (data) => makeAdmin(data, io, userId));
+
+    socket.on("remove-participant", (data) =>
+      removeParticipant(data, io, userId)
+    );
 
     socket.on("disconnect", () => disconnect(socket));
   });
@@ -170,6 +175,60 @@ const makeAdmin = async (
       io.to(socketId).emit("make-admin", {
         participantData,
         makeAdmin: data.makeAdmin,
+        contactId: data.contactId,
+        updatedAt: contact.updatedAt,
+        announcement: {
+          content: announcement.content,
+          messageType: announcement.messageType,
+          seenBy: announcement.seenBy,
+          createdAt: announcement.createdAt,
+          summary: announcement.summary,
+          announcer: announcement.announcer,
+          sender: {
+            _id: announcement.sender,
+          },
+        },
+      });
+    }
+  });
+};
+
+const removeParticipant = async (
+  data: RemoveParticipantFunctionProps,
+  io: IOServer,
+  userId: string
+) => {
+  const contact = await Contact.findByIdAndUpdate(data.contactId, {
+    $pull: {
+      participants: data.participantId,
+      admins: data.participantId,
+    },
+  });
+  if (!contact) return;
+
+  const participants =
+    contact.admins && contact.admins.length > 0
+      ? [...contact.participants, ...contact.admins]
+      : contact.participants;
+
+  const user = await User.findById(userId).select("firstName");
+  const participantData = await User.findById(data.participantId).select(
+    "_id name avatar"
+  );
+
+  const announcement = await Message.create({
+    chatId: new mongoose.Types.ObjectId(data.contactId),
+    sender: userId,
+    messageType: "announcement",
+    announcer: user?.firstName,
+    summary: `removed ${participantData?.name} from the group`,
+  });
+
+  participants.forEach(async (participant) => {
+    const socketId = userSocketMap.get(participant._id.toString());
+    if (socketId) {
+      io.to(socketId).emit("remove-participant", {
+        participantData,
         contactId: data.contactId,
         updatedAt: contact.updatedAt,
         announcement: {

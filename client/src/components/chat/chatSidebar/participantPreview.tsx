@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useSelectedContact } from "@/hooks/useSelectContact";
 import { useUser } from "@/hooks/useUser";
 import { useSocketStore } from "@/stores/useSocketStore";
+import type { SelectedContact } from "@/types/contactTypes";
 
 export default function ParticipantPreview({
   participant,
@@ -19,6 +20,7 @@ export default function ParticipantPreview({
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+  const { selectedContact } = useSelectedContact();
 
   return (
     <div className="w-full flex justify-between items-center gap-5">
@@ -33,19 +35,24 @@ export default function ParticipantPreview({
           <p className="text-sm text-gray">{isAdmin ? "Admin" : "Member"}</p>
         </div>
       </div>
-      <button
-        type="button"
-        className="w-8 h-8 rounded-full flex items-center justify-center bg-teal text-pure-white hover:bg-white-2 hover:text-black cursor-pointer transition-all duration-200"
-        onClick={handleClick}
-      >
-        <BsThreeDots />
-      </button>
-      <ParticipantDropdown
-        participant={participant}
-        isAdmin={isAdmin}
-        anchorEl={anchorEl}
-        setAnchorEl={setAnchorEl}
-      />
+      {selectedContact && selectedContact.isGroup && (
+        <>
+          <button
+            type="button"
+            className="w-8 h-8 rounded-full flex items-center justify-center bg-teal text-pure-white hover:bg-white-2 hover:text-black cursor-pointer transition-all duration-200"
+            onClick={handleClick}
+          >
+            <BsThreeDots />
+          </button>
+          <ParticipantDropdown
+            participant={participant}
+            isAdmin={isAdmin}
+            anchorEl={anchorEl}
+            setAnchorEl={setAnchorEl}
+            selectedContact={selectedContact}
+          />
+        </>
+      )}
     </div>
   );
 }
@@ -55,13 +62,14 @@ function ParticipantDropdown({
   isAdmin,
   anchorEl,
   setAnchorEl,
+  selectedContact,
 }: {
   participant: { _id: string; name: string; avatar: string };
   isAdmin: boolean;
   anchorEl: null | HTMLElement;
   setAnchorEl: React.Dispatch<React.SetStateAction<null | HTMLElement>>;
+  selectedContact: SelectedContact;
 }): React.ReactNode {
-  const { selectedContact } = useSelectedContact();
   const { user } = useUser();
   const socket = useSocketStore((s) => s.socket);
 
@@ -81,6 +89,16 @@ function ParticipantDropdown({
         makeAdmin,
         participantId: participant._id,
         contactId: selectedContact._id,
+      });
+    }
+    setAnchorEl(null);
+  };
+
+  const handleRemoveClick = () => {
+    if (socket) {
+      socket.emit("remove-participant", {
+        contactId: selectedContact._id,
+        participantId: participant._id,
       });
     }
     setAnchorEl(null);
@@ -134,17 +152,9 @@ function ParticipantDropdown({
         </MenuItem>
       )}
 
-      {isUserAdmin && participant._id === user?.id && (
-        <MenuItem onClick={handleClose} key={2}>
-          Leave
-        </MenuItem>
-      )}
-
-      {isUserAdmin && participant._id !== user?.id && (
-        <MenuItem onClick={handleClose} key={3}>
-          Remove
-        </MenuItem>
-      )}
+      <MenuItem onClick={handleRemoveClick} key={2}>
+        {isUserAdmin && participant._id === user?.id ? "Leave" : "Remove"}
+      </MenuItem>
     </Menu>
   );
 }
