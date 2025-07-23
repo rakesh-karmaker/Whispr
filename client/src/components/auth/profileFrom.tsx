@@ -13,7 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import type { RegisterDataType, UserType } from "@/types/authTypes";
 import { registerUser } from "@/lib/api/auth";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "@/contexts/userContext";
+import { useUser } from "@/hooks/useUser";
 
 export default function AuthProfileFrom({
   user,
@@ -23,7 +23,7 @@ export default function AuthProfileFrom({
   id: string;
 }): React.ReactNode {
   const navigate = useNavigate();
-  const userContext = useUser();
+  const { setUser } = useUser();
 
   const {
     register,
@@ -43,8 +43,8 @@ export default function AuthProfileFrom({
   const registerMutation = useMutation({
     mutationFn: (data: RegisterDataType) => registerUser(data),
     onSuccess: (data: UserType) => {
-      if (userContext && userContext.setUser) userContext.setUser(data);
-      navigate("/");
+      setUser(data);
+      navigate("/chat");
     },
     onError: (err) => {
       console.log(err);

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import type { Option } from "@/components/ui/multiSelectDropdown";
 import useContactSearch from "@/hooks/useContactSearch";
 import MultiSelectDropdown from "@/components/ui/multiSelectDropdown";
@@ -40,6 +40,16 @@ export default function SearchContacts({
     },
     [loading, hasMore]
   );
+
+  useEffect(() => {
+    const uniqueContacts = contacts.filter(
+      (contact) => !selected.some((selected) => selected.id === contact._id)
+    );
+
+    if (uniqueContacts.length === 0 && hasMore) {
+      setPageNumber((prevPageNumber) => prevPageNumber + 1);
+    }
+  }, [selected, contacts]);
 
   return (
     <>
