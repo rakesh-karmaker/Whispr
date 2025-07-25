@@ -9,11 +9,11 @@ import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FormSubmitBtn } from "../ui/btns";
 import type { UserType } from "@/types/authTypes";
-import { useUser } from "@/contexts/userContext";
+import { useUser } from "@/hooks/useUser";
 
 export default function LoginForm(): React.ReactNode {
   const navigate = useNavigate();
-  const userContext = useUser();
+  const { setUser } = useUser();
 
   const {
     register,
@@ -27,7 +27,7 @@ export default function LoginForm(): React.ReactNode {
   const userMutation = useMutation({
     mutationFn: (data: LoginSchema) => loginUser(data),
     onSuccess: (data: UserType) => {
-      if (userContext && userContext.setUser) userContext.setUser(data);
+      setUser(data);
       navigate("/");
     },
     onError: (err) => {

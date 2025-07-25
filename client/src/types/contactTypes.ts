@@ -39,7 +39,7 @@ export type SelectedContact = {
   socialLinks: { type: string; link: string }[];
   createdAt: string;
   isActive: boolean;
-  participantsCount: number;
+  participantCount: number;
   participants: {
     _id: string;
     name: string;

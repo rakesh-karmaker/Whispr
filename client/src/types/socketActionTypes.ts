@@ -35,3 +35,16 @@ export type RemoveParticipantFunctionProps = Omit<
   MakeAdminFunctionProps,
   "makeAdmin"
 >;
+
+export type AddParticipantFunctionProps = {
+  participants: {
+    _id: string;
+    name: string;
+    avatar: string;
+    isActive: boolean;
+    firstName: string;
+  }[];
+  updatedAt: string;
+  contactId: string;
+  announcement: Announcement;
+};

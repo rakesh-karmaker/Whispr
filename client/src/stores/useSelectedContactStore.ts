@@ -34,8 +34,18 @@ export type SelectedContactStateType = {
 export const useSelectedContactStore = create<SelectedContactStateType>(
   (set) => ({
     selectedContact: {} as SelectedContact,
-    setSelectedContact: (selectedContact) => set({ selectedContact }),
-
+    setSelectedContact: (selectedContact) => {
+      const participantCount =
+        selectedContact.admins && selectedContact.admins.length > 0
+          ? selectedContact.admins.length + selectedContact.participants.length
+          : selectedContact.participants.length;
+      set({
+        selectedContact: {
+          ...selectedContact,
+          participantCount,
+        },
+      });
+    },
     isLoading: false,
     setIsLoading: (isLoading) => set({ isLoading }),
 

@@ -131,7 +131,7 @@ function ChatHeaderInfo({
       ? "Online"
       : "Offline"
     : selectedContact.isGroup
-    ? `${selectedContact.participantsCount} members`
+    ? `${selectedContact.participantCount} members`
     : selectedContact.isActive
     ? "Online"
     : "Offline";

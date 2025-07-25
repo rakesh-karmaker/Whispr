@@ -3,6 +3,7 @@ import { useSelectedContactStore } from "@/stores/useSelectedContactStore";
 import { useUserStore } from "@/stores/useUserStore";
 import type { QueriedContact, SelectedContact } from "@/types/contactTypes";
 import type {
+  AddParticipantFunctionProps,
   MakeAdminFunctionProps,
   RemoveParticipantFunctionProps,
   UpdatedGroupData,
@@ -207,4 +208,47 @@ export function removeParticipant(data: RemoveParticipantFunctionProps) {
         : prevPinnedContacts;
     });
   }
+}
+
+export function addParticipant(data: AddParticipantFunctionProps) {
+  const selectedContact = useSelectedContactStore.getState().selectedContact;
+  const setSelectedContact =
+    useSelectedContactStore.getState().setSelectedContact;
+  const setContacts = useContactsStore.getState().setContacts;
+
+  if (selectedContact._id === data.contactId) {
+    const updatedSelectedContact = selectedContact;
+    updatedSelectedContact.participants = [
+      ...data.participants.map((participant) => {
+        return {
+          _id: participant._id,
+          name: participant.name,
+          avatar: participant.avatar,
+        };
+      }),
+      ...selectedContact.participants,
+    ];
+
+    setSelectedContact(updatedSelectedContact);
+  }
+
+  setContacts((prevContacts) => {
+    let updatedContact: (typeof prevContacts)[number] | null = null;
+
+    const filteredContacts = prevContacts.filter((contact) => {
+      if (contact._id === data.contactId) {
+        updatedContact = {
+          ...contact,
+          updatedAt: data.updatedAt,
+          lastMessages: [data.announcement, ...contact.lastMessages],
+        };
+        return false; // remove it, we'll move it to the top
+      }
+      return true;
+    });
+
+    return updatedContact
+      ? [updatedContact, ...filteredContacts]
+      : prevContacts;
+  });
 }

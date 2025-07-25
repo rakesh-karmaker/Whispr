@@ -320,7 +320,7 @@ export async function getContact(req: Request, res: Response): Promise<void> {
           foreignField: "_id",
           as: "participants",
           pipeline: [
-            { $limit: 4 },
+            // { $limit: 4 }, //TODO: add pagination for participants to reduce load
             { $project: { _id: 1, name: 1, avatar: 1, isActive: 1 } },
           ],
         },
@@ -379,7 +379,12 @@ export async function getContact(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const participantsCount = await Contact.find({ _id: objectChatId });
+    // const participantsCount = await Contact.find({ _id: objectChatId });
+    // const participantsCount =
+    //   contact[0].participants.length +
+    //   (contact[0].admins && contact[0].admins.length
+    //     ? contact[0].admins.length
+    //     : 0);
     contact[0].lastMessages = await addImageMetaTag(contact[0].lastMessages);
     if (!contact[0].isGroup) {
       contact[0].participants.forEach(
@@ -409,11 +414,7 @@ export async function getContact(req: Request, res: Response): Promise<void> {
         participants: contact[0].participants,
         admins: contact[0].admins,
         isActive: contact[0].isActive,
-        participantsCount:
-          participantsCount[0].participants.length +
-          (participantsCount[0].admins && participantsCount[0].admins.length
-            ? participantsCount[0].admins.length
-            : 0),
+        // participantsCount: participantsCount,
       },
       lastMessages: contact[0].lastMessages,
     });
@@ -483,13 +484,13 @@ export async function createNewContact(
   res: Response
 ): Promise<void> {
   try {
-    const { id } = req.body;
-    if (!id) {
+    const { _id } = req.body;
+    if (!_id) {
       res.status(400).send({ message: "Invalid request" });
       return;
     }
 
-    const objectId = new mongoose.Types.ObjectId(id);
+    const objectId = new mongoose.Types.ObjectId(_id);
     const objectUserId = new mongoose.Types.ObjectId(req.userId);
 
     const contact = await Contact.find({

@@ -5,11 +5,11 @@ import { useRef } from "react";
 import UserPreviewSkeleton from "./skeletons/userPreviewSkeleton";
 
 export type Option = {
-  id: string;
+  _id: string;
   name: string;
-  firstName: string;
-  isActive: boolean;
-  image: string;
+  firstName?: string;
+  isActive?: boolean;
+  avatar: string;
 };
 
 export default function MultiSelectDropdown({
@@ -26,13 +26,13 @@ export default function MultiSelectDropdown({
   const toggleOption = (option: SearchedContact) => {
     setSelected((prevSelected: Option[]) => {
       const filteredData = {
-        id: option._id,
+        _id: option._id,
         name: option.name,
         firstName: option.firstName,
         isActive: option.isActive,
-        image: option.avatar,
+        avatar: option.avatar,
       };
-      if (!prevSelected.some((selected) => selected.id === option._id)) {
+      if (!prevSelected.some((selected) => selected._id === option._id)) {
         return [...prevSelected, filteredData];
       } else {
         return prevSelected;
@@ -61,6 +61,7 @@ export default function MultiSelectDropdown({
     >
       {data.map((option, index) => (
         <button
+          type="button"
           key={option._id}
           ref={index === data.length - 1 ? lastRef : null}
           className="cursor-pointer block w-full focus-within:bg-white-2"

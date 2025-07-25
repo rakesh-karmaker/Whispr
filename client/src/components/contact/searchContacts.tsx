@@ -1,7 +1,9 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { Option } from "@/components/ui/multiSelectDropdown";
 import useContactSearch from "@/hooks/useContactSearch";
 import MultiSelectDropdown from "@/components/ui/multiSelectDropdown";
+import { useSelectedContact } from "@/hooks/useSelectContact";
+import type { SearchedContact } from "@/types/contactTypes";
 
 type SearchContactsProps = {
   selected: Option[];
@@ -11,6 +13,8 @@ type SearchContactsProps = {
   setPageNumber: React.Dispatch<React.SetStateAction<number>>;
   children: React.ReactNode;
   className?: string;
+  addPeople?: boolean;
+  open?: boolean;
 };
 
 export default function SearchContacts({
@@ -21,8 +25,12 @@ export default function SearchContacts({
   setPageNumber,
   children,
   className,
+  addPeople = false,
+  open = true,
 }: SearchContactsProps): React.ReactNode {
   const { contacts, loading, hasMore } = useContactSearch(query, pageNumber);
+  const { selectedContact } = useSelectedContact();
+  const [uniqueContacts, setUniqueContacts] = useState<SearchedContact[]>([]);
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastElementRef = useCallback(
@@ -42,29 +50,40 @@ export default function SearchContacts({
   );
 
   useEffect(() => {
-    const uniqueContacts = contacts.filter(
-      (contact) => !selected.some((selected) => selected.id === contact._id)
-    );
+    const uniqueContacts = contacts.filter((contact) => {
+      if (addPeople && selectedContact) {
+        const participants = selectedContact.admins
+          ? [...selectedContact.admins, ...selectedContact.participants]
+          : selectedContact.participants;
+
+        return ![...participants, ...selected].some(
+          (participant) => participant._id === contact._id
+        );
+      }
+
+      return !selected.some((selected) => selected._id === contact._id);
+    });
+
+    setUniqueContacts(uniqueContacts);
 
     if (uniqueContacts.length === 0 && hasMore) {
       setPageNumber((prevPageNumber) => prevPageNumber + 1);
     }
-  }, [selected, contacts]);
+  }, [selected, contacts, selectedContact]);
 
   return (
     <>
       {children}
-      <div className={className}>
-        <MultiSelectDropdown
-          data={contacts.filter(
-            (contact) =>
-              !selected.some((selected) => selected.id === contact._id)
-          )}
-          setSelected={setSelected}
-          lastRef={lastElementRef}
-          loading={loading}
-        />
-      </div>
+      {open && (
+        <div className={className}>
+          <MultiSelectDropdown
+            data={uniqueContacts}
+            setSelected={setSelected}
+            lastRef={lastElementRef}
+            loading={loading}
+          />
+        </div>
+      )}
     </>
   );
 }

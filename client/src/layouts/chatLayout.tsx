@@ -2,6 +2,7 @@ import ChatLeft from "@/components/chat/chatLeft";
 import { useUser } from "@/hooks/useUser";
 import {
   addContact,
+  addParticipant,
   makeAdmin,
   removeParticipant,
   updateContact,
@@ -9,6 +10,7 @@ import {
 import { useSocketStore } from "@/stores/useSocketStore";
 import type { QueriedContact } from "@/types/contactTypes";
 import type {
+  AddParticipantFunctionProps,
   MakeAdminFunctionProps,
   RemoveParticipantFunctionProps,
   UpdatedGroupData,
@@ -62,7 +64,21 @@ export default function ChatLayout(): React.ReactNode {
           }
         }
       );
+
+      socket.on("add-participant", (data: AddParticipantFunctionProps) =>
+        addParticipant(data)
+      );
     }
+
+    return () => {
+      if (socket) {
+        socket.off("add-contact");
+        socket.off("update-group");
+        socket.off("make-admin");
+        socket.off("remove-participant");
+        socket.off("add-participant");
+      }
+    };
   }, [socket]);
 
   return (

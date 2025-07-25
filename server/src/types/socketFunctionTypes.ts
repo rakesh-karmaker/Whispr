@@ -4,12 +4,12 @@ export type AddContactFunctionProps = {
   isGroup: boolean;
   isActive: boolean;
   contactImage: string;
-  updatedAt: Date;
+  updatedAt: string;
   lastMessages: {
     content: string;
     messageType: string;
     seenBy: string[];
-    createdAt: Date;
+    createdAt: string;
     summary: string;
     announcer: string;
     sender: {
@@ -27,7 +27,7 @@ export type UpdateGroupFunctionProps = {
     content: string;
     messageType: string;
     seenBy: string[];
-    createdAt: Date;
+    createdAt: string;
     summary: string;
     announcer: string;
     sender: {
@@ -44,5 +44,16 @@ export type MakeAdminFunctionProps = {
 
 export type RemoveParticipantFunctionProps = {
   participantId: string;
+  contactId: string;
+};
+
+export type AddParticipantFunctionProps = {
+  participants: {
+    _id: string;
+    name: string;
+    avatar: string;
+    isActive: boolean;
+    firstName: string;
+  }[];
   contactId: string;
 };

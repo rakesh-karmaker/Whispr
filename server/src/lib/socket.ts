@@ -5,6 +5,7 @@ import User from "../models/User.js";
 import Contact from "../models/Contact.js";
 import {
   AddContactFunctionProps,
+  AddParticipantFunctionProps,
   MakeAdminFunctionProps,
   RemoveParticipantFunctionProps,
   UpdateGroupFunctionProps,
@@ -57,6 +58,8 @@ const setUpSocket = (server: Server) => {
     );
 
     socket.on("make-admin", (data) => makeAdmin(data, io, userId));
+
+    socket.on("add-participants", (data) => addParticipant(data, io, userId));
 
     socket.on("remove-participant", (data) =>
       removeParticipant(data, io, userId)
@@ -176,6 +179,88 @@ const makeAdmin = async (
         participantData,
         makeAdmin: data.makeAdmin,
         contactId: data.contactId,
+        updatedAt: contact.updatedAt,
+        announcement: {
+          content: announcement.content,
+          messageType: announcement.messageType,
+          seenBy: announcement.seenBy,
+          createdAt: announcement.createdAt,
+          summary: announcement.summary,
+          announcer: announcement.announcer,
+          sender: {
+            _id: announcement.sender,
+          },
+        },
+      });
+    }
+  });
+};
+
+const addParticipant = async (
+  data: AddParticipantFunctionProps,
+  io: IOServer,
+  userId: string
+) => {
+  const contact = await Contact.findById(data.contactId);
+  if (!contact) return;
+
+  const participants =
+    contact.admins && contact.admins.length > 0
+      ? [...contact.participants, ...contact.admins]
+      : contact.participants;
+
+  data.participants.forEach(async (participant) => {
+    contact.participants.push(new mongoose.Types.ObjectId(participant._id));
+  });
+  await contact.save();
+
+  const user = await User.findById(userId).select("firstName");
+
+  const announcement = await Message.create({
+    chatId: new mongoose.Types.ObjectId(data.contactId),
+    sender: userId,
+    messageType: "announcement",
+    announcer: user?.firstName,
+    summary: `added ${data.participants.length > 1 ? `${data.participants.length} new participants` : data.participants[0].name} to the group`,
+  });
+
+  const lastMessages = await Message.find({
+    chatId: new mongoose.Types.ObjectId(data.contactId),
+  })
+    .sort({ createdAt: -1 })
+    .limit(10);
+  if (!lastMessages) return;
+
+  const contactData: AddContactFunctionProps = {
+    _id: data.contactId,
+    contactName: contact.name,
+    contactImage: contact.image,
+    isGroup: contact.isGroup,
+    isActive: contact.isActive,
+    updatedAt: contact.updatedAt,
+    lastMessages: lastMessages.map((message) => ({
+      content: message.content ?? "",
+      messageType: message.messageType,
+      seenBy: message.seenBy.map((seenBy) => seenBy.toString()),
+      createdAt: message.createdAt,
+      summary: message.summary ?? "",
+      announcer: message.announcer ?? "",
+      sender: { _id: message.sender.toString() },
+    })),
+  };
+
+  data.participants.forEach(async (participant) => {
+    const socketId = userSocketMap.get(participant._id.toString());
+    if (socketId) {
+      io.to(socketId).emit("add-contact", contactData);
+    }
+  });
+
+  participants.forEach(async (participant) => {
+    const socketId = userSocketMap.get(participant._id.toString());
+    if (socketId) {
+      io.to(socketId).emit("add-participant", {
+        ...data,
         updatedAt: contact.updatedAt,
         announcement: {
           content: announcement.content,
