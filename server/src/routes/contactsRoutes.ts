@@ -2,6 +2,7 @@ import {
   createNewContact,
   createNewGroup,
   getAllContacts,
+  getAssets,
   getContact,
   pinContact,
   searchContacts,
@@ -17,6 +18,7 @@ const contactsRouter = express.Router();
 contactsRouter.get("/search-contacts", verifyToken, searchContacts);
 contactsRouter.get("/get-all-contacts", verifyToken, getAllContacts);
 contactsRouter.get("/get-contact", verifyToken, getContact);
+contactsRouter.get("/get-assets", verifyToken, getAssets);
 
 contactsRouter.post("/pin-contact", verifyToken, pinContact);
 contactsRouter.post("/unpin-contact", verifyToken, unpinContact);

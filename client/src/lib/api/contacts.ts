@@ -122,3 +122,16 @@ export async function updateGroup(data: UpdateGroupMutationProps) {
   );
   return response;
 }
+
+export async function getAssets(
+  assetType: "file" | "image" | "link",
+  pageNumber: number,
+  chatId: string,
+  _cancel: Canceler
+) {
+  const { data: response } = await api.get("/contact/get-assets", {
+    params: { assetType, pageNumber, chatId },
+    cancelToken: new axios.CancelToken((c) => (_cancel = c)),
+  });
+  return response;
+}

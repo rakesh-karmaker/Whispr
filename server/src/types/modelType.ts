@@ -44,7 +44,7 @@ export interface MessageType {
   chatId: mongoose.Types.ObjectId;
   sender: mongoose.Types.ObjectId;
   content?: string;
-  messageType: "text" | "file" | "link" | "announcement";
+  messageType: "text" | "file" | "link" | "image" | "announcement";
   files?: {
     url: string;
     publicId: string;

@@ -21,12 +21,6 @@ export const useSelectedContact = () => {
   const setNewSelectedContact = useSelectedContactStore(
     (state) => state.setNewSelectedContact
   );
-  const images = useSelectedContactStore((state) => state.images);
-  const setImages = useSelectedContactStore((state) => state.setImages);
-  const files = useSelectedContactStore((state) => state.files);
-  const setFiles = useSelectedContactStore((state) => state.setFiles);
-  const links = useSelectedContactStore((state) => state.links);
-  const setLinks = useSelectedContactStore((state) => state.setLinks);
 
   return {
     selectedContact,
@@ -37,11 +31,5 @@ export const useSelectedContact = () => {
     setIsNewSelectedContact,
     newSelectedContact,
     setNewSelectedContact,
-    images,
-    setImages,
-    files,
-    setFiles,
-    links,
-    setLinks,
   };
 };

@@ -403,6 +403,19 @@ export async function getContact(req: Request, res: Response): Promise<void> {
       );
     }
 
+    const allAssets = await Message.find({
+      $and: [
+        { chatId: objectChatId },
+        {
+          messageType: {
+            $not: {
+              $in: ["announcement", "text"],
+            },
+          },
+        },
+      ],
+    });
+
     res.status(200).send({
       contactData: {
         _id: contact[0]._id.toString(),
@@ -417,6 +430,12 @@ export async function getContact(req: Request, res: Response): Promise<void> {
         // participantsCount: participantsCount,
       },
       lastMessages: contact[0].lastMessages,
+      imagesCount: allAssets.filter((asset) => asset.messageType === "image")
+        .length,
+      filesCount: allAssets.filter((asset) => asset.messageType === "file")
+        .length,
+      linksCount: allAssets.filter((asset) => asset.messageType === "link")
+        .length,
     });
   } catch (err) {
     console.log("Error getting contact - ", getDate(), "\n---\n", err);
@@ -708,6 +727,49 @@ export async function updateGroup(req: Request, res: Response): Promise<void> {
     });
   } catch (err) {
     console.log("Error updating group - ", getDate(), "\n---\n", err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    res.status(500).send({ message: "Server error", error: errorMessage });
+  }
+}
+
+export async function getAssets(req: Request, res: Response): Promise<void> {
+  try {
+    const { assetType, chatId } = req.query;
+    const page = parseInt(req.query.pageNumber as string, 10);
+    if (!assetType || isNaN(page) || page < 1 || !chatId) {
+      res.status(400).send({ message: "Invalid request" });
+      return;
+    }
+
+    const messages = await Message.find({
+      $and: [
+        { chatId: new mongoose.Types.ObjectId(chatId.toString()) },
+        { messageType: assetType },
+      ],
+    })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * 10)
+      .limit(10);
+
+    const hasMore = messages.length === 10;
+
+    const filteredMessages = await addImageMetaTag(messages);
+
+    res.status(200).send({
+      assets:
+        assetType === "link"
+          ? [
+              ...filteredMessages.map((link) => {
+                return { ...link.link };
+              }),
+            ]
+          : filteredMessages.map((asset) => {
+              return asset.files;
+            }),
+      hasMore,
+    });
+  } catch (err) {
+    console.log("Error getting assets - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);
     res.status(500).send({ message: "Server error", error: errorMessage });
   }

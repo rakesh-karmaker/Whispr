@@ -1,5 +1,6 @@
 import ChatSidebar from "@/components/chat/chatSidebar/chatSidebar";
 import ChatWindow from "@/components/chat/chatWindow";
+import { useContactAssets } from "@/hooks/useContactAssets";
 import { useContacts } from "@/hooks/useContacts";
 import { useSelectedContact } from "@/hooks/useSelectContact";
 import { getContact } from "@/lib/api/contacts";
@@ -13,6 +14,8 @@ export default function Chat(): React.ReactNode {
   const [showChat, setShowChat] = useState(false);
 
   const { pinnedContacts, contacts } = useContacts();
+  const { setImagesCount, setFilesCount, setLinksCount, reset } =
+    useContactAssets();
   const {
     selectedContact,
     setSelectedContact,
@@ -26,7 +29,11 @@ export default function Chat(): React.ReactNode {
         res.contactData &&
         (!selectedContact || res.contactData._id !== selectedContact._id)
       ) {
+        reset();
         setSelectedContact(res.contactData);
+        setImagesCount(res.imagesCount);
+        setFilesCount(res.filesCount);
+        setLinksCount(res.linksCount);
         setIsNewSelectedContact(false);
         setShowChat(true);
       }
