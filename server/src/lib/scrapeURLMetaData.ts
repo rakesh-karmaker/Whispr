@@ -13,9 +13,6 @@ export default async function scrapeURLMetaData(
 ): Promise<URLMetaData> {
   if (!url) return { title: "", description: "", image: "" };
 
-  // clean the url
-  url = url.replace("https://", "").replace("http://", "").replace("www.", "");
-
   // check if url data exists
   const data: URLMetaData = JSON.parse(
     (await redisClient.get(`url_data:${url}`)) || "{}"
@@ -23,7 +20,16 @@ export default async function scrapeURLMetaData(
 
   if (!data.title || !data.description || !data.image) {
     // fetch new data and store it
-    const { body: html, url: finalUrl } = await got.get(url);
+    const { body: html, url: finalUrl } = await got.get(url, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+          "(KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 " +
+          "WhisprScraperBot/1.0 (https://whispr.app/scraper)", // TODO: update the url
+        "Website-Scraper": "Whispr",
+        Accept: "text/html",
+      },
+    });
     const metadata = await scraper({ html, url: finalUrl });
     const newData: URLMetaData = {
       title: metadata.title ?? "",

@@ -32,6 +32,8 @@ export default function ContactPreview({
           return lastMessage.content;
         case "file":
           return lastMessage.summary;
+        case "image":
+          return lastMessage.summary;
         case "link":
           return lastMessage.summary;
         case "announcement":
