@@ -43,6 +43,13 @@ export default function ContactPreview({
             : contactData.lastMessages[0]?.announcer +
                 " " +
                 contactData.lastMessages[0]?.summary;
+        case "hybrid":
+          const name = lastMessage.summary.split(" ")[0];
+          return name === user?.firstName
+            ? "You " + lastMessage.summary.slice(name.length + 1)
+            : lastMessage.summary;
+        default:
+          return "No messages yet";
       }
     }
   };

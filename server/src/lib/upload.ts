@@ -3,6 +3,7 @@ import { Response } from "express";
 import getDate from "../utils/getDate.js";
 import { Readable } from "stream";
 import sharp from "sharp";
+import generateId from "../utils/generateId.js";
 
 export async function uploadFile(
   res: Response,
@@ -12,6 +13,15 @@ export async function uploadFile(
   height?: number
 ): Promise<{ url: string; publicId: string } | Response> {
   try {
+    if (
+      !file ||
+      !file.buffer ||
+      file.size == 0 ||
+      file.size > 10 * 1024 * 1024 // 10 MB limit
+    ) {
+      return res.status(400).send({ error: "File is empty or too large." });
+    }
+
     // change the width and height if an image
     if (file.mimetype.includes("image") && (width || height)) {
       const imageBuffer = await sharp(file.buffer)
@@ -31,8 +41,8 @@ export async function uploadFile(
       public_id: string;
     } = {
       folder: `whispr/${folder}/`,
-      resource_type: "auto", // auto detects image / video / raw
-      public_id: `${Date.now()}-${file.originalname}`,
+      resource_type: file.mimetype.includes("pdf") ? "raw" : "auto",
+      public_id: `${generateId()}-${file.originalname}`,
     };
 
     const streamUpload = (fileBuffer: Buffer) =>
@@ -41,7 +51,11 @@ export async function uploadFile(
         public_id: string;
       }>((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
-          uploadOptions,
+          {
+            use_filename: true,
+            unique_filename: true,
+            ...uploadOptions,
+          },
           (error, result) => {
             if (error) return reject(error);
             if (!result) return reject("No result from Cloudinary");
@@ -73,6 +87,9 @@ export async function uploadMultipleFiles(
 ): Promise<{ url: string; publicId: string }[] | Response> {
   try {
     const streamUpload = async (file: Express.Multer.File) => {
+      if (!file || !file.buffer || file.size === 0) {
+        throw new Error("File is empty.");
+      }
       // change the width and height if an image
       if (file.mimetype.includes("image") && (width || height)) {
         const imageBuffer = await sharp(file.buffer)

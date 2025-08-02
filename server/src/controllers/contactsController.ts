@@ -4,8 +4,9 @@ import User from "../models/User.js";
 import getDate from "../utils/getDate.js";
 import { Request, Response } from "express";
 import Message from "../models/Message.js";
-import { deleteFile, uploadFile } from "../lib/upload.js";
+import { deleteFile, uploadFile, uploadMultipleFiles } from "../lib/upload.js";
 import addImageMetaTag from "../utils/addImageMetaTag.js";
+import { MessageType } from "../types/modelType.js";
 
 export async function searchContacts(
   req: Request,
@@ -42,7 +43,7 @@ export async function searchContacts(
       .limit(10)
       .skip(((pageNumber as unknown as number) - 1) * 10);
 
-    const hasMore = allUsers.length === 10;
+    const hasMore = allUsers.length > 0;
 
     res.status(200).send({
       contacts: allUsers,
@@ -104,7 +105,7 @@ export async function getAllContacts(
             let: { chatId: "$_id" },
             pipeline: [
               { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
-              { $sort: { createdAt: -1 } },
+              { $sort: { updatedAt: -1 } },
               { $limit: 10 },
               {
                 $lookup: {
@@ -289,7 +290,7 @@ export async function getAllContacts(
       { $sort: { updatedAt: -1 } },
     ]);
 
-    const hasMore = allContacts.length === 10;
+    const hasMore = allContacts.length > 0;
     res.status(200).send({
       pinnedContacts: pinnedContactsWithMessages,
       contacts: allContacts,
@@ -342,7 +343,7 @@ export async function getContact(req: Request, res: Response): Promise<void> {
           let: { chatId: "$_id" },
           pipeline: [
             { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
-            { $sort: { createdAt: -1 } },
+            { $sort: { updatedAt: -1 } },
             { $limit: 15 },
           ],
           as: "lastMessages",
@@ -416,6 +417,28 @@ export async function getContact(req: Request, res: Response): Promise<void> {
       ],
     });
 
+    // Count images, files, and links
+    let imagesCount: number = 0;
+    let filesCount: number = 0;
+    let linksCount: number = 0;
+    allAssets.forEach((asset: MessageType) => {
+      if (asset.messageType === "link") {
+        linksCount++;
+      } else if (asset.messageType === "image") {
+        imagesCount += asset.files ? asset.files.length : 0;
+      } else if (asset.messageType === "file") {
+        filesCount += asset.files ? asset.files.length : 0;
+      } else if (asset.messageType === "hybrid") {
+        asset.files?.forEach((file) => {
+          if (file.publicId.startsWith("whispr/images/")) {
+            imagesCount++;
+          } else {
+            filesCount++;
+          }
+        });
+      }
+    });
+
     res.status(200).send({
       contactData: {
         _id: contact[0]._id.toString(),
@@ -430,12 +453,9 @@ export async function getContact(req: Request, res: Response): Promise<void> {
         // participantsCount: participantsCount,
       },
       lastMessages: contact[0].lastMessages,
-      imagesCount: allAssets.filter((asset) => asset.messageType === "image")
-        .length,
-      filesCount: allAssets.filter((asset) => asset.messageType === "file")
-        .length,
-      linksCount: allAssets.filter((asset) => asset.messageType === "link")
-        .length,
+      imagesCount,
+      filesCount,
+      linksCount,
     });
   } catch (err) {
     console.log("Error getting contact - ", getDate(), "\n---\n", err);
@@ -741,19 +761,21 @@ export async function getAssets(req: Request, res: Response): Promise<void> {
       return;
     }
 
+    //! This loads all messages, consider optimizing
     const messages = await Message.find({
-      $and: [
-        { chatId: new mongoose.Types.ObjectId(chatId.toString()) },
-        { messageType: assetType },
-      ],
+      chatId: new mongoose.Types.ObjectId(chatId.toString()),
+      messageType: { $in: ["hybrid", assetType] },
     })
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * 10)
-      .limit(10);
+      .sort({ updatedAt: -1 })
+      .select("files messageType link");
 
-    const hasMore = messages.length === 10;
+    // paginate manually
+    const startIndex = (page - 1) * 10;
+    const endIndex = startIndex + 10;
+    const paginatedMessages = messages.slice(startIndex, endIndex);
 
-    const filteredMessages = await addImageMetaTag(messages);
+    const hasMore = paginatedMessages.length > 0;
+    const filteredMessages = await addImageMetaTag(paginatedMessages);
 
     res.status(200).send({
       assets:

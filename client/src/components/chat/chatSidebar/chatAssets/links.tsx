@@ -32,7 +32,7 @@ export default function Links(): React.ReactNode {
     [isLoading, hasMoreLinks]
   );
 
-  const length = links.length;
+  const length = links ? links.length : 0;
 
   return (
     <div className="w-full h-full grid grid-cols-1 gap-2.5 overflow-hidden">
@@ -60,6 +60,7 @@ function Link({
   lastElementRef: ((node: HTMLDivElement) => void) | null;
 }) {
   const title = linkData.title || linkData.url;
+  if (!linkData.url) return null;
   return (
     <div ref={lastElementRef}>
       <a

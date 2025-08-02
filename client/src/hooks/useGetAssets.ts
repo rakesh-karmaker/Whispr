@@ -32,29 +32,44 @@ export default function useGetAssets(
         );
 
         if (assetType !== "link") {
-          const newData: FileMessageType[] = [];
+          const assets: FileMessageType[] = [];
           data.assets.forEach((asset: FileMessageType[]) => {
-            newData.push(
-              ...asset.map((a) => {
-                return { url: a.url, publicId: a.publicId };
-              })
-            );
+            asset.forEach((item: FileMessageType) => {
+              if (item) {
+                assets.push(item);
+              }
+            });
           });
+
+          console.log(data.assets, "assets");
+
           assetType === "image"
             ? setImages((prev) =>
                 prev.concat(
-                  newData.filter(
-                    (img) =>
-                      prev.some((i) => i.publicId === img.publicId) === false
-                  )
+                  assets
+                    .map((asset: FileMessageType) => {
+                      if (asset.publicId.startsWith("whispr/images/")) {
+                        return asset;
+                      }
+                      return undefined;
+                    })
+                    .filter(
+                      (asset): asset is FileMessageType => asset !== undefined
+                    )
                 )
               )
             : setFiles((prev) =>
                 prev.concat(
-                  newData.filter(
-                    (img) =>
-                      prev.some((i) => i.publicId === img.publicId) === false
-                  )
+                  assets
+                    .map((asset: FileMessageType) => {
+                      if (asset.publicId.startsWith("whispr/files/")) {
+                        return asset;
+                      }
+                      return undefined;
+                    })
+                    .filter(
+                      (asset): asset is FileMessageType => asset !== undefined
+                    )
                 )
               );
         } else {
