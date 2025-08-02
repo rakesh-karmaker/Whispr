@@ -36,6 +36,7 @@ export default function Photos(): React.ReactNode {
   return (
     <div className="w-full h-full grid grid-cols-3 gap-1.5 [grid-template-rows:_auto] overflow-hidden">
       {images.map((image, index) => {
+        if (image.url === "") return null;
         const key = image.publicId || `${image.url}-${index}`;
         if (index === images.length - 1) {
           return (

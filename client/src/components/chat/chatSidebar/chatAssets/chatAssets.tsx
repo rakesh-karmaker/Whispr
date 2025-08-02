@@ -4,16 +4,27 @@ import { FaChevronDown } from "react-icons/fa";
 import Photos from "./photos";
 import { useContactAssets } from "@/hooks/useContactAssets";
 import { useSelectedContact } from "@/hooks/useSelectContact";
+import { PiImageSquareFill, PiLinkSimpleBold } from "react-icons/pi";
 import Links from "./links";
 
 export default function ChatAssets(): React.ReactNode {
   const { imagesCount, linksCount } = useContactAssets();
   return (
     <div className="w-full h-full flex flex-col gap-4 relative mt-5">
-      <AssetsLayout title="Photos" number={imagesCount} logo={<></>}>
+      <AssetsLayout
+        title="Images"
+        subTitle={`${imagesCount} Photos`}
+        logo={<PiImageSquareFill className="text-teal text-3xl" />}
+        color="bg-light-teal"
+      >
         <Photos />
       </AssetsLayout>
-      <AssetsLayout title="Links" number={linksCount} logo={<></>}>
+      <AssetsLayout
+        title="Links"
+        subTitle={`${linksCount} URLs`}
+        logo={<PiLinkSimpleBold className="text-tan text-2xl" />}
+        color="bg-light-beige"
+      >
         <Links />
       </AssetsLayout>
       <div className="absolute -top-5 w-full h-[1px] bg-[#D8D8D8]/70 transition-all duration-200" />
@@ -24,13 +35,15 @@ export default function ChatAssets(): React.ReactNode {
 function AssetsLayout({
   logo,
   title,
-  number,
+  subTitle,
   children,
+  color = "bg-gray-200",
 }: {
   logo: React.ReactNode;
   title: string;
-  number: number;
+  subTitle: string;
   children: React.ReactNode;
+  color?: string;
 }): React.ReactNode {
   const [open, setOpen] = useState<boolean>(false);
   const { selectedContact } = useSelectedContact();
@@ -42,20 +55,24 @@ function AssetsLayout({
     <div className="w-full flex flex-col">
       <button
         type="button"
-        className="w-full flex justify-between items-center"
+        className={`w-full flex justify-between items-center cursor-pointer hover:bg-white-2 transition-all pr-2 duration-200 rounded-md ${
+          open ? "bg-white-2" : ""
+        }`}
+        onClick={() => setOpen(!open)}
       >
-        <div
-          className="w-full flex items-center gap-2.5 text-gray cursor-pointer hover:text-black transition-all duration-200"
-          onClick={() => setOpen(!open)}
-        >
-          {logo}
-          <p className="text-sm flex items-center gap-1">
-            <span className="font-semibold">{number}</span>
-            <span className="font-semibold">{title}</span>
+        <div className="flex items-center gap-2.5">
+          <div
+            className={`w-15 aspect-square ${color} rounded-md flex justify-center items-center`}
+          >
+            {logo}
+          </div>
+          <p className="flex flex-col">
+            <span className="font-semibold text-lg">{title}</span>
+            <span className="text-gray-500 text-sm">{subTitle}</span>
           </p>
         </div>
         <FaChevronDown
-          className={`text-lg text-gray transition-all duration-200 hover:text-black cursor-pointer ${
+          className={`text-lg text-gray-500 transition-all duration-200 hover:text-black cursor-pointer ${
             open ? "rotate-180" : ""
           }`}
         />

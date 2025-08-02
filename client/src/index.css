@@ -14,7 +14,10 @@
   --light-dark-gray: #525252;
   --gray: #696969;
   --teal: #4ec6bd;
+  --light-teal: #e5f7fa;
   --red: #ff4141;
+  --light-beige: #f4ead0;
+  --tan: #c4af7b;
 }
 
 @theme inline {
@@ -29,7 +32,10 @@
   --color-light-dark-gray: var(--light-dark-gray);
   --color-gray: var(--gray);
   --color-teal: var(--teal);
+  --color-light-teal: var(--light-teal);
   --color-red: var(--red);
+  --color-light-beige: var(--light-beige);
+  --color-tan: var(--tan);
 
   --breakpoint-xs: 25rem; /* 400px */
 }
