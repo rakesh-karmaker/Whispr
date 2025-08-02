@@ -16,9 +16,9 @@ export default function AddParticipant(): React.ReactNode {
   return (
     <>
       <PrimaryBtn onClick={() => setShow(!show)} isLoading={false}>
-        <span className="flex items-center">
-          <IoMdPersonAdd className="text-2xl" />
-          <span className="ml-2">Add participant</span>
+        <span className="flex items-center text-md">
+          <IoMdPersonAdd className="text-xl" />
+          <span className="ml-1.5">Add participant</span>
         </span>
       </PrimaryBtn>
       <Modal

@@ -12,7 +12,7 @@ export default function useGetAllContacts(pageNumber: number): {
   const { setContacts, setPinnedContacts, isLoading, setIsLoading } =
     useContacts();
   const [error, setError] = useState<boolean>(false);
-  const [hasMore, setHasMore] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   useEffect(() => {
     setIsLoading(true);
@@ -45,7 +45,7 @@ export default function useGetAllContacts(pageNumber: number): {
       }
     };
 
-    fetchData();
+    hasMore && fetchData();
     return () => {
       cancel();
     };

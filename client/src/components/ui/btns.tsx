@@ -55,7 +55,7 @@ export function PrimaryBtn({
 }): React.ReactNode {
   return (
     <button
-      className="btn w-full h-fit text-[1.15em] text-pure-white font-medium [padding:0.7em_1.2em!important] bg-teal text-black rounded-4xl flex items-center justify-center cursor-pointer btn border-none outline-none hover:bg-white-2 hover:text-black transition-all duration-300 disabled:cursor-not-allowed disabled:hover:bg-teal disabled:hover:text-pure-white disabled:opacity-60"
+      className="btn w-full h-fit text-pure-white font-medium [padding:0.7em_1.2em!important] bg-teal rounded-4xl flex items-center justify-center cursor-pointer btn border-none outline-none hover:bg-white-2 hover:text-black transition-all duration-300 disabled:cursor-not-allowed disabled:hover:bg-teal disabled:hover:text-pure-white disabled:opacity-60"
       onClick={onClick}
       disabled={isLoading}
       type="button"

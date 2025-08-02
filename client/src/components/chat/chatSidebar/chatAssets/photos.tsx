@@ -7,7 +7,7 @@ import { useCallback, useRef, useState } from "react";
 export default function Photos(): React.ReactNode {
   const { images, hasMoreImages, imagePage, setImagePage, setHasMoreImages } =
     useContactAssets();
-  const { error, isLoading } = useGetAssets(
+  const { isLoading } = useGetAssets(
     imagePage,
     hasMoreImages,
     setHasMoreImages,
@@ -67,14 +67,14 @@ export default function Photos(): React.ReactNode {
           );
         }
       })}
-      {(isLoading && hasMoreImages) ||
-        (error &&
-          [...Array(3)].map((_, index) => (
-            <div
-              key={index}
-              className="w-full h-full aspect-square skeleton rounded-sm"
-            />
-          )))}
+      {isLoading &&
+        hasMoreImages &&
+        [...Array(3)].map((_, index) => (
+          <div
+            key={index}
+            className="w-full h-full aspect-square skeleton rounded-sm"
+          />
+        ))}
 
       <ImageViewer
         data={images.map((image) => ({ url: image.url }))}

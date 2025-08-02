@@ -10,7 +10,7 @@ export default function ParticipantList(): React.ReactNode {
   const [showAll, setShowAll] = useState<boolean>(false);
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 relative mt-5">
+    <div className="w-full h-hit flex flex-col gap-4 relative mt-5">
       <div className="w-full h-fit flex justify-between items-center">
         <p className="font-medium text-gray">Members</p>
         {selectedContact.participantCount > 8 && (
@@ -69,7 +69,7 @@ function Participants({
                 }
               />
             ))}
-      <AddParticipant />
+      {selectedContact.isGroup && <AddParticipant />}
     </div>
   );
 }

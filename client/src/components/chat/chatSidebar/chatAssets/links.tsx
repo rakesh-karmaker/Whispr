@@ -8,7 +8,7 @@ import { FaLink } from "react-icons/fa6";
 export default function Links(): React.ReactNode {
   const { links, hasMoreLinks, linkPage, setLinkPage, setHasMoreLinks } =
     useContactAssets();
-  const { error, isLoading } = useGetAssets(
+  const { isLoading } = useGetAssets(
     linkPage,
     hasMoreLinks,
     setHasMoreLinks,
@@ -45,13 +45,9 @@ export default function Links(): React.ReactNode {
           />
         );
       })}
-      {error && <p className="text-red-500">Error loading links</p>}
-      {isLoading && hasMoreLinks && (
-        <>
-          <LinkPreviewSkeleton />
-          <LinkPreviewSkeleton />
-        </>
-      )}
+      {isLoading &&
+        hasMoreLinks &&
+        [...Array(2)].map((_, index) => <LinkPreviewSkeleton key={index} />)}
     </div>
   );
 }

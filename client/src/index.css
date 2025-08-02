@@ -18,6 +18,8 @@
   --red: #ff4141;
   --light-beige: #f4ead0;
   --tan: #c4af7b;
+  --light-blue: #dee1f9;
+  --blue: #5968dc;
 }
 
 @theme inline {
@@ -36,6 +38,8 @@
   --color-red: var(--red);
   --color-light-beige: var(--light-beige);
   --color-tan: var(--tan);
+  --color-light-blue: var(--light-blue);
+  --color-blue: var(--blue);
 
   --breakpoint-xs: 25rem; /* 400px */
 }

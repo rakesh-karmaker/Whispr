@@ -12,17 +12,14 @@ export default function useGetAssets(
   setHasMore: (hasMore: boolean) => void,
   assetType: "image" | "file" | "link"
 ): {
-  error: boolean;
   isLoading: boolean;
 } {
-  const [error, setError] = useState<boolean>(false);
   const { setImages, setFiles, setLinks } = useContactAssets();
   const { selectedContact } = useSelectedContact();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setIsLoading(true);
-    setError(false);
     let cancel: Canceler = () => {};
 
     const fetchData = async () => {
@@ -67,7 +64,6 @@ export default function useGetAssets(
         setHasMore(data.hasMore);
       } catch (err) {
         if (axios.isCancel(err)) return;
-        setError(true);
         console.log(err);
       } finally {
         setIsLoading(false);
@@ -80,5 +76,5 @@ export default function useGetAssets(
     };
   }, [pageNumber]);
 
-  return { error, isLoading };
+  return { isLoading };
 }

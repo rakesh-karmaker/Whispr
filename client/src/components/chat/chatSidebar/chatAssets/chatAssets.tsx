@@ -1,6 +1,6 @@
 import type React from "react";
 import { useEffect, useState } from "react";
-import { FaChevronDown } from "react-icons/fa";
+import { FaChevronDown, FaFile } from "react-icons/fa";
 import Photos from "./photos";
 import { useContactAssets } from "@/hooks/useContactAssets";
 import { useSelectedContact } from "@/hooks/useSelectContact";
@@ -8,12 +8,20 @@ import { PiImageSquareFill, PiLinkSimpleBold } from "react-icons/pi";
 import Links from "./links";
 
 export default function ChatAssets(): React.ReactNode {
-  const { imagesCount, linksCount } = useContactAssets();
+  const { imagesCount, linksCount, filesCount } = useContactAssets();
   return (
     <div className="w-full h-full flex flex-col gap-4 relative mt-5">
       <AssetsLayout
-        title="Images"
-        subTitle={`${imagesCount} Photos`}
+        title="Documents"
+        subTitle={`${filesCount} files`}
+        logo={<FaFile className="text-blue text-2xl" />}
+        color="bg-light-blue"
+      >
+        <Links />
+      </AssetsLayout>
+      <AssetsLayout
+        title="Photos"
+        subTitle={`${imagesCount} files`}
         logo={<PiImageSquareFill className="text-teal text-3xl" />}
         color="bg-light-teal"
       >
@@ -66,7 +74,7 @@ function AssetsLayout({
           >
             {logo}
           </div>
-          <p className="flex flex-col">
+          <p className="flex flex-col items-start">
             <span className="font-semibold text-lg">{title}</span>
             <span className="text-gray-500 text-sm">{subTitle}</span>
           </p>
