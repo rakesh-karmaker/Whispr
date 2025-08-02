@@ -4,13 +4,17 @@ import { FaChevronDown } from "react-icons/fa";
 import Photos from "./photos";
 import { useContactAssets } from "@/hooks/useContactAssets";
 import { useSelectedContact } from "@/hooks/useSelectContact";
+import Links from "./links";
 
 export default function ChatAssets(): React.ReactNode {
-  const { imagesCount } = useContactAssets();
+  const { imagesCount, linksCount } = useContactAssets();
   return (
     <div className="w-full h-full flex flex-col gap-4 relative mt-5">
       <AssetsLayout title="Photos" number={imagesCount} logo={<></>}>
         <Photos />
+      </AssetsLayout>
+      <AssetsLayout title="Links" number={linksCount} logo={<></>}>
+        <Links />
       </AssetsLayout>
       <div className="absolute -top-5 w-full h-[1px] bg-[#D8D8D8]/70 transition-all duration-200" />
     </div>

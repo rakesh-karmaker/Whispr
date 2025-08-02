@@ -1,0 +1,92 @@
+import LinkPreviewSkeleton from "@/components/ui/skeletons/linkPreviewSkeleton";
+import { useContactAssets } from "@/hooks/useContactAssets";
+import useGetAssets from "@/hooks/useGetAssets";
+import type { LinkMessageType } from "@/types/messageTypes";
+import React, { useCallback, useRef } from "react";
+
+export default function Links(): React.ReactNode {
+  const { links, hasMoreLinks, linkPage, setLinkPage, setHasMoreLinks } =
+    useContactAssets();
+  const { error, isLoading } = useGetAssets(
+    linkPage,
+    hasMoreLinks,
+    setHasMoreLinks,
+    "link"
+  );
+
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastElementRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (isLoading) return;
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMoreLinks) {
+          setLinkPage(linkPage + 1);
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, hasMoreLinks]
+  );
+
+  const length = links.length;
+
+  return (
+    <div className="w-full h-full grid grid-cols-1 gap-2.5 overflow-hidden">
+      {links.map((link, index) => {
+        return (
+          <Link
+            key={`${link.url}-${index}`}
+            linkData={link}
+            lastElementRef={index === length - 1 ? lastElementRef : null}
+          />
+        );
+      })}
+      {error && <p className="text-red-500">Error loading links</p>}
+      {isLoading && hasMoreLinks && (
+        <>
+          <LinkPreviewSkeleton />
+          <LinkPreviewSkeleton />
+        </>
+      )}
+    </div>
+  );
+}
+
+function Link({
+  linkData,
+  lastElementRef,
+}: {
+  linkData: LinkMessageType;
+  lastElementRef: ((node: HTMLDivElement) => void) | null;
+}) {
+  const title = linkData.title || linkData.url;
+  return (
+    <div ref={lastElementRef}>
+      <a
+        href={linkData.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-sm w-full relative h-fit flex gap-2.5 rounded-md items-center bg-pure-white hover:bg-white-2 transition-all duration-200"
+      >
+        <img
+          src={linkData.imageURL}
+          alt={title}
+          className="w-15 aspect-square object-cover rounded-md"
+        />
+        <span className="w-full flex flex-col">
+          <span>{title.length > 30 ? `${title.slice(0, 30)}...` : title}</span>
+          {linkData.title && (
+            <span className="text-gray-500 text-xs">
+              {linkData.url.length > 40
+                ? `${linkData.url.slice(0, 40)}...`
+                : linkData.url}
+            </span>
+          )}
+        </span>
+      </a>
+    </div>
+  );
+}

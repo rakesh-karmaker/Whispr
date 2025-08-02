@@ -61,7 +61,7 @@ export default function useGetAssets(
                 )
               );
         } else {
-          setLinks(data.assets);
+          setLinks((prev) => prev.concat(data.assets));
         }
 
         setHasMore(data.hasMore);

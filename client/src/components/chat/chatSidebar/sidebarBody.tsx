@@ -1,7 +1,7 @@
 import type React from "react";
 import ParticipantList from "./participantList";
 import ChatInfo from "./chatInfo";
-import ChatAssets from "./chatAssets";
+import ChatAssets from "./chatAssets/chatAssets";
 
 export default function SidebarBody(): React.ReactNode {
   return (

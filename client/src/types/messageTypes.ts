@@ -10,9 +10,9 @@ export type MessageType = {
   }[];
   link?: {
     url: string;
-    ogImageURL?: string;
-    ogTitle?: string;
-    ogDescription?: string;
+    imageURL?: string;
+    title?: string;
+    description?: string;
   };
   seenBy: string[];
   summary?: string;
@@ -28,7 +28,7 @@ export type FileMessageType = {
 
 export type LinkMessageType = {
   url: string;
-  ogImageURL: string;
-  ogTitle: string;
-  ogDescription: string;
+  title: string;
+  description: string;
+  imageURL: string;
 };
