@@ -59,5 +59,5 @@ export interface MessageType {
   summary?: string;
   announcer?: string;
   createdAt: string;
-  updatedAt: string;
+  updatedAt: Date;
 }

@@ -211,7 +211,7 @@ export async function getAllContacts(
           let: { chatId: "$_id" },
           pipeline: [
             { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
-            { $sort: { createdAt: -1 } },
+            { $sort: { updatedAt: -1 } },
             { $limit: 10 },
             {
               $lookup: {
