@@ -4,9 +4,13 @@ import User from "../models/User.js";
 import getDate from "../utils/getDate.js";
 import { Request, Response } from "express";
 import Message from "../models/Message.js";
-import { deleteFile, uploadFile, uploadMultipleFiles } from "../lib/upload.js";
 import addImageMetaTag from "../utils/addImageMetaTag.js";
 import { MessageType } from "../types/modelType.js";
+import { searchContactsQuery } from "../queries/searchQueries.js";
+import {
+  getAllContactsQuery,
+  getContactQuery,
+} from "../queries/contactQueries.js";
 
 export async function searchContacts(
   req: Request,
@@ -19,29 +23,11 @@ export async function searchContacts(
       return;
     }
 
-    const sanitizedSearchTerm = (searchTerm as string).replace(
-      /[.*+?^${}()|[\]\\]/g,
-      "\\$&"
+    const allUsers = await searchContactsQuery(
+      searchTerm as string,
+      pageNumber as unknown as number,
+      req
     );
-
-    const includesRegex = new RegExp(sanitizedSearchTerm, "i");
-
-    const allUsers = await User.find({
-      $and: [
-        { _id: { $ne: req.userId } },
-        {
-          $or: [
-            { name: { $regex: includesRegex } },
-            { firstName: { $regex: includesRegex } },
-            { lastName: { $regex: includesRegex } },
-            { email: { $regex: includesRegex } },
-          ],
-        },
-      ],
-    })
-      .select("name firstName lastName email avatar isActive")
-      .limit(10)
-      .skip(((pageNumber as unknown as number) - 1) * 10);
 
     const hasMore = allUsers.length > 0;
 
@@ -83,212 +69,26 @@ export async function getAllContacts(
 
     // Only fetch pinned contacts on page 1
     if (page === 1) {
-      pinnedContactsWithMessages = await Contact.aggregate([
-        {
-          $match: {
-            _id: { $in: pinnedContactIds },
-          },
-        },
-        // Lookup participant user info
-        {
-          $lookup: {
-            from: "users",
-            localField: "participants",
-            foreignField: "_id",
-            as: "participantDetails",
-          },
-        },
-        // Lookup last 10 messages
-        {
-          $lookup: {
-            from: "messages",
-            let: { chatId: "$_id" },
-            pipeline: [
-              { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
-              { $sort: { updatedAt: -1 } },
-              { $limit: 10 },
-              {
-                $lookup: {
-                  from: "users",
-                  localField: "sender",
-                  foreignField: "_id",
-                  as: "senderDetails",
-                },
-              },
-              { $unwind: "$senderDetails" },
-              {
-                $project: {
-                  content: 1,
-                  messageType: 1,
-                  createdAt: 1,
-                  seenBy: 1,
-                  summary: 1,
-                  announcer: 1,
-                  sender: {
-                    _id: "$senderDetails._id",
-                    name: "$senderDetails.name",
-                    avatar: "$senderDetails.avatar",
-                  },
-                },
-              },
-            ],
-            as: "lastMessages",
-          },
-        },
-        // Get the other user in DM chats
-        {
-          $addFields: {
-            otherParticipant: {
-              $first: {
-                $filter: {
-                  input: "$participantDetails",
-                  as: "p",
-                  cond: {
-                    $ne: ["$$p._id", new mongoose.Types.ObjectId(userId)],
-                  },
-                },
-              },
-            },
-          },
-        },
-        // Set display name & image based on group or DM
-        {
-          $addFields: {
-            contactName: {
-              $cond: {
-                if: "$isGroup",
-                then: "$name",
-                else: "$otherParticipant.name",
-              },
-            },
-            contactImage: {
-              $cond: {
-                if: "$isGroup",
-                then: "$image",
-                else: "$otherParticipant.avatar",
-              },
-            },
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            isGroup: 1,
-            isActive: "$otherParticipant.isActive",
-            updatedAt: 1,
-            contactName: 1,
-            contactImage: 1,
-            lastMessages: 1,
-          },
-        },
-        { $sort: { updatedAt: -1 } },
-      ]);
+      pinnedContactsWithMessages = await getAllContactsQuery(
+        objectUserId,
+        { _id: { $in: pinnedContactIds } },
+        0,
+        1
+      );
     }
 
-    // Get non-pinned contacts with messages
-    const allContacts = await Contact.aggregate([
+    // Get all contacts excluding pinned contacts
+    const allContacts = await getAllContactsQuery(
+      objectUserId,
       {
-        $match: {
-          $and: [
-            { $or: [{ participants: objectUserId }, { admins: objectUserId }] },
-            { _id: { $nin: pinnedContactIds } },
-          ],
-        },
+        $and: [
+          { $or: [{ participants: objectUserId }, { admins: objectUserId }] },
+          { _id: { $nin: pinnedContactIds } },
+        ],
       },
-      // Get participant user info
-      {
-        $lookup: {
-          from: "users",
-          localField: "participants",
-          foreignField: "_id",
-          as: "participantDetails",
-        },
-      },
-      // Get last 10 messages for each chat
-      {
-        $lookup: {
-          from: "messages",
-          let: { chatId: "$_id" },
-          pipeline: [
-            { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
-            { $sort: { updatedAt: -1 } },
-            { $limit: 10 },
-            {
-              $lookup: {
-                from: "users",
-                localField: "sender",
-                foreignField: "_id",
-                as: "senderDetails",
-              },
-            },
-            { $unwind: "$senderDetails" },
-            {
-              $project: {
-                content: 1,
-                messageType: 1,
-                createdAt: 1,
-                seenBy: 1,
-                summary: 1,
-                announcer: 1,
-                sender: {
-                  _id: "$senderDetails._id",
-                  name: "$senderDetails.name",
-                  avatar: "$senderDetails.avatar",
-                },
-              },
-            },
-          ],
-          as: "lastMessages",
-        },
-      },
-      // Extract the "other" participant for DMs
-      {
-        $addFields: {
-          otherParticipant: {
-            $first: {
-              $filter: {
-                input: "$participantDetails",
-                as: "p",
-                cond: { $ne: ["$$p._id", objectUserId] },
-              },
-            },
-          },
-        },
-      },
-      // Add display fields
-      {
-        $addFields: {
-          contactName: {
-            $cond: {
-              if: "$isGroup",
-              then: "$name",
-              else: "$otherParticipant.name",
-            },
-          },
-          contactImage: {
-            $cond: {
-              if: "$isGroup",
-              then: "$image",
-              else: "$otherParticipant.avatar",
-            },
-          },
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          isGroup: 1,
-          isActive: "$otherParticipant.isActive",
-          updatedAt: 1,
-          contactName: 1,
-          contactImage: 1,
-          lastMessages: 1,
-        },
-      },
-      { $skip: (page - 1) * 10 },
-      { $limit: 10 },
-      { $sort: { updatedAt: -1 } },
-    ]);
+      10,
+      page
+    );
 
     const hasMore = allContacts.length > 0;
     res.status(200).send({
@@ -310,60 +110,9 @@ export async function getContact(req: Request, res: Response): Promise<void> {
       res.status(400).send({ message: "Invalid request" });
       return;
     }
+
     const objectChatId = new mongoose.Types.ObjectId(chatId as string);
-    const contact = await Contact.aggregate([
-      { $match: { _id: objectChatId } },
-      // get the 1st 4 participants
-      {
-        $lookup: {
-          from: "users",
-          localField: "participants",
-          foreignField: "_id",
-          as: "participants",
-          pipeline: [
-            // { $limit: 4 }, //TODO: add pagination for participants to reduce load
-            { $project: { _id: 1, name: 1, avatar: 1, isActive: 1 } },
-          ],
-        },
-      },
-      // get all admins
-      {
-        $lookup: {
-          from: "users",
-          localField: "admins",
-          foreignField: "_id",
-          as: "admins",
-          pipeline: [{ $project: { _id: 1, name: 1, avatar: 1, isActive: 1 } }],
-        },
-      },
-      // get last 15 messages
-      {
-        $lookup: {
-          from: "messages",
-          let: { chatId: "$_id" },
-          pipeline: [
-            { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
-            { $sort: { updatedAt: -1 } },
-            { $limit: 15 },
-          ],
-          as: "lastMessages",
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          isGroup: 1,
-          socialLinks: 1,
-          createdAt: 1,
-          participants: 1,
-          admins: 1,
-          isActive: 1,
-          lastMessages: 1,
-          name: 1,
-          image: 1,
-        },
-      },
-    ]);
+    const contact = await getContactQuery(objectChatId);
     if (contact.length === 0) {
       res.status(404).send({ message: "Contact not found" });
       return;
@@ -380,12 +129,6 @@ export async function getContact(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    // const participantsCount = await Contact.find({ _id: objectChatId });
-    // const participantsCount =
-    //   contact[0].participants.length +
-    //   (contact[0].admins && contact[0].admins.length
-    //     ? contact[0].admins.length
-    //     : 0);
     contact[0].lastMessages = await addImageMetaTag(contact[0].lastMessages);
     if (!contact[0].isGroup) {
       contact[0].participants.forEach(
@@ -464,10 +207,13 @@ export async function getContact(req: Request, res: Response): Promise<void> {
   }
 }
 
-export async function pinContact(req: Request, res: Response): Promise<void> {
+export async function changeContactPinStatus(
+  req: Request,
+  res: Response
+): Promise<void> {
   try {
-    const { chatId } = req.body;
-    if (!chatId) {
+    const { chatId, willPin } = req.body;
+    if (!chatId || typeof willPin !== "boolean") {
       res.status(400).send({ message: "Invalid request" });
       return;
     }
@@ -479,40 +225,20 @@ export async function pinContact(req: Request, res: Response): Promise<void> {
     }
 
     const objectChatId = new mongoose.Types.ObjectId(chatId);
-    await User.updateOne(
-      { _id: req.userId },
-      { $push: { pinnedContacts: objectChatId } }
-    );
-    res.status(200).send({ contactId: chatId, pinned: true });
+    if (willPin) {
+      await User.updateOne(
+        { _id: req.userId },
+        { $push: { pinnedContacts: objectChatId } }
+      );
+    } else {
+      await User.updateOne(
+        { _id: req.userId },
+        { $pull: { pinnedContacts: objectChatId } }
+      );
+    }
+    res.status(200).send({ contactId: chatId, pinned: willPin });
   } catch (err) {
     console.log("Error pinning contact - ", getDate(), "\n---\n", err);
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    res.status(500).send({ message: "Server error", error: errorMessage });
-  }
-}
-
-export async function unpinContact(req: Request, res: Response): Promise<void> {
-  try {
-    const { chatId } = req.body;
-    if (!chatId) {
-      res.status(400).send({ message: "Invalid request" });
-      return;
-    }
-
-    const contact = await Contact.findOne({ _id: chatId });
-    if (!contact) {
-      res.status(404).send({ message: "Contact not found" });
-      return;
-    }
-
-    const objectChatId = new mongoose.Types.ObjectId(chatId);
-    await User.updateOne(
-      { _id: req.userId },
-      { $pull: { pinnedContacts: objectChatId } }
-    );
-    res.status(200).send({ contactId: chatId, pinned: false });
-  } catch (err) {
-    console.log("Error unpinning contact - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);
     res.status(500).send({ message: "Server error", error: errorMessage });
   }
@@ -582,216 +308,6 @@ export async function createNewContact(
     });
   } catch (err) {
     console.log("Error creating new contact - ", getDate(), "\n---\n", err);
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    res.status(500).send({ message: "Server error", error: errorMessage });
-  }
-}
-
-export async function createNewGroup(
-  req: Request,
-  res: Response
-): Promise<void> {
-  try {
-    const { name, selectedUsers } = req.body;
-    const groupImage = req.file;
-    if (
-      !name ||
-      !groupImage ||
-      !selectedUsers ||
-      JSON.parse(selectedUsers).length === 0
-    ) {
-      res.status(400).send({ message: "Invalid request" });
-      return;
-    }
-
-    const participants = JSON.parse(selectedUsers).map((id: string) => {
-      return new mongoose.Types.ObjectId(id);
-    });
-
-    const objectUserId = new mongoose.Types.ObjectId(req.userId);
-    const user = await User.findById(objectUserId).select("firstName");
-    if (!user) {
-      res.status(404).send({ message: "User not found" });
-      return;
-    }
-
-    // upload the image
-    let image, publicId;
-    const data = await uploadFile(res, groupImage, "groups", 400, 400);
-    if (
-      data &&
-      typeof data === "object" &&
-      "url" in data &&
-      "publicId" in data
-    ) {
-      image = data.url;
-      publicId = data.publicId;
-    } else {
-      res.status(500).send({ message: "Image upload failed" });
-      return;
-    }
-
-    // create a new group
-    const newGroupContact = await Contact.create({
-      name,
-      image,
-      publicId,
-      participants,
-      admins: [objectUserId],
-      isGroup: true,
-      isActive: true,
-    });
-
-    const createdMessage = await Message.create({
-      chatId: newGroupContact._id,
-      sender: objectUserId,
-      messageType: "announcement",
-      summary: "created a new contact",
-      announcer: user.firstName,
-    });
-
-    res.status(200).send({
-      groupData: {
-        _id: newGroupContact._id.toString(),
-        contactName: newGroupContact.name,
-        contactImage: newGroupContact.image,
-        isGroup: newGroupContact.isGroup,
-        isActive: newGroupContact.isActive,
-        updatedAt: newGroupContact.updatedAt,
-        lastMessages: [createdMessage],
-      },
-    });
-  } catch (err) {
-    console.log("Error creating new group - ", getDate(), "\n---\n", err);
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    res.status(500).send({ message: "Server error", error: errorMessage });
-  }
-}
-
-export async function updateGroup(req: Request, res: Response): Promise<void> {
-  try {
-    const { chatId, name, socials } = req.body;
-    if (!chatId || !name) {
-      res.status(400).send({ message: "Invalid request" });
-      return;
-    }
-
-    const group = await Contact.findById(chatId);
-    if (!group) {
-      res.status(404).send({ message: "Group not found" });
-      return;
-    }
-
-    if (req.file) {
-      // upload the image
-      const data = await uploadFile(res, req.file, "avatar", 600, 600);
-      if (
-        data &&
-        typeof data === "object" &&
-        "url" in data &&
-        "publicId" in data
-      ) {
-        if (group.publicId) {
-          await deleteFile(res, group.publicId);
-        }
-        group.image = data.url;
-        group.publicId = data.publicId;
-      } else {
-        res.status(500).send({ message: "Image upload failed" });
-        return;
-      }
-    }
-
-    const socialLinks = JSON.parse(socials) as { type: string; link: string }[];
-    group.name = name;
-    group.socialLinks = socialLinks.map((link) => {
-      return {
-        type: link.type,
-        link: link.link,
-      };
-    });
-    await group.save();
-
-    const user = await User.findById(req.userId).select("firstName");
-    if (!user) {
-      res.status(404).send({ message: "User not found" });
-      return;
-    }
-
-    const updatedMessage = await Message.create({
-      chatId: group._id,
-      sender: req.userId,
-      messageType: "announcement",
-      summary: "updated the group info",
-      announcer: user.firstName,
-    });
-
-    res.status(200).send({
-      updatedContact: {
-        _id: group._id.toString(),
-        name: group.name,
-        image: group.image,
-        socialLinks: group.socialLinks,
-        updatedMessage: {
-          content: updatedMessage.content,
-          messageType: updatedMessage.messageType,
-          seenBy: updatedMessage.seenBy,
-          createdAt: updatedMessage.createdAt,
-          summary: updatedMessage.summary,
-          announcer: updatedMessage.announcer,
-          sender: {
-            _id: updatedMessage.sender.toString(),
-          },
-        },
-      },
-    });
-  } catch (err) {
-    console.log("Error updating group - ", getDate(), "\n---\n", err);
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    res.status(500).send({ message: "Server error", error: errorMessage });
-  }
-}
-
-export async function getAssets(req: Request, res: Response): Promise<void> {
-  try {
-    const { assetType, chatId } = req.query;
-    const page = parseInt(req.query.pageNumber as string, 10);
-    if (!assetType || isNaN(page) || page < 1 || !chatId) {
-      res.status(400).send({ message: "Invalid request" });
-      return;
-    }
-
-    //! This loads all messages, consider optimizing
-    const messages = await Message.find({
-      chatId: new mongoose.Types.ObjectId(chatId.toString()),
-      messageType: { $in: ["hybrid", assetType] },
-    })
-      .sort({ updatedAt: -1 })
-      .select("files messageType link");
-
-    // paginate manually
-    const startIndex = (page - 1) * 10;
-    const endIndex = startIndex + 10;
-    const paginatedMessages = messages.slice(startIndex, endIndex);
-
-    const hasMore = paginatedMessages.length > 0;
-    const filteredMessages = await addImageMetaTag(paginatedMessages);
-
-    res.status(200).send({
-      assets:
-        assetType === "link"
-          ? [
-              ...filteredMessages.map((link) => {
-                return { ...link.link };
-              }),
-            ]
-          : filteredMessages.map((asset) => {
-              return asset.files;
-            }),
-      hasMore,
-    });
-  } catch (err) {
-    console.log("Error getting assets - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);
     res.status(500).send({ message: "Server error", error: errorMessage });
   }
