@@ -2,7 +2,7 @@ export type Announcement = {
   content: string;
   messageType: string;
   seenBy: string[];
-  createdAt: string;
+  updatedAt: string;
   summary: string;
   announcer: string;
   sender: {
@@ -16,7 +16,7 @@ export type UpdatedGroupData = {
   image: string;
   updatedAt: string;
   socialLinks: { type: string; link: string }[];
-  announcement: Announcement;
+  updatedMessage: Announcement;
 };
 
 export type MakeAdminFunctionProps = {

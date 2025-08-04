@@ -12,7 +12,7 @@ export default function ChatInfo(): React.ReactNode {
         className="w-23 h-23 rounded-full object-cover object-center"
       />
       <div className="flex flex-col gap-2">
-        <h2 className="font-semibold text-2xl">{selectedContact.name}</h2>
+        <h2 className="font-semibold text-xl">{selectedContact.name}</h2>
         <div className="flex items-center gap-4">
           {selectedContact.socialLinks &&
             selectedContact.socialLinks.slice(0, 5).map((link) => (
@@ -21,6 +21,7 @@ export default function ChatInfo(): React.ReactNode {
                 target="_blank"
                 className="text-xl text-gray hover:text-teal transition-all duration-200"
                 key={link.link}
+                title={`${link.type} link`}
               >
                 {
                   allowedSocialTypesIcons[

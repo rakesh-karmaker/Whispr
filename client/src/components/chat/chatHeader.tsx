@@ -140,7 +140,7 @@ function ChatHeaderInfo({
     <div className="flex items-center gap-2.5">
       <Avatar src={data.image || ""} name={data.name} isActive={isActive} />
       <div className="flex flex-col">
-        <h2 className="font-medium text-[1.275em]">{data.name}</h2>
+        <h2 className="font-medium text-lg">{data.name}</h2>
         <p className="text-sm text-gray">{subHeading}</p>
       </div>
     </div>

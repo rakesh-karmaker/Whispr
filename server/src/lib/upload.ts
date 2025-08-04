@@ -148,8 +148,8 @@ export async function uploadMultipleFiles(
 }
 
 export async function deleteFile(
-  res: Response,
-  publicId: string
+  publicId: string,
+  res?: Response
 ): Promise<void | Response> {
   try {
     await cloudinary.uploader.destroy(publicId, {
@@ -158,6 +158,8 @@ export async function deleteFile(
     console.log("File deleted successfully -", getDate(), "\n---\n");
   } catch (err) {
     console.log("Error deleting file -", getDate(), "\n---\n", err);
-    return res.status(500).send({ error: "Failed to delete file." });
+    return res
+      ? res.status(500).send({ error: "Failed to delete file." })
+      : undefined;
   }
 }

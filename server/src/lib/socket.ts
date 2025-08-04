@@ -12,6 +12,7 @@ import {
 } from "../types/socketFunctionTypes.js";
 import mongoose from "mongoose";
 import Message from "../models/Message.js";
+import { deleteFile } from "./upload.js";
 
 const userSocketMap = new Map<string, string>();
 
@@ -54,8 +55,10 @@ const setUpSocket = (server: Server) => {
     );
 
     socket.on("update-group", (updatedContact) =>
-      groupUpdate(updatedContact, socket)
+      groupUpdate(updatedContact, io)
     );
+
+    socket.on("delete-group", async (contactId) => deleteGroup(contactId, io));
 
     socket.on("make-admin", (data) => makeAdmin(data, io, userId));
 
@@ -100,7 +103,7 @@ const addContact = async (
 
 const groupUpdate = async (
   updatedContact: UpdateGroupFunctionProps,
-  socket: Socket
+  io: IOServer
 ) => {
   const contact = await Contact.findById(updatedContact._id);
   if (contact) {
@@ -110,14 +113,38 @@ const groupUpdate = async (
         : contact.participants;
     participants.forEach(async (participant) => {
       const socketId = userSocketMap.get(participant.toString());
-      if (socketId && socketId !== socket.id) {
-        socket.to(socketId).emit("update-group", {
+      if (socketId) {
+        io.to(socketId).emit("update-group", {
           ...updatedContact,
           updatedAt: contact.updatedAt,
         });
       }
     });
   }
+};
+
+const deleteGroup = async (contactId: string, io: IOServer) => {
+  const contact = await Contact.findByIdAndDelete(contactId);
+  if (!contact) return;
+
+  const participants =
+    contact.admins && contact.admins.length > 0
+      ? [...contact.participants, ...contact.admins]
+      : contact.participants;
+
+  participants.forEach(async (participant) => {
+    const socketId = userSocketMap.get(participant._id.toString());
+    if (socketId) {
+      io.to(socketId).emit("delete-group", {
+        contactId,
+      });
+    }
+    await User.updateOne(
+      { _id: participant },
+      { $pull: { contacts: contactId } }
+    );
+  });
+  await deleteFile(contact.publicId || "");
 };
 
 const makeAdmin = async (

@@ -16,7 +16,7 @@ export default function UserPreview({
           isActive={contactData.isActive}
         />
 
-        <div className="flex flex-col">
+        <div className="flex flex-col text-left">
           <h4 className="text-lg font-medium text-left">{contactData.name}</h4>
           <p className="text-sm text-gray">{contactData.email}</p>
         </div>

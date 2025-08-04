@@ -23,9 +23,17 @@ export async function createNewGroup(
       return;
     }
 
-    const participants = JSON.parse(selectedUsers).map((id: string) => {
-      return new mongoose.Types.ObjectId(id);
-    });
+    const participants = JSON.parse(selectedUsers).map(
+      (participant: {
+        _id: string;
+        name: string;
+        firstName: string;
+        isActive: boolean;
+        avatar: string;
+      }) => {
+        return new mongoose.Types.ObjectId(participant._id);
+      }
+    );
 
     const objectUserId = new mongoose.Types.ObjectId(req.userId);
     const user = await User.findById(objectUserId).select("firstName");
@@ -111,7 +119,7 @@ export async function updateGroup(req: Request, res: Response): Promise<void> {
         "publicId" in data
       ) {
         if (group.publicId) {
-          await deleteFile(res, group.publicId);
+          await deleteFile(group.publicId, res);
         }
         group.image = data.url;
         group.publicId = data.publicId;

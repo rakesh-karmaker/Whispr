@@ -20,9 +20,9 @@ export default function ContactPreview({
   const [isActive, setIsActive] = useState<boolean>(false);
 
   const { user } = useUser();
-  const unseen = contactData.lastMessages.filter(
-    (message) => !message.seenBy.includes(user?.id as string)
-  ).length;
+  const unseen = contactData.lastMessages.filter((message) => {
+    return !message.seenBy.includes(user?.id as string);
+  }).length;
 
   const renderLastMessage = (contactData: QueriedContact) => {
     const lastMessage = contactData.lastMessages[0];

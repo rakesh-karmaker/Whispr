@@ -1,6 +1,7 @@
 import {
   FaFacebook,
   FaGithub,
+  FaGlobe,
   FaInstagram,
   FaLinkedin,
   FaTwitter,
@@ -21,5 +22,5 @@ export const allowedSocialTypesIcons = {
   instagram: <FaInstagram />,
   linkedin: <FaLinkedin />,
   github: <FaGithub />,
-  website: <FaLinkedin />,
+  website: <FaGlobe />,
 };

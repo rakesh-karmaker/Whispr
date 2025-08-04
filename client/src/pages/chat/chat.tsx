@@ -43,6 +43,9 @@ export default function Chat(): React.ReactNode {
       if (axiosError.status === 403 && axiosError.response?.data?.message) {
         setShowChat(false);
       }
+      if (axiosError.status === 404) {
+        navigate("/chat");
+      }
     },
     onSettled: () => {
       setIsLoading(false);

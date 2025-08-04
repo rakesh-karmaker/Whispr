@@ -23,12 +23,14 @@ export function updateContact(updatedContact: UpdatedGroupData) {
   const selectedContact = useSelectedContactStore.getState().selectedContact;
 
   setContacts((prevContacts) => {
-    console.log("update-group", updatedContact);
     const updatedContacts = prevContacts.map((contact) => {
       if (contact._id === updatedContact._id) {
         return {
           ...contact,
-          lastMessages: [...contact.lastMessages, updatedContact.announcement],
+          lastMessages: [
+            updatedContact.updatedMessage,
+            ...contact.lastMessages,
+          ],
           contactName: updatedContact.name,
           contactImage: updatedContact.image,
           updatedAt: updatedContact.updatedAt,
@@ -44,7 +46,10 @@ export function updateContact(updatedContact: UpdatedGroupData) {
       if (contact._id === updatedContact._id) {
         return {
           ...contact,
-          lastMessages: [...contact.lastMessages, updatedContact.announcement],
+          lastMessages: [
+            updatedContact.updatedMessage,
+            ...contact.lastMessages,
+          ],
           contactName: updatedContact.name,
           contactImage: updatedContact.image,
           updatedAt: updatedContact.updatedAt,
@@ -58,6 +63,32 @@ export function updateContact(updatedContact: UpdatedGroupData) {
   if (updatedContact._id === selectedContact?._id) {
     setSelectedContact({ ...selectedContact, ...updatedContact });
   }
+}
+
+export function deleteGroup(contactId: string) {
+  const pinnedContacts = useContactsStore.getState().pinnedContacts;
+  const contacts = useContactsStore.getState().contacts;
+  const setContacts = useContactsStore.getState().setContacts;
+  const setPinnedContacts = useContactsStore.getState().setPinnedContacts;
+  const selectedContact = useSelectedContactStore.getState().selectedContact;
+
+  let nextSelectedContact: QueriedContact | undefined;
+
+  if (selectedContact && selectedContact._id == contactId) {
+    nextSelectedContact = [...pinnedContacts, ...contacts].find(
+      (c) => c._id.toString() !== contactId.toString()
+    );
+  }
+
+  setContacts((prevContacts) =>
+    prevContacts.filter((contact) => contact._id !== contactId)
+  );
+
+  setPinnedContacts((prevPinnedContacts) =>
+    prevPinnedContacts.filter((contact) => contact._id !== contactId)
+  );
+
+  return nextSelectedContact;
 }
 
 export function makeAdmin(data: MakeAdminFunctionProps) {

@@ -3,6 +3,7 @@ import { useUser } from "@/hooks/useUser";
 import {
   addContact,
   addParticipant,
+  deleteGroup,
   makeAdmin,
   removeParticipant,
   updateContact,
@@ -47,6 +48,13 @@ export default function ChatLayout(): React.ReactNode {
         updateContact(updatedContact)
       );
 
+      socket.on("delete-group", (data: { contactId: string }) => {
+        const nextSelectedContact = deleteGroup(data.contactId);
+        if (nextSelectedContact !== undefined && nextSelectedContact !== null) {
+          navigate(`/chat/${nextSelectedContact._id}`, { replace: true });
+        }
+      });
+
       socket.on("make-admin", (data: MakeAdminFunctionProps) => {
         makeAdmin(data);
       });
@@ -74,6 +82,7 @@ export default function ChatLayout(): React.ReactNode {
       if (socket) {
         socket.off("add-contact");
         socket.off("update-group");
+        socket.off("delete-group");
         socket.off("make-admin");
         socket.off("remove-participant");
         socket.off("add-participant");
