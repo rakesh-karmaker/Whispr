@@ -22,7 +22,7 @@ export type QueriedContact = {
     content: string;
     messageType: string;
     seenBy: string[];
-    createdAt: string;
+    updatedAt: string;
     summary: string;
     announcer: string;
     sender: {

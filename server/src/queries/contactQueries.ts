@@ -25,7 +25,7 @@ export async function getAllContactsQuery(
         let: { chatId: "$_id" },
         pipeline: [
           { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
-          { $sort: { updatedAt: -1 } },
+          { $sort: { createdAt: -1 } },
           { $limit: 10 },
           {
             $lookup: {
@@ -40,7 +40,7 @@ export async function getAllContactsQuery(
             $project: {
               content: 1,
               messageType: 1,
-              createdAt: 1,
+              updatedAt: 1,
               seenBy: 1,
               summary: 1,
               announcer: 1,
@@ -119,7 +119,7 @@ export async function getContactQuery(objectChatId: mongoose.Types.ObjectId) {
         as: "participants",
         pipeline: [
           // { $limit: 4 }, //TODO: add pagination for participants to reduce load
-          { $project: { _id: 1, name: 1, avatar: 1, isActive: 1 } },
+          { $project: { _id: 1, name: 1, avatar: 1 } },
         ],
       },
     },
@@ -130,7 +130,7 @@ export async function getContactQuery(objectChatId: mongoose.Types.ObjectId) {
         localField: "admins",
         foreignField: "_id",
         as: "admins",
-        pipeline: [{ $project: { _id: 1, name: 1, avatar: 1, isActive: 1 } }],
+        pipeline: [{ $project: { _id: 1, name: 1, avatar: 1 } }],
       },
     },
     // get last 15 messages
@@ -140,8 +140,19 @@ export async function getContactQuery(objectChatId: mongoose.Types.ObjectId) {
         let: { chatId: "$_id" },
         pipeline: [
           { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
-          { $sort: { updatedAt: -1 } },
+          { $sort: { createdAt: -1 } },
           { $limit: 15 },
+          {
+            $project: {
+              content: 1,
+              messageType: 1,
+              updatedAt: 1,
+              seenBy: 1,
+              summary: 1,
+              announcer: 1,
+              announcement: 1,
+            },
+          },
         ],
         as: "lastMessages",
       },

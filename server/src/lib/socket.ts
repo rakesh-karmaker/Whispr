@@ -184,7 +184,7 @@ const makeAdmin = async (
           content: announcement.content,
           messageType: announcement.messageType,
           seenBy: announcement.seenBy,
-          createdAt: announcement.createdAt,
+          updatedAt: announcement.updatedAt,
           summary: announcement.summary,
           announcer: announcement.announcer,
           sender: {
@@ -242,7 +242,7 @@ const addParticipant = async (
       content: message.content ?? "",
       messageType: message.messageType,
       seenBy: message.seenBy.map((seenBy) => seenBy.toString()),
-      createdAt: message.createdAt,
+      updatedAt: message.updatedAt,
       summary: message.summary ?? "",
       announcer: message.announcer ?? "",
       sender: { _id: message.sender.toString() },
@@ -320,7 +320,7 @@ const removeParticipant = async (
           content: announcement.content,
           messageType: announcement.messageType,
           seenBy: announcement.seenBy,
-          createdAt: announcement.createdAt,
+          updatedAt: announcement.updatedAt,
           summary: announcement.summary,
           announcer: announcement.announcer,
           sender: {

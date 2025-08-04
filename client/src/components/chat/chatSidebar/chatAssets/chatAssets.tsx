@@ -6,6 +6,7 @@ import { useContactAssets } from "@/hooks/useContactAssets";
 import { useSelectedContact } from "@/hooks/useSelectContact";
 import { PiImageSquareFill, PiLinkSimpleBold } from "react-icons/pi";
 import Links from "./links";
+import Files from "./files";
 
 export default function ChatAssets(): React.ReactNode {
   const { imagesCount, linksCount, filesCount } = useContactAssets();
@@ -17,7 +18,7 @@ export default function ChatAssets(): React.ReactNode {
         logo={<FaFile className="text-blue text-2xl" />}
         color="bg-light-blue"
       >
-        <Links />
+        <Files />
       </AssetsLayout>
       <AssetsLayout
         title="Photos"

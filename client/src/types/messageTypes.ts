@@ -24,6 +24,7 @@ export type MessageType = {
 export type FileMessageType = {
   url: string;
   publicId: string;
+  size: number;
 };
 
 export type LinkMessageType = {

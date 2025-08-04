@@ -5,6 +5,7 @@ cloudinary.config({
   cloud_name: config.cloudinaryCloudName,
   api_key: config.cloudinaryApiKey,
   api_secret: config.cloudinaryApiSecret,
+  secure: true, // Use secure URLs
 });
 
 export default cloudinary;

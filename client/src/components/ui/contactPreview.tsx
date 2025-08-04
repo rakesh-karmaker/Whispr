@@ -96,7 +96,7 @@ export default function ContactPreview({
                 : contactData.contactName}
             </h4>
             <p className="font-medium text-xs text-gray">
-              {moment(contactData.lastMessages[0]?.createdAt).format("LT")}
+              {moment(contactData.lastMessages[0].updatedAt).format("LT")}
             </p>
           </div>
           <p className="flex justify-between gap-2.5">

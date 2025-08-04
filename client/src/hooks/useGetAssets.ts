@@ -41,37 +41,23 @@ export default function useGetAssets(
             });
           });
 
-          console.log(data.assets, "assets");
+          const isImage = assetType === "image";
+          const prefix = isImage ? "whispr/images/" : "whispr/files/";
 
-          assetType === "image"
-            ? setImages((prev) =>
-                prev.concat(
-                  assets
-                    .map((asset: FileMessageType) => {
-                      if (asset.publicId.startsWith("whispr/images/")) {
-                        return asset;
-                      }
-                      return undefined;
-                    })
-                    .filter(
-                      (asset): asset is FileMessageType => asset !== undefined
-                    )
-                )
-              )
-            : setFiles((prev) =>
-                prev.concat(
-                  assets
-                    .map((asset: FileMessageType) => {
-                      if (asset.publicId.startsWith("whispr/files/")) {
-                        return asset;
-                      }
-                      return undefined;
-                    })
-                    .filter(
-                      (asset): asset is FileMessageType => asset !== undefined
-                    )
-                )
-              );
+          // Filter assets by type and remove duplicates based on publicId
+          const filteredAssets = assets.filter((asset) =>
+            asset.publicId.startsWith(prefix)
+          );
+
+          // Only add assets that are not already present (by publicId)
+          const updateAssets = (prev: FileMessageType[]) => {
+            const existingIds = new Set(prev.map((a) => a.publicId));
+            return prev.concat(
+              filteredAssets.filter((asset) => !existingIds.has(asset.publicId))
+            );
+          };
+
+          isImage ? setImages(updateAssets) : setFiles(updateAssets);
         } else {
           setLinks((prev) => prev.concat(data.assets));
         }

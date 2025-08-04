@@ -48,6 +48,7 @@ export interface MessageType {
   files?: {
     url: string;
     publicId: string;
+    size?: number;
   }[];
   link?: {
     url: string;
@@ -58,6 +59,6 @@ export interface MessageType {
   seenBy: mongoose.Types.ObjectId[];
   summary?: string;
   announcer?: string;
-  createdAt: string;
-  updatedAt: Date;
+  createdAt: Date;
+  updatedAt: string;
 }

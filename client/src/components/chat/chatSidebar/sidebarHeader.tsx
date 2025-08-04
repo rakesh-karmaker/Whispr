@@ -40,7 +40,7 @@ export default function SidebarHeader(): React.ReactNode {
           <RxCross2 />
         </button>
         <p className="text-gray font-medium">
-          {moment().format("DD MMM YYYY")}
+          {moment(selectedContact.createdAt).format("DD MMM YYYY")}
         </p>
         {selectedContact.isGroup && (
           <>

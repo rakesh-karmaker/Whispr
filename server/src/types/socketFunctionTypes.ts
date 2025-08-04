@@ -9,7 +9,7 @@ export type AddContactFunctionProps = {
     content: string;
     messageType: string;
     seenBy: string[];
-    createdAt: string;
+    updatedAt: string;
     summary: string;
     announcer: string;
     sender: {
@@ -27,7 +27,7 @@ export type UpdateGroupFunctionProps = {
     content: string;
     messageType: string;
     seenBy: string[];
-    createdAt: string;
+    updatedAt: string;
     summary: string;
     announcer: string;
     sender: {

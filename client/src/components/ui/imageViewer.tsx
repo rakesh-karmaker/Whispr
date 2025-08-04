@@ -5,6 +5,7 @@ import Lightbox, {
 } from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import Download from "yet-another-react-lightbox/plugins/download";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 
@@ -30,7 +31,7 @@ export default function ImageViewer({
         return { src: image.url };
       })}
       animation={{ swipe: 0 }}
-      plugins={[Thumbnails, Zoom]}
+      plugins={[Thumbnails, Zoom, Download]}
       carousel={{ finite: true, preload: 100 }}
       thumbnails={{
         ref: thumbnailsRef,
@@ -41,10 +42,11 @@ export default function ImageViewer({
         padding: 3,
       }}
       on={{
-        click: () => {
+        click: (event) => {
           (thumbnailsRef.current?.visible
             ? thumbnailsRef.current?.hide
             : thumbnailsRef.current?.show)?.();
+          console.log(event);
         },
       }}
       zoom={{ ref: zoomRef }}

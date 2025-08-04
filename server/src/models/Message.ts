@@ -19,12 +19,13 @@ const MessageSchema = new mongoose.Schema<MessageType>(
     },
     files: [
       {
-        url: String,
-        publicId: String,
+        url: { type: String },
+        publicId: { type: String },
+        size: { type: Number, default: 0 },
       },
     ],
     link: {
-      url: String,
+      url: { type: String },
     },
     seenBy: [
       {
@@ -36,9 +37,14 @@ const MessageSchema = new mongoose.Schema<MessageType>(
       type: String,
     },
     announcer: { type: String },
-    createdAt: {
+    updatedAt: {
       type: String,
       set: (v = new Date()) => new Date(v).toISOString(),
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      set: (v = new Date()) => new Date(v),
     },
   },
   {
@@ -48,5 +54,10 @@ const MessageSchema = new mongoose.Schema<MessageType>(
     },
   }
 );
+
+MessageSchema.pre("save", function (next) {
+  this.updatedAt = new Date().toISOString();
+  next();
+});
 
 export default mongoose.model("Message", MessageSchema);
