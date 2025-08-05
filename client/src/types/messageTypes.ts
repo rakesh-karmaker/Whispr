@@ -1,7 +1,11 @@
 export type MessageType = {
   _id: string;
   chatId: string;
-  sender: string;
+  senderDetails: {
+    _id: string;
+    name: string;
+    avatar: string;
+  };
   content?: string;
   messageType: "text" | "file" | "link" | "announcement";
   files?: {
@@ -17,6 +21,10 @@ export type MessageType = {
   seenBy: string[];
   summary?: string;
   announcer?: string;
+  reactions?: {
+    userId: string;
+    reaction: string;
+  }[];
   createdAt: Date;
   updatedAt: Date;
 };

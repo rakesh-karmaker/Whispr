@@ -19,6 +19,7 @@ export type QueriedContact = {
   contactImage: string;
   updatedAt: string;
   lastMessages: {
+    _id: string;
     content: string;
     messageType: string;
     seenBy: string[];
@@ -27,6 +28,8 @@ export type QueriedContact = {
     announcer: string;
     sender: {
       _id: string;
+      name?: string;
+      avatar?: string;
     };
   }[];
 };

@@ -1,10 +1,13 @@
 import { useContactsStore } from "@/stores/useContactsStore";
+import { useMessagesStore } from "@/stores/useMessagesStore";
 import { useSelectedContactStore } from "@/stores/useSelectedContactStore";
 import { useUserStore } from "@/stores/useUserStore";
 import type { QueriedContact, SelectedContact } from "@/types/contactTypes";
 import type {
   AddParticipantFunctionProps,
   MakeAdminFunctionProps,
+  MessageSawFunctionProps,
+  MessageSeenFunctionProps,
   RemoveParticipantFunctionProps,
   UpdatedGroupData,
 } from "@/types/socketActionTypes";
@@ -281,5 +284,65 @@ export function addParticipant(data: AddParticipantFunctionProps) {
     return updatedContact
       ? [updatedContact, ...filteredContacts]
       : prevContacts;
+  });
+}
+
+export function messageSeen(data: MessageSeenFunctionProps) {
+  const selectedContact = useSelectedContactStore.getState().selectedContact;
+  const setMessages = useMessagesStore.getState().setMessages;
+
+  if (selectedContact._id === data.chatId) {
+    setMessages((prevMessages) => {
+      return prevMessages.map((message) => {
+        if (message._id === data.messageId) {
+          return {
+            ...message,
+            seenBy: [...message.seenBy, data.seenBy],
+          };
+        }
+        return message;
+      });
+    });
+  }
+}
+
+export function messageSaw(data: MessageSawFunctionProps) {
+  const selectedContact = useSelectedContactStore.getState().selectedContact;
+  const setMessages = useMessagesStore.getState().setMessages;
+  const setContacts = useContactsStore.getState().setContacts;
+  const user = useUserStore.getState().user;
+
+  if (selectedContact._id === data.chatId) {
+    setMessages((prevMessages) => {
+      return prevMessages.map((message) => {
+        if (data.messageIds.includes(message._id)) {
+          return {
+            ...message,
+            seenBy: [...message.seenBy, ...(user?.id || "")],
+          };
+        }
+        return message;
+      });
+    });
+  }
+
+  setContacts((prevContacts) => {
+    return prevContacts.map((contact) => {
+      if (contact._id === data.chatId) {
+        return {
+          ...contact,
+          lastMessages: contact.lastMessages.map((message) => {
+            if (data.messageIds.includes(message._id)) {
+              return {
+                ...message,
+                seenBy: [...message.seenBy, user?.id || ""],
+              };
+            }
+            return message;
+          }),
+        };
+      }
+      return contact;
+    });
   });
 }

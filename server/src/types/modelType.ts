@@ -57,6 +57,10 @@ export interface MessageType {
     ogDescription?: string;
   };
   seenBy: mongoose.Types.ObjectId[];
+  reactions: {
+    userId: mongoose.Types.ObjectId;
+    reaction: string;
+  }[];
   summary?: string;
   announcer?: string;
   createdAt: Date;

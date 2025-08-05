@@ -1,8 +1,7 @@
-import redisClient from "../config/redis/client.js";
 import scrapeURLMetaData from "../lib/scrapeURLMetaData.js";
 import { MessageType } from "../types/modelType.js";
 
-export default async function addImageMetaTag(messages: MessageType[]) {
+export default async function addMetaTag(messages: MessageType[]) {
   const newMessages = await Promise.all(
     messages.map(async (message: MessageType) => {
       if (message.messageType === "link" && message.link) {

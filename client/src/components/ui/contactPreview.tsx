@@ -20,9 +20,16 @@ export default function ContactPreview({
   const [isActive, setIsActive] = useState<boolean>(false);
 
   const { user } = useUser();
-  const unseen = contactData.lastMessages.filter((message) => {
-    return !message.seenBy.includes(user?.id as string);
-  }).length;
+  let unseen = 0;
+  const reversed = [...contactData.lastMessages].reverse();
+  for (const message of reversed) {
+    if (message.sender._id == user?.id) {
+      break;
+    }
+    if (!message.seenBy.includes(user?.id || "")) {
+      unseen++;
+    }
+  }
 
   const renderLastMessage = (contactData: QueriedContact) => {
     const lastMessage = contactData.lastMessages[0];

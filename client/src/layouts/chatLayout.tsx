@@ -5,6 +5,8 @@ import {
   addParticipant,
   deleteGroup,
   makeAdmin,
+  messageSaw,
+  messageSeen,
   removeParticipant,
   updateContact,
 } from "@/lib/socket/contactActions";
@@ -13,6 +15,8 @@ import type { QueriedContact } from "@/types/contactTypes";
 import type {
   AddParticipantFunctionProps,
   MakeAdminFunctionProps,
+  MessageSawFunctionProps,
+  MessageSeenFunctionProps,
   RemoveParticipantFunctionProps,
   UpdatedGroupData,
 } from "@/types/socketActionTypes";
@@ -73,6 +77,14 @@ export default function ChatLayout(): React.ReactNode {
         }
       );
 
+      socket.on("message-seen", (data: MessageSeenFunctionProps) =>
+        messageSeen(data)
+      );
+
+      socket.on("message-saw", (data: MessageSawFunctionProps) =>
+        messageSaw(data)
+      );
+
       socket.on("add-participant", (data: AddParticipantFunctionProps) =>
         addParticipant(data)
       );
@@ -91,7 +103,7 @@ export default function ChatLayout(): React.ReactNode {
   }, [socket]);
 
   return (
-    <div className="h-screen flex gap-4 p-4 bg-white-3 chat-layout">
+    <div className="h-screen max-w-screen flex gap-4 p-4 bg-white-3 chat-layout">
       <ChatLeft />
       <Outlet />
     </div>

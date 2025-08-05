@@ -4,13 +4,14 @@ import User from "../models/User.js";
 import getDate from "../utils/getDate.js";
 import { Request, Response } from "express";
 import Message from "../models/Message.js";
-import addImageMetaTag from "../utils/addImageMetaTag.js";
 import { MessageType } from "../types/modelType.js";
 import { searchContactsQuery } from "../queries/searchQueries.js";
 import {
   getAllContactsQuery,
   getContactQuery,
+  getMessagesQuery,
 } from "../queries/contactQueries.js";
+import addMetaTag from "../utils/addImageMetaTag.js";
 
 export async function searchContacts(
   req: Request,
@@ -129,7 +130,6 @@ export async function getContact(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    contact[0].lastMessages = await addImageMetaTag(contact[0].lastMessages);
     if (!contact[0].isGroup) {
       contact[0].participants.forEach(
         (participant: {
@@ -195,13 +195,39 @@ export async function getContact(req: Request, res: Response): Promise<void> {
         isActive: contact[0].isActive,
         // participantsCount: participantsCount,
       },
-      lastMessages: contact[0].lastMessages,
       imagesCount,
       filesCount,
       linksCount,
     });
   } catch (err) {
     console.log("Error getting contact - ", getDate(), "\n---\n", err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    res.status(500).send({ message: "Server error", error: errorMessage });
+  }
+}
+
+export async function getMessages(req: Request, res: Response): Promise<void> {
+  try {
+    const { chatId, pageNumber } = req.query;
+    if (!chatId || !pageNumber) {
+      res.status(400).send({ message: "Invalid request" });
+      return;
+    }
+    const objectChatId = new mongoose.Types.ObjectId(chatId as string);
+    const messages = await getMessagesQuery(
+      objectChatId,
+      pageNumber as unknown as number
+    );
+
+    const messagesWithMetaData = await addMetaTag(messages);
+    const hasMore = messages.length > 0;
+
+    res.status(200).send({
+      messages: messagesWithMetaData,
+      hasMore,
+    });
+  } catch (err) {
+    console.log("Error getting messages - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);
     res.status(500).send({ message: "Server error", error: errorMessage });
   }

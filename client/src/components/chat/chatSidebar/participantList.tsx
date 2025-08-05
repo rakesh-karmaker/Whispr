@@ -40,6 +40,10 @@ function Participants({
     ? [...selectedContact.admins, ...selectedContact.participants]
     : selectedContact.participants;
 
+  if (!participants || participants.length === 0) {
+    return <p className="text-gray">No participants found</p>;
+  }
+
   return (
     <div className="w-full h-full flex flex-col gap-3.5">
       {showAll

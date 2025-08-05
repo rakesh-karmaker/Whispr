@@ -1,5 +1,5 @@
 import ChatSidebar from "@/components/chat/chatSidebar/chatSidebar";
-import ChatWindow from "@/components/chat/chatWindow";
+import ChatWindow from "@/components/chat/chatWindow/chatWindow";
 import { useContactAssets } from "@/hooks/useContactAssets";
 import { useContacts } from "@/hooks/useContacts";
 import { useSelectedContact } from "@/hooks/useSelectContact";
@@ -71,7 +71,7 @@ export default function Chat(): React.ReactNode {
   if (!showChat) return null;
 
   return (
-    <div className="w-full h-full flex-1 flex gap-4">
+    <div className="w-full h-full flex gap-4">
       <ChatWindow />
       <ChatSidebar />
     </div>

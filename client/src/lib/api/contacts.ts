@@ -137,3 +137,15 @@ export async function getAssets(
   });
   return response;
 }
+
+export async function getMessages(
+  chatId: string,
+  pageNumber: number,
+  _cancel: Canceler
+) {
+  const { data: response } = await api.get("/contact/get-messages", {
+    params: { chatId, pageNumber },
+    cancelToken: new axios.CancelToken((c) => (_cancel = c)),
+  });
+  return response;
+}

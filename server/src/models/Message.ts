@@ -37,6 +37,12 @@ const MessageSchema = new mongoose.Schema<MessageType>(
       type: String,
     },
     announcer: { type: String },
+    reactions: [
+      {
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        reaction: { type: String },
+      },
+    ],
     updatedAt: {
       type: String,
       set: (v = new Date()) => new Date(v).toISOString(),

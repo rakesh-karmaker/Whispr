@@ -133,30 +133,6 @@ export async function getContactQuery(objectChatId: mongoose.Types.ObjectId) {
         pipeline: [{ $project: { _id: 1, name: 1, avatar: 1 } }],
       },
     },
-    // get last 15 messages
-    {
-      $lookup: {
-        from: "messages",
-        let: { chatId: "$_id" },
-        pipeline: [
-          { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
-          { $sort: { createdAt: -1 } },
-          { $limit: 15 },
-          {
-            $project: {
-              content: 1,
-              messageType: 1,
-              updatedAt: 1,
-              seenBy: 1,
-              summary: 1,
-              announcer: 1,
-              announcement: 1,
-            },
-          },
-        ],
-        as: "lastMessages",
-      },
-    },
     {
       $project: {
         _id: 1,
@@ -166,7 +142,6 @@ export async function getContactQuery(objectChatId: mongoose.Types.ObjectId) {
         participants: 1,
         admins: 1,
         isActive: 1,
-        lastMessages: 1,
         name: 1,
         image: 1,
       },
@@ -174,4 +149,63 @@ export async function getContactQuery(objectChatId: mongoose.Types.ObjectId) {
   ]);
 
   return contact;
+}
+
+export async function getMessagesQuery(
+  objectChatId: mongoose.Types.ObjectId,
+  pageNumber: number = 1,
+  limit: number = 20
+) {
+  const messages = await Contact.aggregate([
+    { $match: { _id: objectChatId } },
+    {
+      $lookup: {
+        from: "messages",
+        let: { chatId: "$_id" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
+          { $sort: { createdAt: -1 } },
+          { $skip: (pageNumber - 1) * limit },
+          { $limit: limit === 0 ? 9999999 : limit },
+          {
+            $lookup: {
+              from: "users",
+              localField: "sender",
+              foreignField: "_id",
+              as: "senderDetails",
+            },
+          },
+          { $unwind: "$senderDetails" },
+          {
+            $project: {
+              _id: 1,
+              content: 1,
+              messageType: 1,
+              files: 1,
+              link: 1,
+              seenBy: 1,
+              summary: 1,
+              announcer: 1,
+              reactions: 1,
+              createdAt: 1,
+              updatedAt: 1,
+              senderDetails: {
+                _id: "$senderDetails._id",
+                name: "$senderDetails.name",
+                avatar: "$senderDetails.avatar",
+              },
+            },
+          },
+        ],
+        as: "messages",
+      },
+    },
+    {
+      $project: {
+        messages: 1,
+      },
+    },
+  ]);
+
+  return messages[0]?.messages || [];
 }

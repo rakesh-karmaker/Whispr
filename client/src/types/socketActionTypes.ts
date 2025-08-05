@@ -1,4 +1,5 @@
 export type Announcement = {
+  _id: string;
   content: string;
   messageType: string;
   seenBy: string[];
@@ -47,4 +48,15 @@ export type AddParticipantFunctionProps = {
   updatedAt: string;
   contactId: string;
   announcement: Announcement;
+};
+
+export type MessageSeenFunctionProps = {
+  messageId: string;
+  chatId: string;
+  seenBy: string;
+};
+
+export type MessageSawFunctionProps = {
+  messageIds: string[];
+  chatId: string;
 };

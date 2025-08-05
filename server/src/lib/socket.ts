@@ -68,6 +68,8 @@ const setUpSocket = (server: Server) => {
       removeParticipant(data, io, userId)
     );
 
+    socket.on("message-seen", (data) => messageSeen(data, io));
+
     socket.on("disconnect", () => disconnect(socket));
   });
 };
@@ -395,6 +397,50 @@ const updateUserActiveStatus = async (
         isActive,
       });
     }
+  }
+};
+
+const messageSeen = async (
+  data: { messageId: string; chatId: string; seenBy: string },
+  io: IOServer
+) => {
+  const messages = await Message.find({
+    chatId: new mongoose.Types.ObjectId(data.chatId),
+    _id: { $lte: new mongoose.Types.ObjectId(data.messageId) },
+    seenBy: { $ne: new mongoose.Types.ObjectId(data.seenBy) },
+    sender: { $ne: new mongoose.Types.ObjectId(data.seenBy) },
+  }).sort({ createdAt: -1 });
+
+  const sendersWithNoSeen = messages
+    .filter((message) => {
+      return message.seenBy.length === 0;
+    })
+    .map((message) => message.sender.toString());
+
+  // TODO: apply this update after testing
+  // messages.forEach(async (message) => {
+  //   console.log("Updating message seenBy:", message._id);
+  //   message.seenBy.push(new mongoose.Types.ObjectId(data.seenBy));
+  //   await message.save();
+  // });
+
+  sendersWithNoSeen.forEach(async (senderId) => {
+    const socketId = userSocketMap.get(senderId);
+    if (socketId) {
+      io.to(socketId).emit("message-seen", {
+        messageId: data.messageId,
+        chatId: data.chatId,
+        seenBy: data.seenBy,
+      });
+    }
+  });
+
+  const userSocketId = userSocketMap.get(data.seenBy);
+  if (userSocketId) {
+    io.to(userSocketId).emit("message-saw", {
+      messageIds: messages.map((message) => message._id.toString()),
+      chatId: data.chatId,
+    });
   }
 };
 
