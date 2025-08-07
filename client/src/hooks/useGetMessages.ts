@@ -6,8 +6,8 @@ import { getMessages } from "@/lib/api/contacts";
 import { useSelectedContact } from "./useSelectContact";
 
 export default function useGetMessages(
-  pageNumber: number,
-  setPageNumber: React.Dispatch<React.SetStateAction<number>>
+  pageNumber: number
+  // setPageNumber: React.Dispatch<React.SetStateAction<number>>
 ): {
   isLoading: boolean;
   error: boolean;
@@ -51,12 +51,12 @@ export default function useGetMessages(
     }
   }, [pageNumber]);
 
-  useEffect(() => {
-    // Reset messages when the selected contact changes
-    setMessages([]);
-    setHasMore(true);
-    setPageNumber(1);
-  }, [selectedContact?._id]);
+  // useEffect(() => {
+  //   // Reset messages when the selected contact changes
+  //   setMessages([]);
+  //   setHasMore(true);
+  //   setPageNumber(1);
+  // }, [selectedContact?._id]);
 
   return {
     isLoading,

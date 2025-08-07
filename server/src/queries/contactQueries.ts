@@ -164,9 +164,9 @@ export async function getMessagesQuery(
         let: { chatId: "$_id" },
         pipeline: [
           { $match: { $expr: { $eq: ["$chatId", "$$chatId"] } } },
-          { $sort: { createdAt: -1 } },
+          { $sort: { createdAt: 1 } },
           { $skip: (pageNumber - 1) * limit },
-          { $limit: limit === 0 ? 9999999 : limit },
+          // { $limit: limit === 0 ? 9999999 : limit }, //TODO: add pagination for messages
           {
             $lookup: {
               from: "users",

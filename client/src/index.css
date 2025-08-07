@@ -203,3 +203,33 @@ body:has(.chat-layout) {
     margin: 0px 10px !important;
   }
 }
+
+/* Add these to your global CSS for better Chromium performance */
+.virtuoso-container {
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  will-change: scroll-position;
+
+  /* Reduce layout thrashing */
+  contain: layout style paint;
+
+  /* Optimize scrolling */
+  scroll-behavior: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Optimize message containers */
+[data-message-id] {
+  /* Prevent layout shifts */
+  contain: layout;
+
+  /* Enable GPU acceleration for animations */
+  transform: translateZ(0);
+}
+
+/* Reduce paint operations */
+.message-content {
+  /* Use transform instead of changing properties that trigger layout/paint */
+  backface-visibility: hidden;
+  perspective: 1000px;
+}

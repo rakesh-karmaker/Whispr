@@ -7,7 +7,7 @@ export type MessageType = {
     avatar: string;
   };
   content?: string;
-  messageType: "text" | "file" | "link" | "announcement";
+  messageType: "text" | "file" | "link" | "announcement" | "hybrid";
   files?: {
     url: string;
     publicId: string;

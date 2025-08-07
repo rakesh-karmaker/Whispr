@@ -29,21 +29,27 @@ export default function ChatWindow(): React.ReactNode {
   useEffect(() => {
     setIsDragging(false);
 
-    window.addEventListener("dragover", (e) => {
-      setIsDragging(true);
-      e.preventDefault();
-    });
-    window.addEventListener("dragleave", () => setIsDragging(false));
-
-    const width = getScrollbarWidth();
-    console.log("Scrollbar width:", width);
-
-    return () => {
-      window.removeEventListener("dragover", (e) => {
+    function handleDragOver(e: DragEvent) {
+      if (Array.from(e.dataTransfer?.types || []).includes("Files")) {
         setIsDragging(true);
         e.preventDefault();
-      });
-      window.removeEventListener("dragleave", () => setIsDragging(false));
+      }
+    }
+    function handleDrop() {
+      setIsDragging(false);
+    }
+    function handleDragEnd() {
+      setIsDragging(false);
+    }
+
+    window.addEventListener("dragover", handleDragOver);
+    window.addEventListener("drop", handleDrop);
+    window.addEventListener("dragend", handleDragEnd);
+
+    return () => {
+      window.removeEventListener("dragover", handleDragOver);
+      window.removeEventListener("drop", handleDrop);
+      window.removeEventListener("dragend", handleDragEnd);
     };
   }, []);
   return (
@@ -58,7 +64,7 @@ export default function ChatWindow(): React.ReactNode {
     >
       <ChatHeader />
       <div className="relative w-full h-full bg-pure-white flex-1 flex flex-col pt-0 rounded-xl">
-        <MessagesContainer />
+        <MessagesContainer files={files} />
         <ChatInputContainer files={files} setFiles={setFiles} />
         <FileDrag
           isDragging={isDragging}

@@ -306,6 +306,7 @@ export function messageSeen(data: MessageSeenFunctionProps) {
   }
 }
 
+//TODO: this logic is buggy, it should be fixed
 export function messageSaw(data: MessageSawFunctionProps) {
   const selectedContact = useSelectedContactStore.getState().selectedContact;
   const setMessages = useMessagesStore.getState().setMessages;
