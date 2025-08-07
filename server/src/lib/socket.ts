@@ -404,6 +404,7 @@ const messageSeen = async (
   data: { messageId: string; chatId: string; seenBy: string },
   io: IOServer
 ) => {
+  console.log("Senders with no seen:", data);
   const messages = await Message.find({
     chatId: new mongoose.Types.ObjectId(data.chatId),
     _id: { $lte: new mongoose.Types.ObjectId(data.messageId) },

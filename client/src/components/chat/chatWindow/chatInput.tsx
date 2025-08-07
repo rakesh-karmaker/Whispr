@@ -17,7 +17,7 @@ export default function ChatInputContainer({
   }
 
   return (
-    <div className="w-full flex flex-col gap-2 p-0.5">
+    <div className="w-full max-w-[calc(100%-2rem)] flex flex-col gap-2 p-0.5 self-center">
       {files.length > 0 && (
         <ul className="overflow-x-auto overflow-y-visible flex items-center gap-2.5 pt-3 pb-3 list-none">
           <AddMoreFilesButton setFiles={setFiles} />
@@ -69,7 +69,7 @@ function FilePreview({
       )}
       <button
         type="button"
-        className="w-4 aspect-square rounded-full absolute top-0 right-0 translate-x-[40%] -translate-y-[40%] bg-red text-pure-white flex items-center justify-center text-md cursor-pointer hover:bg-white hover:text-red transition-all duration-200"
+        className="min-w-4 max-w-4 min-h-4 max-h-4 aspect-square rounded-full absolute top-0 right-0 translate-x-[40%] -translate-y-[40%] bg-red text-pure-white flex items-center justify-center text-md cursor-pointer hover:bg-white hover:text-red transition-all duration-200"
         onClick={() => removeFile(index)}
         title="Remove file"
         aria-label="Remove file"

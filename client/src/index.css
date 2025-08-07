@@ -53,6 +53,11 @@ body:has(.chat-layout) {
   background: var(--white-3);
 }
 
+.messages-container > div {
+  display: flex;
+  flex-direction: column;
+}
+
 .MuiAutocomplete-popper,
 .MuiAutocomplete-endAdornment {
   display: none;
