@@ -25,12 +25,12 @@ export default function TextMessageBox({
           href={message.link?.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-teal hover:underline"
+          className="text-teal hover:underline text-[0.98em]/[140%] transition-all duration-200 cursor-pointer"
         >
-          {message.link?.title}
+          {message.link?.url}
         </a>
       ) : (
-        <p>{message.content}</p>
+        <p className="text-[0.98em]/[140%]">{message.content}</p>
       )}
       <div
         className={`${

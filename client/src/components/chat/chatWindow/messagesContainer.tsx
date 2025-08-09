@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useMemo, useCallback } from "react";
+import { useRef, useEffect, useState, useMemo, useCallback, use } from "react";
 import moment from "moment";
 import useMessages from "@/hooks/useMessages";
 import useGetMessages from "@/hooks/useGetMessages";
@@ -8,19 +8,23 @@ import { useSelectedContact } from "@/hooks/useSelectContact";
 import Message from "./message";
 import type { MessageType } from "@/types/messageTypes";
 import ImageViewer from "@/components/ui/imageViewer";
+import Loader from "@/components/ui/Loader/Loader";
 
 export default function MessagesContainer({ files }: { files: File[] }) {
   const { messages } = useMessages();
-  useGetMessages(1);
+  const { isLoading: isLoadingMessages } = useGetMessages(1);
   const socket = useSocketStore((state) => state.socket);
   const { user } = useUser();
   const { selectedContact } = useSelectedContact();
   const lastSeenMessageIdRef = useRef<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const seenObserver = useRef<IntersectionObserver | null>(null);
-  const [imageUrls, setImageUrls] = useState<{ url: string }[]>([]);
+  const [imageUrls, setImageUrls] = useState<
+    { url: string; publicId: string }[]
+  >([]);
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Optimize message seen observer with better cleanup
   const lastElementRef = useCallback(
@@ -63,7 +67,10 @@ export default function MessagesContainer({ files }: { files: File[] }) {
     [messages, selectedContact, user, socket]
   );
 
-  function handleImageClick(imageIndex: number) {
+  function handleImageClick(publicId: string) {
+    const imageIndex = imageUrls.findIndex(
+      (image) => image.publicId === publicId
+    );
     setIndex(imageIndex);
     setOpen(true);
   }
@@ -97,12 +104,15 @@ export default function MessagesContainer({ files }: { files: File[] }) {
       }
 
       if (
-        (message.messageType == "file" || message.messageType == "hybrid") &&
+        (message.messageType == "image" || message.messageType == "hybrid") &&
         message.files
       ) {
         message.files.forEach((file) => {
-          if (file.publicId.startsWith("whisper/images/")) {
-            setImageUrls((prev) => [...prev, { url: file.url }]);
+          if (file.publicId.startsWith("whispr/images/")) {
+            setImageUrls((prev) => [
+              ...prev,
+              { url: file.url, publicId: file.publicId },
+            ]);
           }
         });
       }
@@ -160,7 +170,7 @@ export default function MessagesContainer({ files }: { files: File[] }) {
         <div
           key={message._id}
           data-message-id={message._id}
-          className="w-full flex flex-col px-4"
+          className="w-full flex flex-col"
         >
           <Message
             message={message}
@@ -168,7 +178,7 @@ export default function MessagesContainer({ files }: { files: File[] }) {
             isNewChain={isNewChain}
             isNewDay={isNewDay}
             lastElementRef={isLastMessage ? lastElementRef : null}
-            onImageClick={() => handleImageClick(index)}
+            onImageClick={handleImageClick}
           />
         </div>
       );
@@ -178,12 +188,13 @@ export default function MessagesContainer({ files }: { files: File[] }) {
   const scrollToRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (scrollToRef.current && isInitialized) {
+    if (scrollToRef.current && isInitialized && !isLoadingMessages) {
       scrollToRef.current.scrollIntoView();
+      setIsLoading(false);
     }
-  }, [isInitialized]);
+  }, [isInitialized, isLoadingMessages]);
 
-  if (!computedMessages.length) {
+  if (!computedMessages.length && !isLoadingMessages) {
     return (
       <div className="relative h-full flex items-center justify-center text-gray-500">
         No messages yet
@@ -194,31 +205,39 @@ export default function MessagesContainer({ files }: { files: File[] }) {
   return (
     <>
       <div
-        className="relative h-full flex-1 overflow-y-auto"
+        className="relative w-full h-full flex justify-center items-center"
         style={{
           maxHeight: "calc(100vh - 9.5rem)",
-          paddingBottom: "6rem",
+          paddingBottom: "10rem",
         }}
       >
         <div className="absolute top-0 left-0 h-20 rounded-tl-xl rounded-tr-xl w-full bg-gradient-to-b from-pure-white to-transparent pointer-events-none z-10" />
-
-        {computedMessages.map((item, index) => (
-          <div
-            key={item.message._id}
-            data-message-id={item.message._id}
-            className="w-full flex flex-col px-4"
-          >
-            {itemRenderer(index, item)}
-          </div>
-        ))}
-        <div ref={scrollToRef}></div>
+        <div
+          className={`w-full h-full absolute z-20 bg-pure-white rounded-xl bottom-0 left-0 flex justify-center items-center ${
+            isLoading ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <Loader />
+        </div>
+        <div className="relative h-full flex-1 overflow-y-auto">
+          {computedMessages.map((item, index) => (
+            <div
+              key={item.message._id}
+              data-message-id={item.message._id}
+              className="w-full flex flex-col px-4"
+            >
+              {itemRenderer(index, item)}
+            </div>
+          ))}
+          <div ref={scrollToRef}></div>
+        </div>
+        <ImageViewer
+          data={imageUrls.map((image) => ({ url: image.url }))}
+          open={open}
+          setOpen={setOpen}
+          index={index}
+        />
       </div>
-      <ImageViewer
-        data={imageUrls}
-        open={open}
-        setOpen={setOpen}
-        index={index}
-      />
     </>
   );
 }

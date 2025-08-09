@@ -1,0 +1,61 @@
+import { GoArrowUpRight } from "react-icons/go";
+import TextMessageBox from "./textMessageBox";
+import type { MessageType } from "@/types/messageTypes";
+
+export default function LinkMessageBox({
+  message,
+  isSender,
+  isHybrid = false,
+}: {
+  message: MessageType;
+  isSender: boolean;
+  isHybrid?: boolean;
+}): React.ReactNode {
+  if (!message.link) {
+    return <TextMessageBox message={message} isSender={isSender} />;
+  }
+
+  if (!message.link?.imageURL) {
+    console.log(message);
+    return (
+      <TextMessageBox message={message} isSender={isSender} isLink={true} />
+    );
+  }
+
+  return (
+    <div
+      className={`w-full flex flex-col gap-2 ${
+        isSender ? "items-end" : "items-start"
+      }`}
+    >
+      <a
+        href={message.link.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`flex flex-col gap-2 w-full max-w-80 h-fit p-2 rounded-lg text-gray hover:text-teal transition-all duration-200 bg-white-2 ${
+          isSender ? "rounded-br-none" : "rounded-bl-none"
+        }`}
+      >
+        <img
+          src={message.link.imageURL}
+          alt={message.link.title}
+          className="w-full rounded-md aspect-[16/9] object-cover object-center"
+        />
+        <div className="w-full flex justify-between gap-4">
+          <p className="flex flex-col gap-0.5">
+            <span className="text-sm font-medium text-black line-clamp-2">
+              {message.link.title}
+            </span>
+            <span className="text-xs text-gray line-clamp-1">
+              {message.link.url}
+            </span>
+          </p>
+          <GoArrowUpRight className="text-lg min-w-fit" />
+        </div>
+      </a>
+      {message.content && !isHybrid ? (
+        <TextMessageBox message={message} isSender={isSender} />
+      ) : null}
+    </div>
+  );
+}

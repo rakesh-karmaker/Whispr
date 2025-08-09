@@ -4,7 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelectedContact } from "./useSelectContact";
 import { useContactAssets } from "./useContactAssets";
-import type { FileMessageType } from "@/types/messageTypes";
+import type { FileMessageType, LinkMessageType } from "@/types/messageTypes";
 
 export default function useGetAssets(
   pageNumber: number,
@@ -33,13 +33,19 @@ export default function useGetAssets(
 
         if (assetType !== "link") {
           const assets: FileMessageType[] = [];
-          data.assets.forEach((asset: FileMessageType[]) => {
-            asset.forEach((item: FileMessageType) => {
-              if (item) {
-                assets.push(item);
+          const links: LinkMessageType[] = [];
+          data.assets.forEach(
+            (asset: { files: FileMessageType[]; link: LinkMessageType }) => {
+              asset.files.forEach((item: FileMessageType) => {
+                if (item) {
+                  assets.push(item);
+                }
+              });
+              if (asset.link && asset.link.url) {
+                links.push(asset.link);
               }
-            });
-          });
+            }
+          );
 
           const isImage = assetType === "image";
           const prefix = isImage ? "whispr/images/" : "whispr/files/";
@@ -58,6 +64,11 @@ export default function useGetAssets(
           };
 
           isImage ? setImages(updateAssets) : setFiles(updateAssets);
+
+          // Only add links that are present
+          if (links.length > 0) {
+            setLinks((prev) => prev.concat(links));
+          }
         } else {
           setLinks((prev) => prev.concat(data.assets));
         }

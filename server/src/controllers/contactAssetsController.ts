@@ -38,7 +38,10 @@ export async function getAssets(req: Request, res: Response): Promise<void> {
               }),
             ]
           : filteredMessages.map((asset) => {
-              return asset.files;
+              return {
+                files: asset.files,
+                link: asset.link,
+              };
             }),
       hasMore,
     });

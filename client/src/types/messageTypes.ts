@@ -7,10 +7,11 @@ export type MessageType = {
     avatar: string;
   };
   content?: string;
-  messageType: "text" | "file" | "link" | "announcement" | "hybrid";
+  messageType: "text" | "file" | "image" | "link" | "announcement" | "hybrid";
   files?: {
     url: string;
     publicId: string;
+    size?: number;
   }[];
   link?: {
     url: string;
@@ -32,7 +33,7 @@ export type MessageType = {
 export type FileMessageType = {
   url: string;
   publicId: string;
-  size: number;
+  size?: number;
 };
 
 export type LinkMessageType = {

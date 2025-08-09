@@ -1,8 +1,11 @@
 import { useUser } from "@/hooks/useUser";
-import type { MessageType } from "@/types/messageTypes";
+import type { FileMessageType, MessageType } from "@/types/messageTypes";
 import moment from "moment";
 import TextMessageBox from "./messageBox/textMessageBox";
-import { GoArrowUpRight } from "react-icons/go";
+import LinkMessageBox from "./messageBox/linkMessageBox";
+import ImageMessageBox from "./messageBox/imageMessageBox";
+import React from "react";
+import FileMessageBox from "./messageBox/fileMessageBox";
 
 export default function Message({
   message,
@@ -17,7 +20,7 @@ export default function Message({
   willChain: boolean;
   isNewDay: boolean;
   isNewChain?: boolean;
-  onImageClick?: () => void;
+  onImageClick: (publicId: string) => void;
 }): React.ReactNode {
   const { user } = useUser();
   const isSender = message.senderDetails._id === user?.id;
@@ -67,6 +70,7 @@ export default function Message({
           message={message}
           isSender={isSender}
           isNewChain={isNewChain}
+          onImageClick={onImageClick}
         />
       </div>
     </div>
@@ -87,10 +91,12 @@ function MessageBox({
   message,
   isSender,
   isNewChain,
+  onImageClick,
 }: {
   message: MessageType;
   isSender: boolean;
   isNewChain?: boolean;
+  onImageClick: (publicId: string) => void;
 }): React.ReactNode {
   return (
     <div className="w-fit flex flex-col gap-1">
@@ -100,7 +106,11 @@ function MessageBox({
         </p>
       )}
       <div className="flex flex-col gap-2">
-        <MessageContent message={message} isSender={isSender} />
+        <MessageContent
+          message={message}
+          isSender={isSender}
+          onImageClick={onImageClick}
+        />
       </div>
     </div>
   );
@@ -109,9 +119,11 @@ function MessageBox({
 function MessageContent({
   message,
   isSender,
+  onImageClick,
 }: {
   message: MessageType;
   isSender: boolean;
+  onImageClick: (publicId: string) => void;
 }): React.ReactNode {
   const messageType = message.messageType;
 
@@ -120,58 +132,72 @@ function MessageContent({
       return <TextMessageBox message={message} isSender={isSender} />;
     case "link":
       return <LinkMessageBox message={message} isSender={isSender} />;
-  }
-}
-
-function LinkMessageBox({
-  message,
-  isSender,
-  isHybrid = false,
-}: {
-  message: MessageType;
-  isSender: boolean;
-  isHybrid?: boolean;
-}): React.ReactNode {
-  if (!message.link) {
-    return <TextMessageBox message={message} isSender={isSender} />;
-  }
-
-  if (!message.link?.imageURL) {
-    return (
-      <TextMessageBox message={message} isSender={isSender} isLink={true} />
-    );
-  }
-
-  return (
-    <div className="w-full flex flex-col items-end gap-2">
-      <a
-        href={message.link.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`flex flex-col gap-2 w-full max-w-80 h-fit p-2 rounded-lg text-gray hover:text-teal transition-all duration-200 bg-white-2 ${
-          isSender ? "rounded-br-none" : "rounded-bl-none"
-        }`}
-      >
-        <img
-          src={message.link.imageURL}
-          alt={message.link.title}
-          className="w-full rounded-md aspect-[16/9] object-cover object-center"
+    case "image":
+      return (
+        <ImageMessageBox
+          message={message}
+          images={message.files || []}
+          isSender={isSender}
+          onImageClick={onImageClick}
         />
-        <div className="w-full flex justify-between gap-4">
-          <p className="flex flex-col gap-0.5">
-            <span className="text-sm font-medium text-black line-clamp-2">
-              {message.link.title}
-            </span>
-            <span className="text-xs text-gray line-clamp-1">
-              {message.link.url}
-            </span>
-          </p>
-          <GoArrowUpRight className="text-lg min-w-fit" />
+      );
+    case "file":
+      return (
+        <FileMessageBox
+          message={message}
+          files={message.files || []}
+          isSender={isSender}
+        />
+      );
+
+    case "hybrid":
+      const images: FileMessageType[] = [];
+      const files: FileMessageType[] = [];
+
+      message.files?.forEach((file) => {
+        if (file.publicId.startsWith("whispr/images/")) {
+          images.push(file);
+        } else {
+          files.push(file);
+        }
+      });
+
+      return (
+        <div
+          className={`w-full flex flex-col gap-2 ${
+            isSender ? "items-end" : "items-start"
+          }`}
+        >
+          {message.content && (
+            <TextMessageBox message={message} isSender={isSender} />
+          )}
+          {images.length > 0 && (
+            <ImageMessageBox
+              message={message}
+              images={images}
+              isSender={isSender}
+              onImageClick={onImageClick}
+              isHybrid={true}
+            />
+          )}
+          {files.length > 0 && (
+            <FileMessageBox
+              message={message}
+              files={files}
+              isSender={isSender}
+              isHybrid={true}
+            />
+          )}
+          {message.link && message.link.url && (
+            <LinkMessageBox
+              message={message}
+              isSender={isSender}
+              isHybrid={true}
+            />
+          )}
         </div>
-      </a>
-      {message.content && !isHybrid ? (
-        <TextMessageBox message={message} isSender={isSender} />
-      ) : null}
-    </div>
-  );
+      );
+    default:
+      return <TextMessageBox message={message} isSender={isSender} />;
+  }
 }

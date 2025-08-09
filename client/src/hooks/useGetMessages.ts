@@ -51,12 +51,11 @@ export default function useGetMessages(
     }
   }, [pageNumber]);
 
-  // useEffect(() => {
-  //   // Reset messages when the selected contact changes
-  //   setMessages([]);
-  //   setHasMore(true);
-  //   setPageNumber(1);
-  // }, [selectedContact?._id]);
+  useEffect(() => {
+    // Reset messages when the selected contact changes
+    setMessages([]);
+    setHasMore(true);
+  }, [selectedContact?._id]);
 
   return {
     isLoading,

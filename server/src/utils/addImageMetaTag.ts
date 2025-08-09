@@ -4,7 +4,10 @@ import { MessageType } from "../types/modelType.js";
 export default async function addMetaTag(messages: MessageType[]) {
   const newMessages = await Promise.all(
     messages.map(async (message: MessageType) => {
-      if (message.messageType === "link" && message.link) {
+      if (
+        (message.messageType === "link" || message.messageType === "hybrid") &&
+        message.link
+      ) {
         // Normalize the URL to ensure it has a protocol
         let normalizedUrl = message.link.url;
         // Ensure protocol
