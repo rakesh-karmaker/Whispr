@@ -80,7 +80,10 @@ export default function LoginForm(): React.ReactNode {
           />
         </div>
 
-        <NavLink to={"/auth/forgot-password"} className="text-teal">
+        <NavLink
+          to={"/auth/forgot-password"}
+          className="text-teal w-fit hover:text-gray transition-all duration-200"
+        >
           Forgot password?
         </NavLink>
 

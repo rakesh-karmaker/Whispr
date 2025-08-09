@@ -20,12 +20,17 @@ export default function Register(): React.ReactNode {
 
       <OrLine />
 
-      <GoogleBtn signupWithGoogle={authFunc} isLoading={isOAuthLoading}>
-        Already have an account?{" "}
-        <NavLink to="/auth/login" className={"text-teal"}>
-          Log in
-        </NavLink>
-      </GoogleBtn>
+      <div className="w-[29.0625em]">
+        <GoogleBtn signupWithGoogle={authFunc} isLoading={isOAuthLoading}>
+          Already have an account?{" "}
+          <NavLink
+            to="/auth/login"
+            className={"text-teal hover:text-gray transition-all duration-200"}
+          >
+            Log in
+          </NavLink>
+        </GoogleBtn>
+      </div>
     </div>
   );
 }

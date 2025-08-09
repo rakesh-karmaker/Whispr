@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useMemo, useCallback, use } from "react";
+import { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import moment from "moment";
 import useMessages from "@/hooks/useMessages";
 import useGetMessages from "@/hooks/useGetMessages";
@@ -17,7 +17,6 @@ export default function MessagesContainer({ files }: { files: File[] }) {
   const { user } = useUser();
   const { selectedContact } = useSelectedContact();
   const lastSeenMessageIdRef = useRef<string | null>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
   const seenObserver = useRef<IntersectionObserver | null>(null);
   const [imageUrls, setImageUrls] = useState<
     { url: string; publicId: string }[]
@@ -126,18 +125,6 @@ export default function MessagesContainer({ files }: { files: File[] }) {
     });
   }, [messages]);
 
-  // Handle initial scroll on mount and when contact changes
-  useEffect(() => {
-    if (computedMessages.length > 0 && !isInitialized) {
-      // Delay initial scroll to ensure Virtuoso is ready
-      const timer = setTimeout(() => {
-        setIsInitialized(true);
-      }, 100);
-
-      return () => clearTimeout(timer);
-    }
-  }, [computedMessages.length, isInitialized]);
-
   // Cleanup observer on unmount
   useEffect(() => {
     return () => {
@@ -188,11 +175,11 @@ export default function MessagesContainer({ files }: { files: File[] }) {
   const scrollToRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (scrollToRef.current && isInitialized && !isLoadingMessages) {
+    if (scrollToRef.current && !isLoadingMessages) {
       scrollToRef.current.scrollIntoView();
       setIsLoading(false);
     }
-  }, [isInitialized, isLoadingMessages]);
+  }, [isLoadingMessages]);
 
   if (!computedMessages.length && !isLoadingMessages) {
     return (

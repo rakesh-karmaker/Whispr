@@ -18,12 +18,17 @@ export default function Login(): React.ReactElement {
 
       <OrLine />
 
-      <GoogleBtn signupWithGoogle={authFunc} isLoading={isOAuthLoading}>
-        Don’t have an account?{" "}
-        <NavLink to="/auth/register" className={"text-teal"}>
-          Sign up
-        </NavLink>
-      </GoogleBtn>
+      <div className="w-[29.0625em]">
+        <GoogleBtn signupWithGoogle={authFunc} isLoading={isOAuthLoading}>
+          Don’t have an account?{" "}
+          <NavLink
+            to="/auth/register"
+            className={"text-teal hover:text-gray transition-all duration-200"}
+          >
+            Sign up
+          </NavLink>
+        </GoogleBtn>
+      </div>
     </AuthForm>
   );
 }

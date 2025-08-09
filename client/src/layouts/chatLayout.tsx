@@ -43,6 +43,12 @@ export default function ChatLayout(): React.ReactNode {
   }, [user?.id]);
 
   useEffect(() => {
+    if (!user?.id) {
+      navigate("/auth/login", { replace: true });
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
     if (socket) {
       socket.on("add-contact", (contactData: QueriedContact) =>
         addContact(contactData)

@@ -1,9 +1,19 @@
+import { useUser } from "@/hooks/useUser";
 import type React from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 export default function AuthPageLayout(): React.ReactNode {
+  const { user } = useUser();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (user) {
+      navigate("/chat");
+    }
+  }, [user, navigate]);
+
   return (
-    <main className="w-screen h-screen min-h-full flex">
+    <main className="w-full h-screen min-h-full flex">
       <AuthLeft />
       <div className="px-10 flex-1 w-full max-2xl:min-w-3xl max-xl:min-w-full h-screen min-h-full flex items-center justify-center">
         <Outlet />

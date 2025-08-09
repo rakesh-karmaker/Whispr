@@ -88,7 +88,10 @@ export default function ResetPasswordForm({
 
         <p className="text-center font-medium text-gray">
           Back to{" "}
-          <NavLink to="/auth/login" className={"text-teal"}>
+          <NavLink
+            to="/auth/login"
+            className={"text-teal hover:text-gray transition-all duration-200"}
+          >
             Log in
           </NavLink>
         </p>
