@@ -1,6 +1,8 @@
 import { SERVER } from "@/config/constants";
+import { verifySession } from "@/lib/api/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "./useUser";
 
 const serverURL = SERVER;
 
@@ -15,6 +17,7 @@ export default function useGoogleOAuth(): {
   isOAuthLoading: boolean;
 } {
   const navigate = useNavigate();
+  const { setUser } = useUser();
 
   const [isOAuthLoading, setIsOAuthLoading] = useState<boolean>(false);
 
@@ -27,7 +30,7 @@ export default function useGoogleOAuth(): {
     );
 
     // Listen for message from popup
-    window.addEventListener("message", (event) => {
+    window.addEventListener("message", async (event) => {
       if (event.origin !== serverURL) return; // important for security
 
       const response: OAuthResponse = event.data.user;
@@ -36,7 +39,15 @@ export default function useGoogleOAuth(): {
       if (response.new) {
         navigate(`/auth/profile?id=${response.redisId}`);
       } else {
-        console.log(response);
+        const sessionId = response.sessionId;
+        if (sessionId) {
+          const res = await verifySession(sessionId);
+          if (res.success) {
+            setUser(res.data.user);
+            console.log("User verified:", res.data);
+            navigate(`/chat`, { replace: true });
+          }
+        }
       }
     });
   }

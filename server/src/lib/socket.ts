@@ -320,6 +320,12 @@ const removeParticipant = async (
   });
   if (!contact) return;
 
+  // update the participant's pinned messages
+  await User.updateOne(
+    { _id: data.participantId },
+    { $pull: { pinnedContacts: data.contactId } }
+  );
+
   const participants =
     contact.admins && contact.admins.length > 0
       ? [...contact.participants, ...contact.admins]

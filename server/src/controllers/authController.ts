@@ -197,3 +197,56 @@ export async function getUser(req: Request, res: Response): Promise<void> {
     res.status(500).send({ message: "Server error", error: errorMessage });
   }
 }
+
+export async function verifySession(
+  req: Request,
+  res: Response
+): Promise<void> {
+  try {
+    const sessionId = req.query.sessionId as string;
+    if (!sessionId) {
+      res.status(400).send({ message: "Session ID is required" });
+      return;
+    }
+
+    // Check if the session ID exists in Redis
+    const sessionData = await redisClient.get(`session:${sessionId}`);
+    if (!sessionData) {
+      res.status(404).send({ message: "Session not found" });
+      return;
+    }
+
+    // Parse the session data to get the user ID
+    const sessionInfo = JSON.parse(sessionData);
+
+    const user = await User.findById(sessionInfo.id).select("-password");
+    if (!user) {
+      res.status(404).send({ message: "User not found" });
+      return;
+    }
+
+    // Set the cookie with the user ID
+    res.cookie("token", signJWTToken({ id: user._id.toString() }), {
+      maxAge: MAX_AGE,
+      secure: true,
+      sameSite: "none",
+    });
+
+    res.status(200).send({
+      user: {
+        id: user._id.toString(),
+        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        avatar: user.avatar,
+        pinnedContacts: user.pinnedContacts,
+        authProvider: user.authProvider,
+      },
+    });
+  } catch (err) {
+    console.log("Error verifying session - ", getDate(), "\n---\n", err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    res.status(500).send({ message: "Server error", error: errorMessage });
+  }
+}

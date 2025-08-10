@@ -306,11 +306,11 @@ export function messageSeen(data: MessageSeenFunctionProps) {
   }
 }
 
-//TODO: this logic is buggy, it should be fixed
 export function messageSaw(data: MessageSawFunctionProps) {
   const selectedContact = useSelectedContactStore.getState().selectedContact;
   const setMessages = useMessagesStore.getState().setMessages;
   const setContacts = useContactsStore.getState().setContacts;
+  const setPinnedContacts = useContactsStore.getState().setPinnedContacts;
   const user = useUserStore.getState().user;
 
   if (selectedContact._id === data.chatId) {
@@ -329,6 +329,26 @@ export function messageSaw(data: MessageSawFunctionProps) {
 
   setContacts((prevContacts) => {
     return prevContacts.map((contact) => {
+      if (contact._id === data.chatId) {
+        return {
+          ...contact,
+          lastMessages: contact.lastMessages.map((message) => {
+            if (data.messageIds.includes(message._id)) {
+              return {
+                ...message,
+                seenBy: [...message.seenBy, user?.id || ""],
+              };
+            }
+            return message;
+          }),
+        };
+      }
+      return contact;
+    });
+  });
+
+  setPinnedContacts((prevPinnedContacts) => {
+    return prevPinnedContacts.map((contact) => {
       if (contact._id === data.chatId) {
         return {
           ...contact,

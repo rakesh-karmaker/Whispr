@@ -28,7 +28,7 @@ export default function LoginForm(): React.ReactNode {
     mutationFn: (data: LoginSchema) => loginUser(data),
     onSuccess: (data: UserType) => {
       setUser(data);
-      navigate("/");
+      navigate("/chat", { replace: true });
     },
     onError: (err) => {
       const axiosError = err as AxiosError<{ subject?: string }>;

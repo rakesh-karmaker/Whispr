@@ -21,8 +21,7 @@ export default function ContactPreview({
 
   const { user } = useUser();
   let unseen = 0;
-  const reversed = [...contactData.lastMessages].reverse();
-  for (const message of reversed) {
+  for (const message of contactData.lastMessages) {
     if (message.sender._id == user?.id) {
       break;
     }

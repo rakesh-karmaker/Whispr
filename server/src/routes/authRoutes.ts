@@ -1,4 +1,9 @@
-import { getUser, login, register } from "../controllers/authController.js";
+import {
+  getUser,
+  login,
+  register,
+  verifySession,
+} from "../controllers/authController.js";
 import {
   resetPassword,
   sendForgotPasswordOtp,
@@ -19,6 +24,7 @@ authRouter.post("/add-temp-user", addTempUser);
 authRouter.post("/register", upload.single("avatar"), register);
 authRouter.post("/login", login);
 authRouter.get("/get-user", verifyToken, getUser);
+authRouter.get("/verify-session", verifySession);
 
 authRouter.post("/forgot-password", sendForgotPasswordOtp);
 authRouter.post("/verify-otp", verifyOtp);

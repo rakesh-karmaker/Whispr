@@ -47,3 +47,10 @@ export async function getUser() {
   const { data: response } = await api.get("/auth/get-user");
   return response;
 }
+
+export async function verifySession(sessionId: string) {
+  const { data: response } = await api.get(`/auth/verify-session`, {
+    params: { sessionId },
+  });
+  return response;
+}
