@@ -15,6 +15,20 @@ export default function FileMessageBox({
   isSender: boolean;
   isHybrid?: boolean;
 }): React.ReactNode {
+  const handleDownload = async (fileData: FileMessageType) => {
+    const title = filterPublicId(fileData.publicId);
+    const response = await fetch(fileData.url);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = title;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div
       className={`w-full flex flex-col gap-2 ${
@@ -30,14 +44,17 @@ export default function FileMessageBox({
           ((file.size ?? 0) / 1024).toFixed(2)
         );
         return (
-          <div
-            className="bg-white-2 p-1 w-full max-w-65 h-full flex rounded-lg"
+          <button
+            type="button"
+            className="bg-white-2 p-1 w-full max-w-65 h-full flex rounded-lg text-left cursor-pointer"
             key={file.publicId}
+            onClick={() => handleDownload(file)}
+            rel="noopener noreferrer"
           >
             <div className="w-fit flex items-center justify-center rounded-md px-3 pr-4">
               <FaFile className="text-blue text-2xl" />
             </div>
-            <div className="flex flex-col gap-2 justify-between bg-pure-white p-2 rounded-md w-full min-w-40 rounded-tl-none rounded-bl-none">
+            <div className="flex flex-col gap-2 justify-between bg-pure-white p-2 rounded-md w-full min-w-40 rounded-tl-none rounded-bl-none hover:bg-white-2 transition-all duration-200">
               <span className="text-sm font-medium text-black line-clamp-2">
                 {title}
               </span>
@@ -52,7 +69,7 @@ export default function FileMessageBox({
                 </span>
               </div>
             </div>
-          </div>
+          </button>
         );
       })}
     </div>
