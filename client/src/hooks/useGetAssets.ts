@@ -32,45 +32,28 @@ export default function useGetAssets(
         );
 
         if (assetType !== "link") {
-          const assets: FileMessageType[] = [];
-          const links: LinkMessageType[] = [];
-          data.assets.forEach(
-            (asset: { files: FileMessageType[]; link: LinkMessageType }) => {
-              asset.files.forEach((item: FileMessageType) => {
-                if (item) {
-                  assets.push(item);
-                }
-              });
-              if (asset.link && asset.link.url) {
-                links.push(asset.link);
-              }
-            }
-          );
-
-          const isImage = assetType === "image";
-          const prefix = isImage ? "whispr/images/" : "whispr/files/";
-
-          // Filter assets by type and remove duplicates based on publicId
-          const filteredAssets = assets.filter((asset) =>
-            asset.publicId.startsWith(prefix)
-          );
-
           // Only add assets that are not already present (by publicId)
           const updateAssets = (prev: FileMessageType[]) => {
             const existingIds = new Set(prev.map((a) => a.publicId));
             return prev.concat(
-              filteredAssets.filter((asset) => !existingIds.has(asset.publicId))
+              data.assets.filter(
+                (asset: FileMessageType) => !existingIds.has(asset.publicId)
+              )
             );
           };
 
-          isImage ? setImages(updateAssets) : setFiles(updateAssets);
-
-          // Only add links that are present
-          if (links.length > 0) {
-            setLinks((prev) => prev.concat(links));
-          }
+          assetType === "image"
+            ? setImages(updateAssets)
+            : setFiles(updateAssets);
         } else {
-          setLinks((prev) => prev.concat(data.assets));
+          setLinks((prev) => {
+            const existingIds = new Set(prev.map((a) => a.messageId));
+            return prev.concat(
+              data.assets.filter(
+                (asset: LinkMessageType) => !existingIds.has(asset.messageId)
+              )
+            );
+          });
         }
 
         setHasMore(data.hasMore);

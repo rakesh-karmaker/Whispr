@@ -39,7 +39,7 @@ export default function Links(): React.ReactNode {
       {links.map((link, index) => {
         return (
           <Link
-            key={`${link.url}-${index}`}
+            key={`${link.messageId}`}
             linkData={link}
             lastElementRef={index === length - 1 ? lastElementRef : null}
           />

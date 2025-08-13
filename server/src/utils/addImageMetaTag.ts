@@ -23,6 +23,7 @@ export default async function addMetaTag(messages: MessageType[]) {
           urlObj.hostname = "www." + urlObj.hostname;
           normalizedUrl = urlObj.toString();
         }
+
         const metaData = await scrapeURLMetaData(normalizedUrl);
 
         return {

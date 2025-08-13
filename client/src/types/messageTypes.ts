@@ -37,6 +37,7 @@ export type FileMessageType = {
 };
 
 export type LinkMessageType = {
+  messageId: string;
   url: string;
   title: string;
   description: string;
