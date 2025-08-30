@@ -26,7 +26,11 @@ export default function useGetMessages(
 
     const fetchMessages = async () => {
       try {
-        const data = await getMessages(selectedContact._id, pageNumber, cancel);
+        const data = await getMessages(
+          selectedContact?._id || "",
+          pageNumber,
+          cancel
+        );
 
         setMessages((prev) => {
           const allMessages = [...data.messages, ...prev];
@@ -46,7 +50,7 @@ export default function useGetMessages(
       }
     };
 
-    if (hasMore && selectedContact?._id) {
+    if (hasMore) {
       fetchMessages();
     }
   }, [pageNumber]);

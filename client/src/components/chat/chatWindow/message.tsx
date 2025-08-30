@@ -16,7 +16,7 @@ export default function Message({
   onImageClick,
 }: {
   message: MessageType;
-  lastElementRef: ((node: HTMLDivElement) => void) | null;
+  lastElementRef?: ((node: HTMLDivElement) => void) | null;
   willChain: boolean;
   isNewDay: boolean;
   isNewChain?: boolean;
@@ -31,7 +31,7 @@ export default function Message({
         ref={(node) => {
           if (lastElementRef) lastElementRef(node as HTMLDivElement);
         }}
-        className="w-full flex flex-col gap-2 text-center text-gray-500 text-xs my-1"
+        className="w-full flex flex-col gap-2 text-center text-gray-500 text-xs py-1"
       >
         {isNewDay && <DateBox data={message.createdAt} />}
         <span>
@@ -79,7 +79,7 @@ export default function Message({
 
 function DateBox({ data }: { data: Date }) {
   return (
-    <span className="text-center text-gray-500 text-xs my-8 flex items-center justify-center w-full gap-2.5">
+    <span className="text-center text-gray-500 text-xs py-8 flex items-center justify-center w-full gap-2.5">
       <span className="w-[20%] h-[1px] bg-gray-300"></span>
       <span>{moment(data).local().format("MMM D, YYYY")}</span>
       <span className="w-[20%] h-[1px] bg-gray-300"></span>

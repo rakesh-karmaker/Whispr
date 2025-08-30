@@ -9,6 +9,7 @@ import Message from "./message";
 import type { MessageType } from "@/types/messageTypes";
 import ImageViewer from "@/components/ui/imageViewer";
 import Loader from "@/components/ui/Loader/Loader";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 export default function MessagesContainer({ files }: { files: File[] }) {
   const { messages } = useMessages();
@@ -102,20 +103,6 @@ export default function MessagesContainer({ files }: { files: File[] }) {
         lastChainId = "";
       }
 
-      if (
-        (message.messageType == "image" || message.messageType == "hybrid") &&
-        message.files
-      ) {
-        message.files.forEach((file) => {
-          if (file.publicId.startsWith("whispr/images/")) {
-            setImageUrls((prev) => [
-              ...prev,
-              { url: file.url, publicId: file.publicId },
-            ]);
-          }
-        });
-      }
-
       return {
         message,
         isNewDay,
@@ -123,6 +110,24 @@ export default function MessagesContainer({ files }: { files: File[] }) {
         isNewChain,
       };
     });
+  }, [messages]);
+
+  // Extract image URLs in a separate effect to avoid mutations in memo
+  useEffect(() => {
+    const newImageUrls: { url: string; publicId: string }[] = [];
+    messages.forEach((message) => {
+      if (
+        (message.messageType === "image" || message.messageType === "hybrid") &&
+        message.files
+      ) {
+        message.files.forEach((file) => {
+          if (file.publicId.startsWith("whispr/images/")) {
+            newImageUrls.push({ url: file.url, publicId: file.publicId });
+          }
+        });
+      }
+    });
+    setImageUrls(newImageUrls);
   }, [messages]);
 
   // Cleanup observer on unmount
@@ -172,30 +177,57 @@ export default function MessagesContainer({ files }: { files: File[] }) {
     },
     [computedMessages.length, lastElementRef]
   );
-  const scrollToRef = useRef<HTMLDivElement>(null);
+
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const count = messages.length;
+  const virtualizer = useVirtualizer({
+    count,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 40, // Slightly higher for better accuracy with images
+    overscan: 10, // Increased for large lists
+    measureElement: (el) => {
+      return el.getBoundingClientRect().height;
+    },
+  });
+
+  const items = virtualizer.getVirtualItems();
 
   useEffect(() => {
-    if (scrollToRef.current && !isLoadingMessages) {
-      scrollToRef.current.scrollIntoView();
-      setIsLoading(false);
+    virtualizer.measure();
+    if (isLoadingMessages) {
+      setIsLoading(true);
+    } else {
+      if (count > 0) {
+        // wait a frame so element measurements from refs are applied, then scroll to the last item
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            virtualizer.scrollToIndex(count - 1, { align: "end" });
+          }, 100);
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 600);
+        });
+      }
     }
-  }, [isLoadingMessages]);
+  }, [messages, isLoadingMessages]);
 
-  if (!computedMessages.length && !isLoadingMessages) {
-    return (
-      <div className="relative h-full flex items-center justify-center text-gray-500">
-        No messages yet
-      </div>
-    );
-  }
+  useEffect(() => {
+    virtualizer.scrollToIndex(count - 1, { align: "end" });
+  }, [files]);
 
   return (
-    <>
+    <div
+      className="w-full h-full"
+      style={{
+        maxHeight: `100%`,
+        paddingBottom: files.length > 0 ? "4.25rem" : "0rem",
+      }}
+    >
       <div
         className="relative w-full h-full flex justify-center items-center"
         style={{
-          maxHeight: "calc(100vh - 9.5rem)",
-          paddingBottom: "10rem",
+          maxHeight: `100%`,
         }}
       >
         <div className="absolute top-0 left-0 h-20 rounded-tl-xl rounded-tr-xl w-full bg-gradient-to-b from-pure-white to-transparent pointer-events-none z-10" />
@@ -206,25 +238,52 @@ export default function MessagesContainer({ files }: { files: File[] }) {
         >
           <Loader />
         </div>
-        <div className="relative h-full flex-1 overflow-y-auto">
-          {computedMessages.map((item, index) => (
+        <div
+          ref={parentRef}
+          className="List w-full h-full"
+          style={{
+            overflowY: "auto",
+            contain: "strict",
+          }}
+        >
+          <div
+            style={{
+              height: virtualizer.getTotalSize(),
+              width: "100%",
+              position: "relative",
+            }}
+          >
             <div
-              key={item.message._id}
-              data-message-id={item.message._id}
-              className="w-full flex flex-col px-4"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                transform: `translateY(${items[0]?.start ?? 0}px)`,
+              }}
             >
-              {itemRenderer(index, item)}
+              {items.map((virtualRow) => (
+                <div
+                  key={virtualRow.key}
+                  data-index={virtualRow.index}
+                  ref={virtualizer.measureElement}
+                >
+                  {itemRenderer(
+                    virtualRow.index,
+                    computedMessages[virtualRow.index]
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
-          <div ref={scrollToRef}></div>
+          </div>
         </div>
-        <ImageViewer
-          data={imageUrls.map((image) => ({ url: image.url }))}
-          open={open}
-          setOpen={setOpen}
-          index={index}
-        />
       </div>
-    </>
+      <ImageViewer
+        data={imageUrls.map((image) => ({ url: image.url }))}
+        open={open}
+        setOpen={setOpen}
+        index={index}
+      />
+    </div>
   );
 }

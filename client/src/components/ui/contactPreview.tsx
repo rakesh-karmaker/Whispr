@@ -96,20 +96,16 @@ export default function ContactPreview({
         />
         <div className="w-full flex flex-col">
           <div className="flex justify-between items-center gap-2.5">
-            <h4 className="font-medium text-md">
-              {contactData.contactName && contactData.contactName.length > 17
-                ? contactData.contactName.slice(0, 17) + "..."
-                : contactData.contactName}
+            <h4 className="font-medium text-md line-clamp-1">
+              {contactData.contactName}
             </h4>
-            <p className="font-medium text-xs text-gray">
+            <p className="font-medium text-xs text-gray min-w-fit">
               {moment(contactData.lastMessages[0].updatedAt).format("LT")}
             </p>
           </div>
           <p className="flex justify-between gap-2.5">
-            <span className="text-sm text-gray">
-              {lastMessage && lastMessage.length > 35
-                ? lastMessage.slice(0, 35) + "..."
-                : lastMessage}
+            <span className="text-sm text-gray line-clamp-1">
+              {lastMessage}
             </span>
             {unseen > 0 && (
               <span className="w-5 h-5 flex items-center justify-center bg-teal text-pure-white text-[0.625em] rounded-full">

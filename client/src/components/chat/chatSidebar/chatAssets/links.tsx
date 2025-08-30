@@ -2,7 +2,7 @@ import LinkPreviewSkeleton from "@/components/ui/skeletons/linkPreviewSkeleton";
 import { useContactAssets } from "@/hooks/useContactAssets";
 import useGetAssets from "@/hooks/useGetAssets";
 import type { LinkMessageType } from "@/types/messageTypes";
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { FaLink } from "react-icons/fa6";
 
 export default function Links(): React.ReactNode {
@@ -61,6 +61,14 @@ function Link({
 }) {
   const title = linkData.title || linkData.url;
   if (!linkData.url) return null;
+  const [isImageUrlValid, setIsImageUrlValid] = useState<boolean>(false);
+  if (linkData.imageURL) {
+    const img = new Image();
+    img.src = linkData.imageURL;
+    img.onload = () => setIsImageUrlValid(true);
+    img.onerror = () => setIsImageUrlValid(false);
+  }
+
   return (
     <div ref={lastElementRef}>
       <a
@@ -69,7 +77,7 @@ function Link({
         rel="noopener noreferrer"
         className="text-sm w-full relative h-fit flex gap-2.5 rounded-md items-center bg-pure-white hover:bg-white-2 transition-all duration-200"
       >
-        {linkData.imageURL ? (
+        {linkData.imageURL && isImageUrlValid ? (
           <img
             src={linkData.imageURL}
             alt={title}

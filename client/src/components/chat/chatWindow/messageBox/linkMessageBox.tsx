@@ -1,6 +1,7 @@
 import { GoArrowUpRight } from "react-icons/go";
 import TextMessageBox from "./textMessageBox";
 import type { MessageType } from "@/types/messageTypes";
+import { useState } from "react";
 
 export default function LinkMessageBox({
   message,
@@ -22,6 +23,15 @@ export default function LinkMessageBox({
     );
   }
 
+  const [isImageUrlValid, setIsImageUrlValid] = useState(true);
+
+  if (message.link.imageURL) {
+    const img = new Image();
+    img.src = message.link.imageURL;
+    img.onload = () => setIsImageUrlValid(true);
+    img.onerror = () => setIsImageUrlValid(false);
+  }
+
   return (
     <div
       className={`w-full flex flex-col gap-2 ${
@@ -36,11 +46,16 @@ export default function LinkMessageBox({
           isSender ? "rounded-br-none" : "rounded-bl-none"
         }`}
       >
-        <img
-          src={message.link.imageURL}
-          alt={message.link.title}
-          className="w-full rounded-md aspect-[16/9] object-cover object-center"
-        />
+        {message.link.imageURL && isImageUrlValid && (
+          <div
+            style={{
+              backgroundImage: `url(${message.link.imageURL})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+            className="w-full rounded-md aspect-[16/9] object-cover object-center min-w-[304px] min-h-[171px]"
+          />
+        )}
         <div className="w-full flex justify-between gap-4">
           <p className="flex flex-col gap-0.5">
             <span className="text-sm font-medium text-black line-clamp-2">

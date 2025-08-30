@@ -13,19 +13,6 @@ export default function ChatWindow(): React.ReactNode {
   const [files, setFiles] = useState<File[]>([]);
   const { selectedContact } = useSelectedContact();
 
-  function getScrollbarWidth() {
-    const scrollDiv = document.createElement("div");
-    scrollDiv.style.width = "100px";
-    scrollDiv.style.height = "100px";
-    scrollDiv.style.overflow = "scroll";
-    scrollDiv.style.position = "absolute";
-    scrollDiv.style.top = "-9999px";
-    document.body.appendChild(scrollDiv);
-    const scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
-    document.body.removeChild(scrollDiv);
-    return scrollbarWidth;
-  }
-
   useEffect(() => {
     setIsDragging(false);
 
@@ -58,8 +45,8 @@ export default function ChatWindow(): React.ReactNode {
       className={`flex-1 flex flex-col w-full h-full gap-4`}
       style={{
         maxWidth: isSidebarOpen
-          ? `calc(100vw - (((25.75em + 2rem) * 2) + ${getScrollbarWidth()}px))`
-          : `calc(100vw - ((25.75em + 3rem) + ${getScrollbarWidth()}px))`,
+          ? `calc(100vw - (((25.75em + 2rem) * 2)))`
+          : `calc(100vw - ((25.75em + 3rem)))`,
       }}
     >
       <ChatHeader />
