@@ -1,7 +1,7 @@
 import type React from "react";
 import ChatHeader from "./chatHeader";
 import { useEffect, useState } from "react";
-import ChatInputContainer from "./chatInput/chatInput";
+import ChatInputContainer from "./chatInput/chatInputContainer";
 import { usePreferences } from "@/hooks/usePreferences";
 import FileDrag from "./fileDrag";
 import MessagesContainer from "./messagesContainer";
@@ -50,7 +50,7 @@ export default function ChatWindow(): React.ReactNode {
       }}
     >
       <ChatHeader />
-      <div className="relative w-full h-full bg-pure-white flex-1 flex flex-col pt-0 rounded-xl">
+      <div className="relative w-full h-full bg-pure-white flex-1 flex flex-col pt-0 rounded-xl gap-3">
         <MessagesContainer files={files} />
         <ChatInputContainer files={files} setFiles={setFiles} />
         <FileDrag

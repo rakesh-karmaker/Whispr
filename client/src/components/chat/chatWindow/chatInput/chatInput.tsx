@@ -1,55 +1,51 @@
-import type React from "react";
-import FilePreview from "./filePreview";
-import AddMoreFilesButton from "./addMoreFilesButton";
-import { RiSendPlaneFill } from "react-icons/ri";
-import { useState } from "react";
+import React, { useEffect, useRef } from "react";
 
-export default function ChatInputContainer({
-  files,
-  setFiles,
+export default function ChatInput({
+  message,
+  setMessage,
+  handleMessageSubmit,
 }: {
-  files: File[];
-  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
-}): React.ReactNode {
-  function removeFile(index: number): void {
-    setFiles((prevFiles) => {
-      const newFiles = [...prevFiles];
-      newFiles.splice(index, 1);
-      return newFiles;
-    });
-  }
-  const [message, setMessage] = useState<string>("");
+  message: string;
+  setMessage: React.Dispatch<React.SetStateAction<string>>;
+  handleMessageSubmit: () => void;
+}) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  function handleMessageSubmit() {
-    // Handle message submission logic here
-  }
+  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value);
+    // Auto-resize textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${e.target.value}px`;
+    }
+  };
+
+  useEffect(() => {
+    // Initial resize
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [message]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleMessageSubmit();
+    }
+  };
 
   return (
-    <div className="w-full bottom-0 max-w-[calc(100%-2rem)] flex flex-col gap-2 p-0.5 self-center">
-      {files.length > 0 && (
-        <ul className="overflow-x-auto overflow-y-visible flex items-center gap-2.5 pt-3 pb-3 list-none bg-pure-white rounded-xl max-h-28">
-          <AddMoreFilesButton setFiles={setFiles} />
-          {files.map((file, index) => (
-            <FilePreview
-              key={index}
-              file={file}
-              index={index}
-              removeFile={removeFile}
-            />
-          ))}
-        </ul>
-      )}
-      <div className="w-full h-full flex items-end gap-2 mb-[1.375em]">
-        <div className="w-full h-full rounded-full border-[0.5px] border-light-gray flex "></div>
-        <button
-          type="submit"
-          aria-label="Send message"
-          onClick={handleMessageSubmit}
-          className="min-w-10.5 min-h-10.5 max-h-10.5 flex justify-center items-center cursor-pointer text-xl bg-teal text-pure-white hover:text-black hover:bg-white-2 transition-all duration-200 rounded-full focus-within:outline-none focus-within:bg-white-2 focus-within:text-black"
-        >
-          <RiSendPlaneFill className="-ml-0.5 -mb-0.25" />
-        </button>
-      </div>
+    <div className="w-full h-fit rounded-3xl border-[0.5px] border-light-gray flex items-center gap-1.5 px-3">
+      <textarea
+        ref={textareaRef}
+        className="w-full min-h-6 max-h-32 resize-none border-none outline-none overflow-hidden bg-transparent py-2.5 text-sm"
+        placeholder="Type a message..."
+        value={message}
+        onChange={handleMessageChange}
+        onKeyDown={handleKeyDown}
+        rows={1}
+      />
     </div>
   );
 }

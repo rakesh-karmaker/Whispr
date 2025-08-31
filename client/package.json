@@ -12,7 +12,6 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@faker-js/faker": "^10.0.0",
     "@hookform/resolvers": "^5.1.1",
     "@mui/material": "^7.1.1",
     "@supabase/supabase-js": "^2.50.0",
@@ -22,7 +21,7 @@
     "@types/react-virtualized": "^9.22.2",
     "@types/react-window": "^1.8.8",
     "axios": "^1.10.0",
-    "faker": "^6.6.6",
+    "emoji-picker-react": "^4.13.2",
     "moment": "^2.30.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -41,7 +40,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
-    "@types/faker": "^6.6.11",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@types/react-lazy-load-image-component": "^1.6.4",

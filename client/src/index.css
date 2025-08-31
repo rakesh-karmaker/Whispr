@@ -44,6 +44,28 @@
   --breakpoint-xs: 25rem; /* 400px */
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--teal);
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--light-teal);
+}
+
 body {
   font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
   overflow-y: auto !important;

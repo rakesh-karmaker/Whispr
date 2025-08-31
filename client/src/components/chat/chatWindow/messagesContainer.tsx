@@ -212,16 +212,11 @@ export default function MessagesContainer({ files }: { files: File[] }) {
     }
   }, [messages, isLoadingMessages]);
 
-  useEffect(() => {
-    virtualizer.scrollToIndex(count - 1, { align: "end" });
-  }, [files]);
-
   return (
     <div
-      className="w-full h-full"
+      className="w-full h-full px-4"
       style={{
         maxHeight: `100%`,
-        paddingBottom: files.length > 0 ? "4.25rem" : "0rem",
       }}
     >
       <div
