@@ -11,7 +11,7 @@ import ImageViewer from "@/components/ui/imageViewer";
 import Loader from "@/components/ui/Loader/Loader";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
-export default function MessagesContainer({ files }: { files: File[] }) {
+export default function MessagesContainer() {
   const { messages } = useMessages();
   const { isLoading: isLoadingMessages } = useGetMessages(1);
   const socket = useSocketStore((state) => state.socket);
@@ -198,7 +198,7 @@ export default function MessagesContainer({ files }: { files: File[] }) {
     if (isLoadingMessages) {
       setIsLoading(true);
     } else {
-      if (count > 0) {
+      if (count > 0 && !isLoadingMessages) {
         // wait a frame so element measurements from refs are applied, then scroll to the last item
         requestAnimationFrame(() => {
           setTimeout(() => {
@@ -210,11 +210,15 @@ export default function MessagesContainer({ files }: { files: File[] }) {
         });
       }
     }
-  }, [messages, isLoadingMessages]);
+  }, [isLoadingMessages]);
+
+  useEffect(() => {
+    virtualizer.scrollToIndex(count - 1, { align: "end" });
+  }, [messages]);
 
   return (
     <div
-      className="w-full h-full px-4"
+      className="w-full h-full"
       style={{
         maxHeight: `100%`,
       }}
@@ -235,7 +239,7 @@ export default function MessagesContainer({ files }: { files: File[] }) {
         </div>
         <div
           ref={parentRef}
-          className="List w-full h-full"
+          className="List w-full h-full px-4"
           style={{
             overflowY: "auto",
             contain: "strict",

@@ -57,3 +57,9 @@ export type AddParticipantFunctionProps = {
   }[];
   contactId: string;
 };
+
+export type SendMessageFunctionProps = {
+  files: File[];
+  message: string;
+  chatId: string;
+};

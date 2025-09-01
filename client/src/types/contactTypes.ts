@@ -25,7 +25,7 @@ export type QueriedContact = {
     seenBy: string[];
     updatedAt: string;
     summary: string;
-    announcer: string;
+    announcer?: string;
     sender: {
       _id: string;
       name?: string;

@@ -13,6 +13,8 @@ export type ContactsStateType = {
   changeActiveContact: (contactId: string, activeStatus: boolean) => void;
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
+  isMessageSending: boolean;
+  setIsMessageSending: (isMessageSending: boolean) => void;
 };
 
 export const useContactsStore = create<ContactsStateType>((set) => ({
@@ -45,4 +47,6 @@ export const useContactsStore = create<ContactsStateType>((set) => ({
     })),
   isLoading: false,
   setIsLoading: (isLoading) => set({ isLoading }),
+  isMessageSending: false,
+  setIsMessageSending: (isMessageSending) => set({ isMessageSending }),
 }));

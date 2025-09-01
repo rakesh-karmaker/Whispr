@@ -51,7 +51,7 @@ export default function ChatWindow(): React.ReactNode {
     >
       <ChatHeader />
       <div className="relative w-full h-full bg-pure-white flex-1 flex flex-col pt-0 rounded-xl gap-3">
-        <MessagesContainer files={files} />
+        <MessagesContainer />
         <ChatInputContainer files={files} setFiles={setFiles} />
         <FileDrag
           isDragging={isDragging}

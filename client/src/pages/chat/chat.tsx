@@ -13,7 +13,7 @@ export default function Chat(): React.ReactNode {
   const navigate = useNavigate();
   const [showChat, setShowChat] = useState(false);
 
-  const { pinnedContacts, contacts } = useContacts();
+  const { pinnedContacts, contacts, setIsMessageSending } = useContacts();
   const { setImagesCount, setFilesCount, setLinksCount, reset } =
     useContactAssets();
   const {
@@ -36,6 +36,7 @@ export default function Chat(): React.ReactNode {
         setLinksCount(res.linksCount);
         setIsNewSelectedContact(false);
         setShowChat(true);
+        setIsMessageSending(false);
       }
     },
     onError: (err) => {

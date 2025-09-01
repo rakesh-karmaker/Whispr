@@ -8,11 +8,14 @@ import {
   AddParticipantFunctionProps,
   MakeAdminFunctionProps,
   RemoveParticipantFunctionProps,
+  SendMessageFunctionProps,
   UpdateGroupFunctionProps,
 } from "../types/socketFunctionTypes.js";
 import mongoose from "mongoose";
 import Message from "../models/Message.js";
 import { deleteFile } from "./upload.js";
+import { MessageType } from "../types/messageTypes.js";
+import scrapeURLMetaData from "./scrapeURLMetaData.js";
 
 const userSocketMap = new Map<string, string>();
 
@@ -67,6 +70,8 @@ const setUpSocket = (server: Server) => {
     socket.on("remove-participant", (data) =>
       removeParticipant(data, io, userId)
     );
+
+    socket.on("sendMessage", (data) => sendMessage(data, io, userId));
 
     socket.on("message-seen", (data) => messageSeen(data, io));
 
@@ -402,6 +407,91 @@ const updateUserActiveStatus = async (
         contactId,
         isActive,
       });
+    }
+  }
+};
+
+const sendMessage = async (
+  data: SendMessageFunctionProps,
+  io: IOServer,
+  userId: string
+) => {
+  // Find the contact
+  const contact = await Contact.find({
+    $and: [
+      {
+        _id: new mongoose.Types.ObjectId(data.chatId),
+      },
+      {
+        $or: [
+          {
+            participants: { $elemMatch: { $eq: userId } },
+          },
+          {
+            admins: { $elemMatch: { $eq: userId } },
+          },
+        ],
+      },
+    ],
+  });
+
+  if (!contact) return;
+
+  const sender = await User.findById(userId);
+
+  if (!sender) return;
+
+  // check if link is present in the message
+  const linkRegex = /https?:\/\/[^\s]+/g;
+  const links = data.message.match(linkRegex);
+
+  // Handle message sending logic here
+  const message = await Message.create({
+    chatId: new mongoose.Types.ObjectId(data.chatId),
+    sender: userId,
+    content: data.message,
+    messageType: links && links.length > 0 ? "link" : "text",
+    link: {
+      url: links && links.length > 0 ? links[0] : null,
+    },
+  });
+
+  console.log(message);
+
+  const participants =
+    contact[0].admins && contact[0].admins.length > 0
+      ? [...contact[0].participants, ...contact[0].admins]
+      : contact[0].participants;
+
+  const formattedMessage: MessageType = {
+    _id: message._id.toString(),
+    chatId: message.chatId.toString(),
+    senderDetails: {
+      _id: sender._id.toString(),
+      name: sender.name,
+      avatar: sender.avatar,
+    },
+    content: message.content,
+    messageType: message.messageType,
+    seenBy: message.seenBy.map((seenBy) => seenBy.toString()),
+    createdAt: message.createdAt,
+    updatedAt: new Date(message.updatedAt),
+  };
+
+  // get the meta tags if url exists
+  if (links && links.length > 0) {
+    const metaData = await scrapeURLMetaData(links[0]);
+    formattedMessage.link = {
+      url: links[0],
+      imageURL: metaData.imageURL,
+      title: metaData.title,
+      description: metaData.description,
+    };
+  }
+
+  for (const [id, socketId] of userSocketMap) {
+    if (participants.some((participant) => participant._id.toString() === id)) {
+      io.to(socketId).emit("sendMessage", formattedMessage);
     }
   }
 };

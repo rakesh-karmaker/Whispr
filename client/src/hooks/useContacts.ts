@@ -8,6 +8,8 @@ export const useContacts = () => {
   const isLoading = useContactsStore((s) => s.isLoading);
   const setIsLoading = useContactsStore((s) => s.setIsLoading);
   const changeActiveContact = useContactsStore((s) => s.changeActiveContact);
+  const isMessageSending = useContactsStore((s) => s.isMessageSending);
+  const setIsMessageSending = useContactsStore((s) => s.setIsMessageSending);
 
   return {
     contacts,
@@ -17,5 +19,7 @@ export const useContacts = () => {
     isLoading,
     setIsLoading,
     changeActiveContact,
+    isMessageSending,
+    setIsMessageSending,
   };
 };

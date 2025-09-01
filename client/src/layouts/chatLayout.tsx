@@ -8,10 +8,12 @@ import {
   messageSaw,
   messageSeen,
   removeParticipant,
+  sendMessage,
   updateContact,
 } from "@/lib/socket/contactActions";
 import { useSocketStore } from "@/stores/useSocketStore";
 import type { QueriedContact } from "@/types/contactTypes";
+import type { MessageType } from "@/types/messageTypes";
 import type {
   AddParticipantFunctionProps,
   MakeAdminFunctionProps,
@@ -82,6 +84,8 @@ export default function ChatLayout(): React.ReactNode {
           }
         }
       );
+
+      socket.on("sendMessage", (data: MessageType) => sendMessage(data));
 
       socket.on("message-seen", (data: MessageSeenFunctionProps) =>
         messageSeen(data)

@@ -3,6 +3,7 @@ import { useMessagesStore } from "@/stores/useMessagesStore";
 import { useSelectedContactStore } from "@/stores/useSelectedContactStore";
 import { useUserStore } from "@/stores/useUserStore";
 import type { QueriedContact, SelectedContact } from "@/types/contactTypes";
+import type { MessageType } from "@/types/messageTypes";
 import type {
   AddParticipantFunctionProps,
   MakeAdminFunctionProps,
@@ -285,6 +286,58 @@ export function addParticipant(data: AddParticipantFunctionProps) {
       ? [updatedContact, ...filteredContacts]
       : prevContacts;
   });
+}
+
+export function sendMessage(data: MessageType) {
+  const setMessages = useMessagesStore.getState().setMessages;
+  const selectedContact = useSelectedContactStore.getState().selectedContact;
+  const setPinnedContacts = useContactsStore.getState().setPinnedContacts;
+  const setContacts = useContactsStore.getState().setContacts;
+  const setIsMessageSending = useContactsStore.getState().setIsMessageSending;
+
+  if (selectedContact._id === data.chatId) {
+    setMessages((prevMessages) => [...prevMessages, data]);
+  }
+
+  const formattedMessage = {
+    _id: data._id,
+    content: data?.content ?? "",
+    messageType: data.messageType,
+    seenBy: data.seenBy.map((seenBy) => seenBy.toString()),
+    summary: "",
+    updatedAt: data.updatedAt.toString(),
+    sender: {
+      _id: data.senderDetails._id,
+      name: data.senderDetails.name,
+      avatar: data.senderDetails.avatar,
+    },
+  };
+
+  setContacts((prevContacts) => {
+    return prevContacts.map((contact) => {
+      if (contact._id === data.chatId) {
+        return {
+          ...contact,
+          lastMessages: [...contact.lastMessages, formattedMessage],
+        };
+      }
+      return contact;
+    });
+  });
+
+  setPinnedContacts((prevPinnedContacts) => {
+    return prevPinnedContacts.map((contact) => {
+      if (contact._id === data.chatId) {
+        return {
+          ...contact,
+          lastMessages: [...contact.lastMessages, formattedMessage],
+        };
+      }
+      return contact;
+    });
+  });
+
+  setIsMessageSending(false);
 }
 
 export function messageSeen(data: MessageSeenFunctionProps) {
