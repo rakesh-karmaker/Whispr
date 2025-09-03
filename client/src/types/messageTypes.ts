@@ -43,3 +43,9 @@ export type LinkMessageType = {
   description: string;
   imageURL: string;
 };
+
+export type UploadedFile = {
+  url: string;
+  publicId: string;
+  size: number;
+};

@@ -101,8 +101,8 @@ function MessageBox({
   return (
     <div className="w-fit flex flex-col gap-1">
       {!isSender && isNewChain && (
-        <p className={`text-gray text-sm ml-3 text-left`}>
-          {message.senderDetails.name}
+        <p className={`text-gray text-sm ml-1 text-left`}>
+          {message.senderDetails.name.split(" ")[0]}
         </p>
       )}
       <div className="flex flex-col gap-2">

@@ -1,4 +1,4 @@
-import { getAssets } from "@/lib/api/contacts";
+import { getAssets } from "@/lib/api/assets";
 import type { Canceler } from "axios";
 import axios from "axios";
 import { useEffect, useState } from "react";

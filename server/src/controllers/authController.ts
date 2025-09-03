@@ -35,16 +35,12 @@ export async function register(req: Request, res: Response): Promise<void> {
       }
 
       // upload the avatar image
-      const data = await uploadFile(res, req.file, "avatar", 600, 600);
-      if (
-        data &&
-        typeof data === "object" &&
-        "url" in data &&
-        "publicId" in data
-      ) {
+      try {
+        const data = await uploadFile(req.file, "avatar", 600, 600);
         avatar = data.url;
         publicId = data.publicId;
-      } else {
+      } catch (error) {
+        console.log("Error uploading avatar:", error);
         res.status(500).send({ message: "Image upload failed" });
         return;
       }

@@ -5,14 +5,13 @@ import { RiCheckDoubleLine } from "react-icons/ri";
 export default function TextMessageBox({
   message,
   isSender,
-  isLink = false,
 }: {
   message: MessageType;
   isSender: boolean;
-  isLink?: boolean;
 }): React.ReactNode {
   const date = moment(message.createdAt).local().format("hh:mm A");
   const hasSeen = message.seenBy.length > 0;
+  const linkRegex = /https?:\/\/[^\s]+/g;
 
   return (
     <div
@@ -20,18 +19,25 @@ export default function TextMessageBox({
         isSender ? "rounded-br-none" : "rounded-bl-none"
       }`}
     >
-      {isLink ? (
-        <a
-          href={message.link?.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-teal hover:underline text-[0.98em]/[140%] transition-all duration-200 cursor-pointer"
-        >
-          {message.link?.url}
-        </a>
-      ) : (
-        <p className="text-[0.98em]/[140%]">{message.content}</p>
-      )}
+      <p className="text-[0.93em]/[140%]">
+        {message.content &&
+          message.content.split(" ").map((word, index) => {
+            const isLink = linkRegex.test(word);
+            return isLink ? (
+              <a
+                key={index}
+                href={word}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-teal hover:underline transition-all duration-200 cursor-pointer"
+              >
+                {word}{" "}
+              </a>
+            ) : (
+              <span key={index}>{word} </span>
+            );
+          })}
+      </p>
       <div
         className={`${
           isSender ? "self-end" : "self-start"

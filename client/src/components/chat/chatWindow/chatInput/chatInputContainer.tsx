@@ -9,6 +9,8 @@ import EmojiPickerContainer from "./emojiPicker";
 import { useContacts } from "@/hooks/useContacts";
 import { useSocketStore } from "@/stores/useSocketStore";
 import { useSelectedContact } from "@/hooks/useSelectContact";
+import { uploadFiles } from "@/lib/api/messages";
+import type { UploadedFile } from "@/types/messageTypes";
 
 export default function ChatInputContainer({
   files,
@@ -30,21 +32,36 @@ export default function ChatInputContainer({
   }
   const [message, setMessage] = useState<string>("");
 
-  function handleMessageSubmit() {
+  async function handleMessageSubmit() {
     // Handle message submission logic here
     if ((files.length === 0 && message.trim() === "") || isMessageSending)
       return;
 
     setMessage("");
+    setIsMessageSending(true);
+
+    let imageData: UploadedFile[] = [];
+    let fileData: UploadedFile[] = [];
+
+    if (files.length > 0) {
+      const res = await uploadFiles(files);
+      if (res) {
+        imageData = res.images;
+        fileData = res.files;
+        setFiles([]);
+      }
+    }
 
     if (socket) {
       socket.emit("sendMessage", {
-        files,
+        files: {
+          images: imageData,
+          files: fileData,
+        },
         message,
         chatId: selectedContact._id,
       });
     }
-    setIsMessageSending(true);
   }
 
   return (

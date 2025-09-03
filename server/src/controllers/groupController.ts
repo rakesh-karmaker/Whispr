@@ -43,20 +43,12 @@ export async function createNewGroup(
     }
 
     // upload the image
-    let image, publicId;
-    const data = await uploadFile(res, groupImage, "groups", 400, 400);
-    if (
-      data &&
-      typeof data === "object" &&
-      "url" in data &&
-      "publicId" in data
-    ) {
-      image = data.url;
-      publicId = data.publicId;
-    } else {
-      res.status(500).send({ message: "Image upload failed" });
-      return;
-    }
+    const { url: image, publicId } = await uploadFile(
+      groupImage,
+      "groups",
+      400,
+      400
+    );
 
     // create a new group
     const newGroupContact = await Contact.create({
@@ -111,19 +103,15 @@ export async function updateGroup(req: Request, res: Response): Promise<void> {
 
     if (req.file) {
       // upload the image
-      const data = await uploadFile(res, req.file, "avatar", 600, 600);
-      if (
-        data &&
-        typeof data === "object" &&
-        "url" in data &&
-        "publicId" in data
-      ) {
+      try {
+        const data = await uploadFile(req.file, "avatar", 600, 600);
         if (group.publicId) {
-          await deleteFile(group.publicId, res);
+          await deleteFile(group.publicId);
         }
         group.image = data.url;
         group.publicId = data.publicId;
-      } else {
+      } catch (error) {
+        console.log("Error uploading avatar:", error);
         res.status(500).send({ message: "Image upload failed" });
         return;
       }

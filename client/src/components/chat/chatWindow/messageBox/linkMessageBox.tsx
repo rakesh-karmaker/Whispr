@@ -16,11 +16,8 @@ export default function LinkMessageBox({
     return <TextMessageBox message={message} isSender={isSender} />;
   }
 
-  if (!message.link?.imageURL) {
-    console.log(message);
-    return (
-      <TextMessageBox message={message} isSender={isSender} isLink={true} />
-    );
+  if (!message.link?.imageURL || !message.link?.title || !message.link?.url) {
+    return <TextMessageBox message={message} isSender={isSender} />;
   }
 
   const [isImageUrlValid, setIsImageUrlValid] = useState(true);

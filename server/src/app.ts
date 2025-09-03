@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routes/authRoutes.js";
 import config from "./config/config.js";
 import contactsRouter from "./routes/contactsRoutes.js";
+import messagesRouter from "./routes/messagesRoutes.js";
+import assetsRouter from "./routes/assetsRoutes.js";
 
 const app = express();
 
@@ -23,5 +25,7 @@ app.use(express.static("public"));
 
 app.use("/auth", authRouter);
 app.use("/contact", contactsRouter);
+app.use("/messages", messagesRouter);
+app.use("/assets", assetsRouter);
 
 export default app;

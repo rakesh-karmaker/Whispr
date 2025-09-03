@@ -14,6 +14,12 @@ export type LinkMessageType = {
   imageURL: string;
 };
 
+export type UploadedFile = {
+  url: string;
+  publicId: string;
+  size: number;
+};
+
 export type MessageType = {
   _id: string;
   chatId: string;

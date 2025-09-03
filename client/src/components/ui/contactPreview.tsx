@@ -6,6 +6,7 @@ import Avatar from "./avatar";
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelectedContact } from "@/hooks/useSelectContact";
+import formatLastMessage from "@/utils/formateLastMessage";
 
 export default function ContactPreview({
   contactData,
@@ -30,37 +31,7 @@ export default function ContactPreview({
     }
   }
 
-  const renderLastMessage = (contactData: QueriedContact) => {
-    const lastMessage = contactData.lastMessages[0];
-    if (lastMessage) {
-      switch (lastMessage.messageType) {
-        case "text":
-          return lastMessage.content;
-        case "file":
-          return lastMessage.summary;
-        case "image":
-          return lastMessage.summary;
-        case "link":
-          return lastMessage.summary;
-        case "announcement":
-          const announcer = contactData.lastMessages[0]?.announcer;
-          return announcer == user?.firstName
-            ? "You " + contactData.lastMessages[0]?.summary
-            : contactData.lastMessages[0]?.announcer +
-                " " +
-                contactData.lastMessages[0]?.summary;
-        case "hybrid":
-          const name = lastMessage.summary.split(" ")[0];
-          return name === user?.firstName
-            ? "You " + lastMessage.summary.slice(name.length + 1)
-            : lastMessage.summary;
-        default:
-          return "No messages yet";
-      }
-    }
-  };
-
-  const lastMessage = renderLastMessage(contactData);
+  const lastMessage = formatLastMessage(contactData, user);
 
   const { selectedContact } = useSelectedContact();
   useEffect(() => {

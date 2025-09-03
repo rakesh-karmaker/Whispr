@@ -17,7 +17,8 @@ export default function ChatWindow(): React.ReactNode {
     setIsDragging(false);
 
     function handleDragOver(e: DragEvent) {
-      if (Array.from(e.dataTransfer?.types || []).includes("Files")) {
+      const types = Array.from(e.dataTransfer?.types || []);
+      if (types.includes("Files") || types.includes("text/uri-list")) {
         setIsDragging(true);
         e.preventDefault();
       }

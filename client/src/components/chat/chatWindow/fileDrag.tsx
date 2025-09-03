@@ -10,12 +10,14 @@ export default function FileDrag({
   setFiles: React.Dispatch<React.SetStateAction<File[]>>;
   setIsDragging: React.Dispatch<React.SetStateAction<boolean>>;
 }): React.ReactNode {
-  function handleDrop(event: React.DragEvent<HTMLDivElement>): void {
+  async function handleDrop(
+    event: React.DragEvent<HTMLDivElement>
+  ): Promise<void> {
     event.preventDefault();
-    // only take the files from the drop event
-    if (event.dataTransfer.files.length === 0) return;
     const droppedFiles = Array.from(event.dataTransfer.files);
-    // remove folders and files larger than 10MB
+    const items = Array.from(event.dataTransfer.items);
+
+    // Handle direct file drops
     const validFiles = droppedFiles.filter((file) => {
       return (
         file.size <= 10 * 1024 * 1024 &&
@@ -23,9 +25,49 @@ export default function FileDrag({
         !file.type.includes("folder")
       );
     });
-    if (validFiles.length > 0) {
-      setFiles((prevFiles) => [...prevFiles, ...validFiles]);
+
+    // Handle URL drops (images from web)
+    const urlPromises: Promise<File | null>[] = [];
+    for (const item of items) {
+      if (item.type === "text/uri-list") {
+        const promise = new Promise<File | null>((resolve) => {
+          item.getAsString(async (url) => {
+            if (url && url.startsWith("http")) {
+              try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                if (blob.type.startsWith("image/")) {
+                  const file = new File([blob], `image-${Date.now()}.png`, {
+                    type: blob.type,
+                  });
+                  resolve(file);
+                } else {
+                  resolve(null);
+                }
+              } catch (error) {
+                console.error("Failed to fetch image from URL:", error);
+                resolve(null);
+              }
+            } else {
+              resolve(null);
+            }
+          });
+        });
+        urlPromises.push(promise);
+      }
     }
+
+    // Wait for all URL fetches to complete
+    const urlFiles = (await Promise.all(urlPromises)).filter(
+      (file) => file !== null
+    ) as File[];
+
+    // Combine valid files and fetched URL files
+    const allFiles = [...validFiles, ...urlFiles];
+    if (allFiles.length > 0) {
+      setFiles((prevFiles) => [...prevFiles, ...allFiles]);
+    }
+
     setIsDragging(false);
   }
 

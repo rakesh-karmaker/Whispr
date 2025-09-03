@@ -6,12 +6,11 @@ import sharp from "sharp";
 import generateId from "../utils/generateId.js";
 
 export async function uploadFile(
-  res: Response,
   file: Express.Multer.File,
   folder: string,
   width?: number,
   height?: number
-): Promise<{ url: string; publicId: string } | Response> {
+): Promise<{ url: string; publicId: string }> {
   try {
     if (
       !file ||
@@ -19,7 +18,7 @@ export async function uploadFile(
       file.size == 0 ||
       file.size > 10 * 1024 * 1024 // 10 MB limit
     ) {
-      return res.status(400).send({ error: "File is empty or too large." });
+      throw new Error("File is empty or too large.");
     }
 
     // change the width and height if an image
@@ -74,17 +73,16 @@ export async function uploadFile(
     return { url: result.secure_url, publicId: result.public_id };
   } catch (err) {
     console.log("Error uploading file -", getDate(), "\n---\n", err);
-    return res.status(500).send({ error: "Failed to upload file." });
+    throw new Error("Failed to upload file.");
   }
 }
 
 export async function uploadMultipleFiles(
-  res: Response,
   files: Express.Multer.File[],
   folder: string,
   width?: number,
   height?: number
-): Promise<{ url: string; publicId: string }[] | Response> {
+): Promise<{ url: string; publicId: string }[]> {
   try {
     const streamUpload = async (file: Express.Multer.File) => {
       if (!file || !file.buffer || file.size === 0) {
@@ -109,8 +107,8 @@ export async function uploadMultipleFiles(
         public_id: string;
       } = {
         folder: `whispr/${folder}/`,
-        resource_type: "auto", // auto detects image / video / raw
-        public_id: `${Date.now()}-${file.originalname}-${Math.floor(Math.random() * 1000)}`,
+        resource_type: file.mimetype.includes("pdf") ? "raw" : "auto",
+        public_id: `${generateId()}-${file.originalname}`,
       };
 
       return new Promise<{
@@ -143,14 +141,11 @@ export async function uploadMultipleFiles(
     }));
   } catch (err) {
     console.log("Error uploading multiple files -", getDate(), "\n---\n", err);
-    return res.status(500).send({ error: "Failed to upload files." });
+    throw new Error("Failed to upload files.");
   }
 }
 
-export async function deleteFile(
-  publicId: string,
-  res?: Response
-): Promise<void | Response> {
+export async function deleteFile(publicId: string): Promise<void> {
   try {
     await cloudinary.uploader.destroy(publicId, {
       invalidate: true,
@@ -158,8 +153,6 @@ export async function deleteFile(
     console.log("File deleted successfully -", getDate(), "\n---\n");
   } catch (err) {
     console.log("Error deleting file -", getDate(), "\n---\n", err);
-    return res
-      ? res.status(500).send({ error: "Failed to delete file." })
-      : undefined;
+    throw new Error("Failed to delete file.");
   }
 }

@@ -9,9 +9,7 @@ import { searchContactsQuery } from "../queries/searchQueries.js";
 import {
   getAllContactsQuery,
   getContactQuery,
-  getMessagesQuery,
 } from "../queries/contactQueries.js";
-import addMetaTag from "../utils/addImageMetaTag.js";
 
 export async function searchContacts(
   req: Request,
@@ -201,33 +199,6 @@ export async function getContact(req: Request, res: Response): Promise<void> {
     });
   } catch (err) {
     console.log("Error getting contact - ", getDate(), "\n---\n", err);
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    res.status(500).send({ message: "Server error", error: errorMessage });
-  }
-}
-
-export async function getMessages(req: Request, res: Response): Promise<void> {
-  try {
-    const { chatId, pageNumber } = req.query;
-    if (!chatId || !pageNumber) {
-      res.status(400).send({ message: "Invalid request" });
-      return;
-    }
-    const objectChatId = new mongoose.Types.ObjectId(chatId as string);
-    const messages = await getMessagesQuery(
-      objectChatId,
-      pageNumber as unknown as number
-    );
-
-    const messagesWithMetaData = await addMetaTag(messages);
-    const hasMore = messages.length > 0;
-
-    res.status(200).send({
-      messages: messagesWithMetaData,
-      hasMore,
-    });
-  } catch (err) {
-    console.log("Error getting messages - ", getDate(), "\n---\n", err);
     const errorMessage = err instanceof Error ? err.message : String(err);
     res.status(500).send({ message: "Server error", error: errorMessage });
   }

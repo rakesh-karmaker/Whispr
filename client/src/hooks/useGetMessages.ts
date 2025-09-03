@@ -2,7 +2,7 @@ import type { Canceler } from "axios";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import useMessages from "./useMessages";
-import { getMessages } from "@/lib/api/contacts";
+import { getMessages } from "@/lib/api/messages";
 import { useSelectedContact } from "./useSelectContact";
 
 export default function useGetMessages(

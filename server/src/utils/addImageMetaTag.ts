@@ -6,7 +6,8 @@ export default async function addMetaTag(messages: MessageType[]) {
     messages.map(async (message: MessageType) => {
       if (
         (message.messageType === "link" || message.messageType === "hybrid") &&
-        message.link
+        message.link &&
+        message.link.url
       ) {
         // Normalize the URL to ensure it has a protocol
         let normalizedUrl = message.link.url;

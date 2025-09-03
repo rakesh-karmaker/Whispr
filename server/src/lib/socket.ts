@@ -16,6 +16,8 @@ import Message from "../models/Message.js";
 import { deleteFile } from "./upload.js";
 import { MessageType } from "../types/messageTypes.js";
 import scrapeURLMetaData from "./scrapeURLMetaData.js";
+import getMessageType from "../utils/getMessageType.js";
+import getMessageSummary from "../utils/getMessageSummary.js";
 
 const userSocketMap = new Map<string, string>();
 
@@ -151,7 +153,13 @@ const deleteGroup = async (contactId: string, io: IOServer) => {
       { $pull: { contacts: contactId } }
     );
   });
-  await deleteFile(contact.publicId || "");
+  if (contact.publicId) {
+    try {
+      await deleteFile(contact.publicId);
+    } catch (error) {
+      console.log("Error deleting file:", error);
+    }
+  }
 };
 
 const makeAdmin = async (
@@ -416,6 +424,7 @@ const sendMessage = async (
   io: IOServer,
   userId: string
 ) => {
+  console.log(data);
   // Find the contact
   const contact = await Contact.find({
     $and: [
@@ -445,18 +454,35 @@ const sendMessage = async (
   const linkRegex = /https?:\/\/[^\s]+/g;
   const links = data.message.match(linkRegex);
 
+  const messageType = getMessageType(
+    data.files.images.length > 0,
+    data.files.files.length > 0,
+    !!links && links.length > 0
+  );
+
   // Handle message sending logic here
   const message = await Message.create({
     chatId: new mongoose.Types.ObjectId(data.chatId),
     sender: userId,
     content: data.message,
-    messageType: links && links.length > 0 ? "link" : "text",
+    messageType,
     link: {
       url: links && links.length > 0 ? links[0] : null,
     },
+    files: [
+      ...data.files.images.map((image) => ({
+        url: image.url,
+        publicId: image.publicId,
+        size: image.size,
+      })),
+      ...data.files.files.map((file) => ({
+        url: file.url,
+        publicId: file.publicId,
+        size: file.size,
+      })),
+    ],
+    summary: getMessageSummary(data, !!links && links.length > 0, messageType),
   });
-
-  console.log(message);
 
   const participants =
     contact[0].admins && contact[0].admins.length > 0
@@ -476,7 +502,13 @@ const sendMessage = async (
     seenBy: message.seenBy.map((seenBy) => seenBy.toString()),
     createdAt: message.createdAt,
     updatedAt: new Date(message.updatedAt),
+    summary: message.summary,
   };
+
+  // add files
+  if (data.files.images.length > 0 || data.files.files.length > 0) {
+    formattedMessage.files = message.files;
+  }
 
   // get the meta tags if url exists
   if (links && links.length > 0) {
@@ -488,6 +520,8 @@ const sendMessage = async (
       description: metaData.description,
     };
   }
+
+  console.log(formattedMessage);
 
   for (const [id, socketId] of userSocketMap) {
     if (participants.some((participant) => participant._id.toString() === id)) {
@@ -513,12 +547,10 @@ const messageSeen = async (
     })
     .map((message) => message.sender.toString());
 
-  // TODO: apply this update after testing
-  // messages.forEach(async (message) => {
-  //   console.log("Updating message seenBy:", message._id);
-  //   message.seenBy.push(new mongoose.Types.ObjectId(data.seenBy));
-  //   await message.save();
-  // });
+  messages.forEach(async (message) => {
+    message.seenBy.push(new mongoose.Types.ObjectId(data.seenBy));
+    await message.save();
+  });
 
   sendersWithNoSeen.forEach(async (senderId) => {
     const socketId = userSocketMap.get(senderId);

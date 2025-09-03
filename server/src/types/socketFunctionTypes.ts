@@ -1,3 +1,5 @@
+import { UploadedFile } from "./messageTypes.js";
+
 export type AddContactFunctionProps = {
   _id: string;
   contactName: string;
@@ -59,7 +61,10 @@ export type AddParticipantFunctionProps = {
 };
 
 export type SendMessageFunctionProps = {
-  files: File[];
+  files: {
+    images: UploadedFile[];
+    files: UploadedFile[];
+  };
   message: string;
   chatId: string;
 };
