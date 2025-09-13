@@ -45,9 +45,7 @@ async function fetchWithRetry(
         timeout: {
           request: 10000, // 10 seconds
         },
-        retry: {
-          limit: 0,
-        }, // Disable got's built-in retry
+        retry: 0, // Disable got's built-in retry
         followRedirect: true,
       });
 
