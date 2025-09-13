@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "npx tsc --project tsconfig.json",
     "prestart": "bun run build",
     "start": "node dist/server.js",
     "dev": "concurrently \"tsc -w\" \"nodemon dist/server.js\""
