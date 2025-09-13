@@ -1,7 +1,7 @@
 import app from "./app.js";
 import config from "./config/config.js";
 import mongoose from "mongoose";
-import mailSender from "./config/mailSender.js";
+import { verifyConnection } from "./config/mailSender.js";
 import setUpSocket from "./lib/socket.js";
 
 mongoose
@@ -9,13 +9,10 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error(err));
 
-// Test the mailSender
-mailSender.verify((error, success) => {
-  if (error) {
-    console.log(error, "email");
-  } else {
-    console.log("Server is ready to send our emails");
-  }
+// Verify email connection asynchronously (don't block server startup)
+verifyConnection().catch((error) => {
+  console.error("Email verification failed:", error.message);
+  console.log("Server will continue without email functionality");
 });
 
 const server = app.listen(config.port, () => {

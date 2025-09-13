@@ -82,7 +82,9 @@ async function fetchWithRetry(
 
       if (
         isGotError(error) &&
-        (error.code === "ETIMEDOUT" || error.code === "ECONNRESET")
+        (error.code === "ETIMEDOUT" ||
+          error.code === "ECONNRESET" ||
+          error.code === "ECONNREFUSED")
       ) {
         console.warn(`Network error (${error.code}) for ${url}, retrying...`);
         await new Promise((resolve) =>
@@ -103,6 +105,35 @@ export default async function scrapeURLMetaData(
   url: string
 ): Promise<URLMetaData> {
   if (!url) return { title: "", description: "", imageURL: "" };
+
+  // Validate URL format
+  try {
+    const urlObj = new URL(url);
+
+    // Skip localhost and internal network URLs
+    if (
+      urlObj.hostname === "localhost" ||
+      urlObj.hostname === "127.0.0.1" ||
+      urlObj.hostname === "0.0.0.0" ||
+      urlObj.hostname.startsWith("192.168.") ||
+      urlObj.hostname.startsWith("10.") ||
+      urlObj.hostname.startsWith("172.") ||
+      urlObj.hostname === "broadcasthost" ||
+      urlObj.hostname === "local"
+    ) {
+      console.log(`Skipping internal/localhost URL: ${url}`);
+      return { title: "", description: "", imageURL: "" };
+    }
+
+    // Skip non-HTTP/HTTPS protocols
+    if (!["http:", "https:"].includes(urlObj.protocol)) {
+      console.log(`Skipping non-HTTP URL: ${url}`);
+      return { title: "", description: "", imageURL: "" };
+    }
+  } catch (error) {
+    console.log(`Invalid URL format: ${url}`);
+    return { title: "", description: "", imageURL: "" };
+  }
 
   // check if url data exists
   const data: URLMetaData = JSON.parse(
