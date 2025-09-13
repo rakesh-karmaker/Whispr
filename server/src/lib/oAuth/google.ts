@@ -35,6 +35,8 @@ router.get("/callback", async (req: Request, res: Response): Promise<void> => {
     grant_type: "authorization_code",
   });
 
+  console.log("Google OAuth token response:", data);
+
   const accessToken = data.access_token as string;
 
   const userInfo = await axios.get(
@@ -43,6 +45,8 @@ router.get("/callback", async (req: Request, res: Response): Promise<void> => {
       headers: { Authorization: `Bearer ${accessToken}` },
     }
   );
+
+  console.log("Google user info:", userInfo.data);
 
   let response: AuthResponse = {
     new: false,
@@ -78,6 +82,8 @@ router.get("/callback", async (req: Request, res: Response): Promise<void> => {
     await redisClient.set(`temp_user:${id}`, JSON.stringify(userInfo.data));
     await redisClient.expire(`temp_user:${id}`, 3600); // 1 hour
   }
+
+  console.log("OAuth response:", response);
 
   res.send(`
     <script>

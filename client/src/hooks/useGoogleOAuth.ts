@@ -33,6 +33,8 @@ export default function useGoogleOAuth(): {
     window.addEventListener("message", async (event) => {
       if (event.origin !== serverURL) return; // important for security
 
+      console.log("Message received from OAuth popup:", event);
+
       const response: OAuthResponse = event.data.user;
       setIsOAuthLoading(false);
 
