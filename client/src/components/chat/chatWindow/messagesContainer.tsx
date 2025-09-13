@@ -218,20 +218,20 @@ export default function MessagesContainer() {
 
   return (
     <div
-      className="w-full h-full"
+      className="w-full h-full dark:bg-d-dark-gray rounded-xl"
       style={{
         maxHeight: `100%`,
       }}
     >
       <div
-        className="relative w-full h-full flex justify-center items-center"
+        className="relative w-full h-full flex justify-center items-center dark:bg-d-dark-gray rounded-xl"
         style={{
           maxHeight: `100%`,
         }}
       >
-        <div className="absolute top-0 left-0 h-20 rounded-tl-xl rounded-tr-xl w-full bg-gradient-to-b from-pure-white to-transparent pointer-events-none z-10" />
+        <div className="absolute top-0 left-0 h-20 rounded-tl-xl rounded-tr-xl w-full bg-gradient-to-b from-pure-white dark:from-d-dark-gray to-transparent pointer-events-none z-10" />
         <div
-          className={`w-full h-full absolute z-20 bg-pure-white rounded-xl bottom-0 left-0 flex justify-center items-center ${
+          className={`w-full h-full absolute z-20 bg-pure-white dark:bg-d-dark-gray rounded-xl bottom-0 left-0 flex justify-center items-center ${
             isLoading ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >
@@ -239,7 +239,7 @@ export default function MessagesContainer() {
         </div>
         <div
           ref={parentRef}
-          className="List w-full h-full px-4"
+          className="List w-full h-full px-4 dark:bg-d-dark-gray rounded-xl"
           style={{
             overflowY: "auto",
             contain: "strict",

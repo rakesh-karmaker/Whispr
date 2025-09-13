@@ -4,6 +4,7 @@ import { lazy, Suspense } from "react";
 import Loader from "@/components/ui/Loader/Loader";
 import AuthProfile from "@/pages/auth/profile";
 import ForgotPassword from "@/pages/auth/forgotPasword";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const Login = lazy(() => import("@/pages/auth/login"));
 const Register = lazy(() => import("@/pages/auth/register"));
@@ -19,6 +20,12 @@ interface Route {
   children?: Route[];
 }
 
+const theme = createTheme({
+  colorSchemes: {
+    dark: true,
+  },
+});
+
 const routes: Route[] = [
   {
     path: "/",
@@ -33,7 +40,9 @@ const routes: Route[] = [
     path: "/chat",
     element: (
       <Suspense fallback={<Loader />}>
-        <ChatLayout />
+        <ThemeProvider theme={theme}>
+          <ChatLayout />
+        </ThemeProvider>
       </Suspense>
     ),
     children: [

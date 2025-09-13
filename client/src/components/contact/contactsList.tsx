@@ -28,7 +28,7 @@ export default function ContactsList(): React.ReactNode {
     [isLoading, hasMore]
   );
   return (
-    <div className="w-full h-full relative overflow-y-hidden bg-pure-white rounded-xl flex-1">
+    <div className="w-full h-full relative overflow-y-hidden bg-pure-white dark:bg-d-dark-gray rounded-xl flex-1">
       <div className="w-full h-full relative overflow-y-auto flex flex-col gap-5">
         <ContentsSection
           title="Pinned"
@@ -42,7 +42,7 @@ export default function ContactsList(): React.ReactNode {
           isLoading={isLoading}
         />
       </div>
-      <div className="absolute bottom-0 w-full h-30 bg-[linear-gradient(180deg,_rgba(255,_255,_255,_0)_37.97%,_#FFFFFF_100%)] pointer-events-none" />
+      <div className="absolute bottom-0 w-full h-30 bg-gradient-to-t from-pure-white dark:from-d-dark-gray to-transparent pointer-events-none" />
     </div>
   );
 }
@@ -60,7 +60,7 @@ function ContentsSection({
 }): React.ReactNode {
   return (
     <div className="w-full h-fit flex flex-col gap-2.5">
-      <h3 className="pt-[1.375em] pl-[1.375em] font-medium text-light-dark-gray">
+      <h3 className="pt-[1.375em] pl-[1.375em] font-medium text-light-dark-gray dark:text-d-gray">
         {title}
       </h3>
       <div className="flex flex-col">

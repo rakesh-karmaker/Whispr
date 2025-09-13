@@ -22,6 +22,8 @@ import type {
   RemoveParticipantFunctionProps,
   UpdatedGroupData,
 } from "@/types/socketActionTypes";
+import { useColorScheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import type React from "react";
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -112,8 +114,20 @@ export default function ChatLayout(): React.ReactNode {
     };
   }, [socket]);
 
+  // handle dark mode
+  const { mode } = useColorScheme();
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  console.log(mode, prefersDarkMode);
+  useEffect(() => {
+    if (mode === "system") {
+      document.documentElement.classList.toggle("dark", prefersDarkMode);
+    } else {
+      document.documentElement.classList.toggle("dark", mode === "dark");
+    }
+  }, [mode, prefersDarkMode]);
+
   return (
-    <div className="h-screen max-w-screen flex gap-4 p-4 bg-white-3 chat-layout">
+    <div className="h-screen max-w-screen flex gap-4 p-4 bg-white-3 dark:bg-black chat-layout">
       <ChatLeft />
       <Outlet />
     </div>

@@ -1,5 +1,6 @@
 @import url("./fonts.css");
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --pure-white: #ffffff;
@@ -20,6 +21,11 @@
   --tan: #c4af7b;
   --light-blue: #dee1f9;
   --blue: #5968dc;
+
+  --d-dark-gray: #1f1f1f;
+  --d-light-dark-gray: #303030;
+  --d-gray: #bdbdbd;
+  --d-white: #fafafa;
 }
 
 @theme inline {
@@ -40,6 +46,16 @@
   --color-tan: var(--tan);
   --color-light-blue: var(--light-blue);
   --color-blue: var(--blue);
+
+  --skeleton-light-from: hsl(200, 20%, 80%);
+  --skeleton-light-to: hsl(200, 20%, 95%);
+  --skeleton-dark-from: hsl(200, 5%, 50%);
+  --skeleton-dark-to: hsl(200, 5%, 65%);
+
+  --color-d-dark-gray: var(--d-dark-gray);
+  --color-d-light-dark-gray: var(--d-light-dark-gray);
+  --color-d-gray: var(--d-gray);
+  --color-d-white: var(--d-white);
 
   --breakpoint-xs: 25rem; /* 400px */
 }
@@ -70,11 +86,21 @@ body {
   font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
   overflow-y: auto !important;
   padding: 0px !important;
+
+  --skeleton-from: var(--skeleton-light-from);
+  --skeleton-to: var(--skeleton-light-to);
 }
 
 body:has(.chat-layout) {
   background: var(--white-3);
   overflow-y: hidden !important;
+}
+
+.dark body:has(.chat-layout) {
+  background: var(--black);
+
+  --skeleton-from: var(--skeleton-dark-from);
+  --skeleton-to: var(--skeleton-dark-to);
 }
 
 .messages-container > div {
@@ -110,10 +136,10 @@ body:has(.chat-layout) {
 
 @keyframes skeleton-loading {
   0% {
-    background-color: hsl(200, 20%, 80%);
+    background-color: var(--skeleton-from);
   }
   100% {
-    background-color: hsl(200, 20%, 95%);
+    background-color: var(--skeleton-to);
   }
 }
 
@@ -228,32 +254,29 @@ body:has(.chat-layout) {
   }
 }
 
-/* Add these to your global CSS for better Chromium performance */
-.virtuoso-container {
+/* Optimize participant list performance */
+.participant-list-item {
   /* Enable hardware acceleration */
   transform: translateZ(0);
-  will-change: scroll-position;
+  will-change: auto;
 
   /* Reduce layout thrashing */
   contain: layout style paint;
 
-  /* Optimize scrolling */
-  scroll-behavior: auto !important;
-  -webkit-overflow-scrolling: touch;
+  /* Optimize for frequent updates */
+  backface-visibility: hidden;
 }
 
-/* Optimize message containers */
-[data-message-id] {
-  /* Prevent layout shifts */
-  contain: layout;
-
-  /* Enable GPU acceleration for animations */
-  transform: translateZ(0);
-}
-
-/* Reduce paint operations */
-.message-content {
+/* Optimize dropdown animations */
+.participant-dropdown {
   /* Use transform instead of changing properties that trigger layout/paint */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Reduce paint operations for participant items */
+.participant-content {
+  /* Prevent unnecessary repaints */
   backface-visibility: hidden;
   perspective: 1000px;
 }

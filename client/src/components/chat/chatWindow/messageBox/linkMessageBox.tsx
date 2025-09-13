@@ -39,7 +39,7 @@ export default function LinkMessageBox({
         href={message.link.url}
         target="_blank"
         rel="noopener noreferrer"
-        className={`flex flex-col gap-2 w-full max-w-80 h-fit p-2 rounded-lg text-gray hover:text-teal transition-all duration-200 bg-white-2 ${
+        className={`flex flex-col gap-2 w-full max-w-80 h-fit p-2 rounded-lg text-gray dark:text-d-white/45 hover:text-teal transition-all duration-200 bg-white-2 dark:bg-d-light-dark-gray ${
           isSender ? "rounded-br-none" : "rounded-bl-none"
         }`}
       >
@@ -55,10 +55,10 @@ export default function LinkMessageBox({
         )}
         <div className="w-full flex justify-between gap-4">
           <p className="flex flex-col gap-0.5">
-            <span className="text-sm font-medium text-black line-clamp-2">
+            <span className="text-sm font-medium text-black line-clamp-2 dark:text-d-white/90">
               {message.link.title}
             </span>
-            <span className="text-xs text-gray line-clamp-1">
+            <span className="text-xs text-gray line-clamp-1 dark:text-d-white/45">
               {message.link.url}
             </span>
           </p>

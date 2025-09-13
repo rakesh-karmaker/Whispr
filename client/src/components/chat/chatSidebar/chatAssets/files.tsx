@@ -80,19 +80,17 @@ function File({
     <div ref={lastElementRef}>
       <button
         rel="noopener noreferrer"
-        className="text-sm w-full relative h-fit flex justify-start text-left border-none outline-none gap-2.5 rounded-md items-center bg-pure-white hover:bg-white-2 transition-all duration-200 cursor-pointer"
+        className="text-sm w-full relative h-fit flex justify-start text-left border-none outline-none gap-2.5 rounded-md items-center bg-pure-white dark:bg-d-dark-gray hover:bg-white-2 dark:hover:bg-d-light-dark-gray transition-all duration-200 cursor-pointer"
         onClick={handleDownload}
         type="button"
       >
-        <div className="min-w-15 aspect-square rounded-md bg-gray-200 flex items-center justify-center">
+        <div className="min-w-15 aspect-square rounded-md bg-gray-200 dark:bg-d-light-dark-gray flex items-center justify-center">
           <FaFile className="text-gray-500 text-2xl" />
         </div>
-        <span className="w-full flex flex-col">
-          <span title={title}>
-            {title.length > 30 ? `${title.slice(0, 30)}...` : title}
-          </span>
+        <span className="w-full flex flex-col line-clamp-1 dark:text-d-white/90">
+          <span title={title}>{title}</span>
 
-          <span className="text-gray-500 text-xs">
+          <span className="text-gray-500 text-xs dark:text-d-white/50">
             {fileData.size
               ? `${(fileData.size / 1024).toFixed(2)} KB`
               : "Unknown size"}

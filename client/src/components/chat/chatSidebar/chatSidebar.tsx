@@ -9,7 +9,7 @@ export default function ChatSidebar(): React.ReactNode {
   if (!isSidebarOpen) return null;
 
   return (
-    <section className="w-full flex-1 h-full min-w-[25.75em] max-w-[25.75em] overflow-y-auto rounded-xl bg-pure-white p-[1.375em] flex flex-col gap-7">
+    <section className="w-full flex-1 h-full min-w-[25.75em] max-w-[25.75em] overflow-y-auto rounded-xl bg-pure-white dark:bg-d-dark-gray p-[1.375em] flex flex-col gap-7">
       <SidebarHeader />
       <SidebarBody />
     </section>

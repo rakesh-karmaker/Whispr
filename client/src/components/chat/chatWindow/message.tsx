@@ -31,14 +31,11 @@ export default function Message({
         ref={(node) => {
           if (lastElementRef) lastElementRef(node as HTMLDivElement);
         }}
-        className="w-full flex flex-col gap-2 text-center text-gray-500 text-xs py-1"
+        className="w-full flex flex-col gap-2 text-center text-gray-500 dark:text-d-white/50 text-xs py-1"
       >
         {isNewDay && <DateBox data={message.createdAt} />}
         <span>
-          <span className="font-semibold">
-            {isSender ? "You" : message.announcer}
-          </span>{" "}
-          {message.summary}
+          {isSender ? "You" : message.announcer} {message.summary}
         </span>
       </p>
     );
@@ -79,10 +76,10 @@ export default function Message({
 
 function DateBox({ data }: { data: Date }) {
   return (
-    <span className="text-center text-gray-500 text-xs py-8 flex items-center justify-center w-full gap-2.5">
-      <span className="w-[20%] h-[1px] bg-gray-300"></span>
+    <span className="text-center text-gray-500 dark:text-d-white/50 text-xs py-8 flex items-center justify-center w-full gap-2.5">
+      <span className="w-[20%] h-[1px] bg-gray-300 dark:bg-d-light-dark-gray"></span>
       <span>{moment(data).local().format("MMM D, YYYY")}</span>
-      <span className="w-[20%] h-[1px] bg-gray-300"></span>
+      <span className="w-[20%] h-[1px] bg-gray-300 dark:bg-d-light-dark-gray"></span>
     </span>
   );
 }
@@ -100,11 +97,14 @@ function MessageBox({
 }): React.ReactNode {
   return (
     <div className="w-fit flex flex-col gap-1">
-      {!isSender && isNewChain && (
-        <p className={`text-gray text-sm ml-1 text-left`}>
-          {message.senderDetails.name.split(" ")[0]}
-        </p>
-      )}
+      {!isSender &&
+        isNewChain && ( //TODO: fix this
+          <p
+            className={`text-gray text-sm ml-1 text-left dark:text-d-white/50`}
+          >
+            {message.senderDetails.name.split(" ")[0]}
+          </p>
+        )}
       <div className="flex flex-col gap-2">
         <MessageContent
           message={message}

@@ -75,7 +75,7 @@ function Link({
         href={linkData.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-sm w-full relative h-fit flex gap-2.5 rounded-md items-center bg-pure-white hover:bg-white-2 transition-all duration-200"
+        className="text-sm w-full relative h-fit flex gap-2.5 rounded-md items-center bg-pure-white dark:bg-d-dark-gray hover:bg-white-2 dark:hover:bg-d-light-dark-gray transition-all duration-200"
       >
         {linkData.imageURL && isImageUrlValid ? (
           <img
@@ -84,17 +84,15 @@ function Link({
             className="w-15 aspect-square object-cover rounded-md"
           />
         ) : (
-          <div className="min-w-15 aspect-square rounded-md bg-gray-200 flex items-center justify-center">
+          <div className="min-w-15 aspect-square rounded-md bg-gray-200 dark:bg-d-light-dark-gray flex items-center justify-center">
             <FaLink className="text-gray-500 text-2xl" />
           </div>
         )}
         <span className="w-full flex flex-col">
-          <span>{title.length > 30 ? `${title.slice(0, 30)}...` : title}</span>
+          <span className="dark:text-d-white/90 line-clamp-1">{title}</span>
           {linkData.title && (
-            <span className="text-gray-500 text-xs">
-              {linkData.url.length > 40
-                ? `${linkData.url.slice(0, 40)}...`
-                : linkData.url}
+            <span className="text-gray-500 text-xs dark:text-d-white/50 line-clamp-2">
+              {linkData.url}
             </span>
           )}
         </span>

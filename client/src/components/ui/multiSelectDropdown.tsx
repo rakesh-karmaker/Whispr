@@ -56,7 +56,7 @@ export default function MultiSelectDropdown({
 
   return (
     <div
-      className="shadow-sm bg-pure-white z-50 max-h-80 overflow-y-auto rounded-xl"
+      className="shadow-sm dark:shadow-d-light-dark-gray bg-pure-white dark:bg-d-dark-gray z-50 max-h-80 overflow-y-auto rounded-xl"
       ref={dropdownRef}
     >
       {data.map((option, index) => (
@@ -64,7 +64,7 @@ export default function MultiSelectDropdown({
           type="button"
           key={option._id}
           ref={index === data.length - 1 ? lastRef : null}
-          className="cursor-pointer block w-full focus-within:bg-white-2"
+          className="cursor-pointer block w-full focus-within:bg-white-2 dark:focus-within:bg-d-light-dark-gray"
           onClick={() => toggleOption(option)}
         >
           <UserPreview contactData={option} />

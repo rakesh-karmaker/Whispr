@@ -15,11 +15,11 @@ export default function TextMessageBox({
 
   return (
     <div
-      className={`w-fit h-fit p-3 flex flex-col gap-1 bg-[#F7F7F7] rounded-lg ${
+      className={`w-fit h-fit p-3 flex flex-col gap-1 bg-[#F7F7F7] dark:bg-d-light-dark-gray rounded-lg ${
         isSender ? "rounded-br-none" : "rounded-bl-none"
       }`}
     >
-      <p className="text-[0.93em]/[140%]">
+      <p className="text-[0.93em]/[140%] dark:text-d-white/90">
         {message.content &&
           message.content.split(" ").map((word, index) => {
             const isLink = linkRegex.test(word);
@@ -43,7 +43,7 @@ export default function TextMessageBox({
           isSender ? "self-end" : "self-start"
         } flex gap-1 items-center`}
       >
-        <p className="text-xs text-gray">{date}</p>
+        <p className="text-xs text-gray dark:text-d-white/45">{date}</p>
         {isSender && (
           <RiCheckDoubleLine
             className={`text-sm ${hasSeen ? "text-teal" : "text-gray"}`}

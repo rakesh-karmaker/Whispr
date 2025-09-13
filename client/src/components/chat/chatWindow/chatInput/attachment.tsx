@@ -10,7 +10,7 @@ export default function Attachment({
     <div>
       <label
         htmlFor="files"
-        className="text-md text-gray cursor-pointer hover:text-black transition-all duration-200 min-w-10.5 min-h-10.5 max-h-10.5 flex justify-center items-center text-xl bg-white-2 hover:bg-light-gray  rounded-full focus-within:outline-none focus-within:bg-white-2 focus-within:text-black"
+        className="text-md text-gray cursor-pointer hover:text-black dark:hover:text-d-white/90 transition-all duration-200 min-w-10.5 min-h-10.5 max-h-10.5 flex justify-center items-center text-xl bg-white-2 dark:bg-d-light-dark-gray hover:bg-light-gray dark:hover:bg-d-dark-gray rounded-full focus-within:outline-none focus-within:bg-white-2 dark:focus-within:bg-d-dark-gray focus-within:text-black dark:focus-within:text-d-white/90"
       >
         <GrAttachment />
       </label>

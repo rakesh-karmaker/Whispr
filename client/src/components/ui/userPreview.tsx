@@ -8,7 +8,7 @@ export default function UserPreview({
   contactData: SearchedContact;
 }): React.ReactNode {
   return (
-    <div className="w-full h-full flex p-3 items-center transition-all duration-200 hover:bg-white-2 focus-within:bg-white-2">
+    <div className="w-full h-full flex p-3 items-center transition-all duration-200 hover:bg-white-2 dark:hover:bg-d-light-dark-gray focus-within:bg-white-2 dark:focus-within:bg-d-light-dark-gray">
       <div className="flex gap-2.5 items-center relative">
         <Avatar
           src={contactData.avatar}
@@ -17,8 +17,12 @@ export default function UserPreview({
         />
 
         <div className="flex flex-col text-left">
-          <h4 className="text-lg font-medium text-left">{contactData.name}</h4>
-          <p className="text-sm text-gray">{contactData.email}</p>
+          <h4 className="text-lg font-medium text-left dark:text-d-white/90">
+            {contactData.name}
+          </h4>
+          <p className="text-sm text-gray dark:text-d-white/70">
+            {contactData.email}
+          </p>
         </div>
       </div>
     </div>

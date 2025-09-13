@@ -1,5 +1,5 @@
 import type React from "react";
-import { FaPlus } from "react-icons/fa";
+import { GoPlus } from "react-icons/go";
 
 export default function AddMoreFilesButton({
   setFiles,
@@ -10,11 +10,11 @@ export default function AddMoreFilesButton({
     <li>
       <label
         htmlFor="add-more-file"
-        className="cursor-pointer bg-white-2 text-teal text-xl flex justify-center items-center min-w-10 max-w-10 w-10 aspect-square rounded-full hover:bg-teal hover:text-white transition-all duration-200"
+        className="cursor-pointer bg-white-2 dark:bg-d-light-dark-gray text-teal flex justify-center items-center min-w-10 max-w-10 w-10 aspect-square rounded-full hover:bg-teal hover:text-white transition-all duration-200"
         title="Add more files"
         aria-label="Add more files"
       >
-        <FaPlus />
+        <GoPlus className="text-3xl" />
       </label>
       <input
         type="file"

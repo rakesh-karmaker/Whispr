@@ -48,14 +48,20 @@ export default function ContactPreview({
     <NavLink
       ref={ref ? ref : null}
       className={
-        "w-full h-fit relative flex justify-center items-center border-none outline-none px-[1.375em] py-4.5 bg-pure-white hover:bg-white-2 transition-all duration-200 cursor-pointer" +
-        (isActive ? " bg-white-2" : "")
+        "w-full h-fit relative flex justify-center items-center border-none outline-none px-[1.375em] py-4.5 bg-pure-white dark:bg-d-dark-gray hover:bg-white-2 dark:hover:bg-d-light-dark-gray focus-within:bg-d-light-dark-gray transition-all duration-200 cursor-pointer" +
+        (isActive ? " bg-white-2 dark:bg-d-light-dark-gray" : "")
       }
       to={`/chat/${contactData._id}`}
       onMouseEnter={() => {
         !isActive && setShowLine(false);
       }}
       onMouseLeave={() => {
+        !isActive && setShowLine(true);
+      }}
+      onFocus={() => {
+        !isActive && setShowLine(false);
+      }}
+      onBlur={() => {
         !isActive && setShowLine(true);
       }}
     >
@@ -67,15 +73,15 @@ export default function ContactPreview({
         />
         <div className="w-full flex flex-col">
           <div className="flex justify-between items-center gap-2.5">
-            <h4 className="font-medium text-md line-clamp-1">
+            <h4 className="font-medium text-md line-clamp-1 dark:text-d-white/90">
               {contactData.contactName}
             </h4>
-            <p className="font-medium text-xs text-gray min-w-fit">
+            <p className="font-medium text-xs text-gray min-w-fit dark:text-d-white/50">
               {moment(contactData.lastMessages[0].updatedAt).format("LT")}
             </p>
           </div>
           <p className="flex justify-between gap-2.5">
-            <span className="text-sm text-gray line-clamp-1">
+            <span className="text-sm text-gray line-clamp-1 dark:text-d-white/50">
               {lastMessage}
             </span>
             {unseen > 0 && (
@@ -87,7 +93,7 @@ export default function ContactPreview({
         </div>
         <div
           className={
-            "absolute -bottom-[40%] w-full h-[1px] bg-[#D8D8D8]/70 transition-all duration-200" +
+            "absolute -bottom-[40%] w-full h-[1px] bg-[#D8D8D8]/70 dark:bg-d-light-dark-gray/90 transition-all duration-200" +
             (showLine ? "" : " opacity-0")
           }
         />

@@ -14,7 +14,7 @@ export default function ChatHeader(): React.ReactNode {
   const { isSidebarOpen, setIsSidebarOpen } = usePreferences();
 
   return (
-    <div className="w-full min-h-14 max-h-[5.5em] p-[1.375em] bg-pure-white rounded-xl flex-1 flex justify-between items-center gap-5">
+    <div className="w-full min-h-14 max-h-[5.5em] p-[1.375em] bg-pure-white dark:bg-d-dark-gray rounded-xl flex-1 flex justify-between items-center gap-5">
       <ChatHeaderInfo
         selectedContact={selectedContact}
         isNewSelectedContact={isNewSelectedContact}
@@ -25,9 +25,9 @@ export default function ChatHeader(): React.ReactNode {
           <PinChatButton />
           <button
             type="button"
-            className={`text-2xl w-[44px] h-[44px] rounded-full flex items-center justify-center cursor-pointer hover:bg-white-2 hover:text-black transition-all duration-200 ${
+            className={`text-2xl w-[44px] h-[44px] rounded-full flex items-center justify-center cursor-pointer hover:bg-white-2 dark:hover:bg-d-white/30 hover:text-black dark:hover:text-d-white transition-all duration-200 ${
               isSidebarOpen
-                ? " bg-white-2 text-black"
+                ? " bg-white-2 text-black dark:bg-d-light-dark-gray dark:text-d-white/90"
                 : " text-pure-white bg-teal"
             }`}
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -97,7 +97,7 @@ function PinChatButton(): React.ReactNode {
   return (
     <button
       type="button"
-      className="font-medium text-lg text-pure-white w-27 h-11 rounded-4xl bg-black flex items-center justify-center cursor-pointer hover:bg-white-2 hover:text-black transition-all duration-200 disabled:cursor-not-allowed disabled:hover:bg-black disabled:hover:text-pure-white disabled:opacity-60"
+      className="font-medium text-lg text-pure-white w-27 h-11 rounded-4xl bg-black dark:bg-d-light-dark-gray flex items-center justify-center cursor-pointer hover:bg-white-2 dark:hover:bg-d-white/30 hover:text-black dark:hover:text-d-white transition-all duration-200 disabled:cursor-not-allowed disabled:hover:bg-black disabled:hover:text-pure-white disabled:opacity-60"
       onClick={() => {
         pinContactMutation.mutate({
           chatId: selectedContact._id,
@@ -140,8 +140,10 @@ function ChatHeaderInfo({
     <div className="flex items-center gap-2.5">
       <Avatar src={data.image || ""} name={data.name} isActive={isActive} />
       <div className="flex flex-col">
-        <h2 className="font-medium text-lg">{data.name}</h2>
-        <p className="text-sm text-gray">{subHeading}</p>
+        <h2 className="font-medium text-lg line-clamp-1 dark:text-d-white/90">
+          {data.name}
+        </h2>
+        <p className="text-sm text-gray dark:text-d-white/45">{subHeading}</p>
       </div>
     </div>
   );

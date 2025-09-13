@@ -12,14 +12,19 @@ export default function ChatInfo(): React.ReactNode {
         className="w-23 h-23 rounded-full object-cover object-center"
       />
       <div className="flex flex-col gap-2">
-        <h2 className="font-semibold text-xl">{selectedContact.name}</h2>
+        <h2
+          className="font-semibold text-xl line-clamp-3 dark:text-d-white/90"
+          title={selectedContact.name}
+        >
+          {selectedContact.name}
+        </h2>
         <div className="flex items-center gap-4">
           {selectedContact.socialLinks &&
             selectedContact.socialLinks.slice(0, 5).map((link) => (
               <Link
                 to={link.link}
                 target="_blank"
-                className="text-xl text-gray hover:text-teal transition-all duration-200"
+                className="text-xl text-gray dark:text-d-gray/90 hover:text-teal transition-all duration-200"
                 key={link.link}
                 title={`${link.type} link`}
               >

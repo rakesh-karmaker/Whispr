@@ -263,23 +263,25 @@ function DeleteGroupWarning({
       onClose={() => setWarningOpen(false)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
-      className="flex items-center justify-center h-fit min-h-full absolute max-sm:bg-pure-white"
+      className="flex items-center justify-center h-fit min-h-full absolute max-sm:bg-pure-white dark:max-sm:bg-d-dark-gray"
     >
-      <div className="w-full max-w-[28.75em] max-xs:max-w-full min-h-fit max-xs:min-h-screen p-7 rounded-lg max-xs:rounded-none bg-pure-white flex flex-col max-xs:justify-center gap-3 relative">
+      <div className="w-full max-w-[28.75em] max-xs:max-w-full min-h-fit max-xs:min-h-screen p-7 rounded-lg max-xs:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col max-xs:justify-center gap-3 relative">
         <div className="flex flex-col gap-2">
-          <h2 className="text-xl font-semibold">Delete Group</h2>
-          <p className="text-gray text-sm">
+          <h2 className="text-xl font-semibold dark:text-d-white/90">
+            Delete Group
+          </h2>
+          <p className="text-gray text-sm dark:text-d-white/70">
             This action cannot be undone. This will permanently delete this
             group <b>{selectedContact.name}</b> and remove all of its data from
             our servers. All your images, files, links, and message data will be
             permanently lost.
           </p>
-          <p className="bg-red-100 text-red p-2.5 border-[1px] border-red rounded-md text-sm font-medium">
+          <p className="bg-red-100 dark:bg-red-200 text-red p-2.5 border-[1px] border-red rounded-md text-sm font-medium">
             Warning: This action cannot be undone
           </p>
           <div className="w-full flex gap-2.5 justify-end items-center mt-2">
             <button
-              className="bg-white-2 text-gray py-2 px-3 rounded-sm border-[1px] border-gray-300 hover:bg-gray-300 hover:text-gray-800 transition-all duration-200 cursor-pointer"
+              className="bg-white-2 dark:bg-d-light-dark-gray text-gray dark:text-d-white/80 py-2 px-3 rounded-sm border-[1px] dark:border-none border-gray-300 hover:bg-gray-300 hover:text-gray-800 transition-all duration-200 cursor-pointer"
               onClick={() => setWarningOpen(false)}
             >
               Cancel
@@ -304,7 +306,7 @@ function AddSocialLinkButton({
 }) {
   return (
     <button
-      className={`min-w-10 min-h-10 max-h-10 max-w-10 flex items-center justify-center bg-white-2 text-teal rounded-full text-xl hover:bg-teal hover:text-pure-white transition-all duration-200 cursor-pointer`}
+      className={`min-w-10 min-h-10 max-h-10 max-w-10 flex items-center justify-center bg-white-2 dark:bg-d-light-dark-gray text-teal rounded-full text-xl hover:bg-teal hover:text-pure-white transition-all duration-200 cursor-pointer`}
       onClick={() => append({ type: "", link: "" })}
       type="button"
       aria-label="Add social link"
@@ -324,7 +326,7 @@ function RemoveSocialLinkButton({
 }) {
   return (
     <button
-      className={`min-w-10 min-h-10 max-h-10 max-w-10 flex items-center justify-center bg-white-2 text-red rounded-full text-xl hover:bg-red hover:text-pure-white transition-all duration-200 cursor-pointer`}
+      className={`min-w-10 min-h-10 max-h-10 max-w-10 flex items-center justify-center bg-white-2 dark:bg-d-light-dark-gray text-red rounded-full text-xl hover:bg-red hover:text-pure-white transition-all duration-200 cursor-pointer`}
       onClick={() => remove(index)}
       type="button"
       aria-label="Remove social link"

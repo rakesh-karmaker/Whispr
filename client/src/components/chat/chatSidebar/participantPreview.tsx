@@ -3,13 +3,13 @@ import type React from "react";
 import { BsThreeDots } from "react-icons/bs";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useState } from "react";
+import { useState, memo, useMemo } from "react";
 import { useSelectedContact } from "@/hooks/useSelectContact";
 import { useUser } from "@/hooks/useUser";
 import { useSocketStore } from "@/stores/useSocketStore";
 import type { SelectedContact } from "@/types/contactTypes";
 
-export default function ParticipantPreview({
+export default memo(function ParticipantPreview({
   participant,
   isAdmin,
 }: {
@@ -17,47 +17,54 @@ export default function ParticipantPreview({
   isAdmin: boolean;
 }): React.ReactNode {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { selectedContact } = useSelectedContact();
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const { selectedContact } = useSelectedContact();
 
   return (
-    <div className="w-full flex justify-between items-center gap-5">
-      <div className="flex gap-3 items-center">
+    <div className="w-full flex justify-between items-center gap-5 participant-content">
+      <div className="flex gap-3 items-center flex-1">
         <Avatar
           src={participant.avatar}
           name={participant.name}
           isActive={false}
         />
         <div className="flex flex-col">
-          <p className="font-medium text-lg">{participant.name}</p>
-          <p className="text-sm text-gray">{isAdmin ? "Admin" : "Member"}</p>
+          <p className="font-medium text-lg dark:text-d-white/90">
+            {participant.name}
+          </p>
+          <p className="text-sm text-gray dark:text-d-white/50">
+            {isAdmin ? "Admin" : "Member"}
+          </p>
         </div>
       </div>
       {selectedContact && selectedContact.isGroup && (
         <>
           <button
             type="button"
-            className="w-8 h-8 rounded-full flex items-center justify-center bg-teal text-pure-white hover:bg-white-2 hover:text-black cursor-pointer transition-all duration-200"
+            className="w-8 h-8 rounded-full flex items-center justify-center bg-teal text-pure-white hover:bg-white-2 dark:hover:bg-d-light-dark-gray hover:text-black dark:hover:text-d-white cursor-pointer transition-all duration-200"
             onClick={handleClick}
           >
             <BsThreeDots />
           </button>
-          <ParticipantDropdown
-            participant={participant}
-            isAdmin={isAdmin}
-            anchorEl={anchorEl}
-            setAnchorEl={setAnchorEl}
-            selectedContact={selectedContact}
-          />
+          <div className="participant-dropdown absolute">
+            <ParticipantDropdown
+              participant={participant}
+              isAdmin={isAdmin}
+              anchorEl={anchorEl}
+              setAnchorEl={setAnchorEl}
+              selectedContact={selectedContact}
+            />
+          </div>
         </>
       )}
     </div>
   );
-}
+});
 
-function ParticipantDropdown({
+const ParticipantDropdown = memo(function ParticipantDropdown({
   participant,
   isAdmin,
   anchorEl,
@@ -73,9 +80,10 @@ function ParticipantDropdown({
   const { user } = useUser();
   const socket = useSocketStore((s) => s.socket);
 
-  const isUserAdmin = selectedContact.admins?.some(
-    (admin) => admin._id === user?.id
-  );
+  // Memoize expensive admin check
+  const isUserAdmin = useMemo(() => {
+    return selectedContact.admins?.some((admin) => admin._id === user?.id);
+  }, [selectedContact.admins, user?.id]);
 
   const open = Boolean(anchorEl);
 
@@ -157,4 +165,4 @@ function ParticipantDropdown({
       </MenuItem>
     </Menu>
   );
-}
+});

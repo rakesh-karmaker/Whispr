@@ -73,7 +73,7 @@ export default function FileDrag({
 
   return (
     <div
-      className={`w-full h-full absolute top-0 left-0 flex justify-center items-center border-dashed border-2 border-teal rounded-lg bg-white-3/40 backdrop-blur-xs ${
+      className={`w-full h-full absolute top-0 left-0 flex justify-center items-center border-dashed border-2 border-teal rounded-lg bg-white-3/40 dark:bg-d-dark-gray/40 backdrop-blur-xs ${
         isDragging ? "opacity-100" : "opacity-0 pointer-events-none"
       } transition-opacity duration-300`}
       onDrop={handleDrop}
@@ -88,10 +88,12 @@ export default function FileDrag({
           <RiFolderUploadFill />
         </p>
         <div className="flex flex-col gap-2 items-center">
-          <h3 className={`text-2xl text-center font-medium`}>
+          <h3
+            className={`text-2xl text-center font-medium dark:text-d-white/90`}
+          >
             Upload your files
           </h3>
-          <p className="text-sm text-center">
+          <p className="text-sm text-center dark:text-d-white/45">
             Max <span className="font-medium">10MB</span>, no folders allowed
           </p>
         </div>

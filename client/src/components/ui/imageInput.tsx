@@ -57,7 +57,7 @@ export default function ImageInput({
         ref={labelRef}
         htmlFor="file"
         className={
-          "cursor-pointer relative w-36 h-36 bg-white-2 flex justify-center items-center py-2.5 px-5 [box-shadow:rgba(0,0,0,0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] rounded-full transition-all duration-200"
+          "cursor-pointer relative w-36 h-36 bg-white-2 dark:bg-d-light-dark-gray flex justify-center items-center py-2.5 px-5 [box-shadow:rgba(0,0,0,0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] rounded-full transition-all duration-200"
         }
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -67,7 +67,7 @@ export default function ImageInput({
       >
         <MdEdit
           className={
-            "text-6xl relative z-10 text-black transition-all duration-200 opacity-0 " +
+            "text-6xl relative z-10 text-black dark:text-d-white/80 transition-all duration-200 opacity-0 " +
             (isHovered || !hasImage ? "opacity-100" : "") +
             " " +
             (hasImage ? "text-pure-white" : "")
@@ -75,7 +75,7 @@ export default function ImageInput({
         />
         <div
           className={
-            "absolute w-full h-full pointer-events-none bg-[rgba(0,0,0,0.5)] rounded-full opacity-0 transition-all duration-200 " +
+            "absolute w-full h-full pointer-events-none bg-[rgba(0,0,0,0.5)] dark:bg-gray/50 rounded-full opacity-0 transition-all duration-200 " +
             (isHovered ? "opacity-100" : "")
           }
         />
