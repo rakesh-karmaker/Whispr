@@ -5,42 +5,39 @@ import useMessages from "./useMessages";
 import { getMessages } from "@/lib/api/messages";
 import { useSelectedContact } from "./useSelectContact";
 
-export default function useGetMessages(
-  pageNumber: number
+export default function useGetMessages(): {
+  // pageNumber: number
   // setPageNumber: React.Dispatch<React.SetStateAction<number>>
-): {
   isLoading: boolean;
   error: boolean;
-  hasMore: boolean;
+  // hasMore: boolean;
 } {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
-  const [hasMore, setHasMore] = useState<boolean>(true);
+  // const [hasMore, setHasMore] = useState<boolean>(true);
   const { setMessages } = useMessages();
   const { selectedContact } = useSelectedContact();
 
   useEffect(() => {
-    setIsLoading(true);
     setError(false);
+    setIsLoading(true);
+    setMessages([]);
     let cancel: Canceler = () => {};
 
     const fetchMessages = async () => {
       try {
-        const data = await getMessages(
-          selectedContact?._id || "",
-          pageNumber,
-          cancel
-        );
+        const data = await getMessages(selectedContact?._id || "", 1, cancel);
 
-        setMessages((prev) => {
-          const allMessages = [...data.messages, ...prev];
-          const uniqueMessages = Array.from(
-            new Map(allMessages.map((msg) => [msg._id, msg])).values()
-          );
-          return uniqueMessages;
-        });
+        // setMessages((prev) => {
+        //   const allMessages = [...data.messages, ...prev];
+        //   const uniqueMessages = Array.from(
+        //     new Map(allMessages.map((msg) => [msg._id, msg])).values()
+        //   );
+        //   return uniqueMessages;
+        // });
+        setMessages(data.messages);
 
-        setHasMore(data.hasMore);
+        // setHasMore(data.hasMore);
       } catch (err) {
         if (axios.isCancel(err)) return;
         setError(true);
@@ -50,20 +47,12 @@ export default function useGetMessages(
       }
     };
 
-    if (hasMore) {
-      fetchMessages();
-    }
-  }, [pageNumber]);
-
-  useEffect(() => {
-    // Reset messages when the selected contact changes
-    setMessages([]);
-    setHasMore(true);
+    fetchMessages();
   }, [selectedContact?._id]);
 
   return {
     isLoading,
     error,
-    hasMore,
+    // hasMore,
   };
 }

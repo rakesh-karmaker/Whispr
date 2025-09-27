@@ -117,7 +117,6 @@ export default function ChatLayout(): React.ReactNode {
   // handle dark mode
   const { mode } = useColorScheme();
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-  console.log(mode, prefersDarkMode);
   useEffect(() => {
     if (mode === "system") {
       document.documentElement.classList.toggle("dark", prefersDarkMode);

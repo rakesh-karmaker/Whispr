@@ -10,10 +10,11 @@ import type { MessageType } from "@/types/messageTypes";
 import ImageViewer from "@/components/ui/imageViewer";
 import Loader from "@/components/ui/Loader/Loader";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { IoArrowDown } from "react-icons/io5";
 
 export default function MessagesContainer() {
   const { messages } = useMessages();
-  const { isLoading: isLoadingMessages } = useGetMessages(1);
+  const { isLoading: isLoadingMessages } = useGetMessages();
   const socket = useSocketStore((state) => state.socket);
   const { user } = useUser();
   const { selectedContact } = useSelectedContact();
@@ -25,6 +26,7 @@ export default function MessagesContainer() {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAtBottom, setIsAtBottom] = useState(true);
 
   // Optimize message seen observer with better cleanup
   const lastElementRef = useCallback(
@@ -216,6 +218,33 @@ export default function MessagesContainer() {
     virtualizer.scrollToIndex(count - 1, { align: "end" });
   }, [messages]);
 
+  // Detect if user is at bottom
+  useEffect(() => {
+    const handleScroll = () => {
+      if (parentRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = parentRef.current;
+        setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 300); // 300px threshold
+      }
+    };
+
+    parentRef.current?.addEventListener("scroll", handleScroll);
+    return () => {
+      parentRef.current?.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Detect if chat changed
+  useEffect(() => {
+    setIsAtBottom(true);
+    setImageUrls([]);
+  }, [selectedContact]);
+
+  // Scroll to bottom
+  function bottomClick() {
+    virtualizer.scrollToIndex(count - 1, { align: "end" });
+    setIsAtBottom(true);
+  }
+
   return (
     <div
       className="w-full h-full dark:bg-d-dark-gray rounded-xl"
@@ -275,6 +304,20 @@ export default function MessagesContainer() {
               ))}
             </div>
           </div>
+        </div>
+        <div
+          className={`w-full h-fit flex justify-center items-center absolute z-10 transition-all duration-200 ${
+            isAtBottom
+              ? "opacity-0 pointer-events-none bottom-0"
+              : "opacity-100 bottom-2"
+          }`}
+        >
+          <button
+            onClick={bottomClick}
+            className="p-2 rounded-full text-xl text-teal bg-white-2 dark:bg-d-light-dark-gray hover:bg-light-gray dark:hover:bg-d-dark-gray transition-all duration-200 cursor-pointer"
+          >
+            <IoArrowDown />
+          </button>
         </div>
       </div>
       <ImageViewer

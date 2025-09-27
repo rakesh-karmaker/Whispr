@@ -141,24 +141,29 @@ export default async function scrapeURLMetaData(
   );
 
   if (!data.title || !data.description || !data.imageURL) {
-    // fetch new data with retry logic
-    const { body: html, url: finalUrl } = await fetchWithRetry(url);
+    try {
+      // fetch new data with retry logic
+      const { body: html, url: finalUrl } = await fetchWithRetry(url, 2);
 
-    const metadata = await scraper({ html, url: finalUrl });
+      const metadata = await scraper({ html, url: finalUrl });
 
-    const newData: URLMetaData = {
-      title: metadata.title ?? "",
-      description: metadata.description ?? "",
-      imageURL: metadata.image ?? "",
-    };
+      const newData: URLMetaData = {
+        title: metadata.title ?? "",
+        description: metadata.description ?? "",
+        imageURL: metadata.image ?? "",
+      };
 
-    // Only cache if we got meaningful data
-    if (newData.title || newData.description || newData.imageURL) {
-      await redisClient.set(`url_data:${url}`, JSON.stringify(newData));
-      await redisClient.expire(`url_data:${url}`, 60 * 60 * 24 * 3); // 3 days
+      // Only cache if we got meaningful data
+      if (newData.title || newData.description || newData.imageURL) {
+        await redisClient.set(`url_data:${url}`, JSON.stringify(newData));
+        await redisClient.expire(`url_data:${url}`, 60 * 60 * 24 * 3); // 3 days
+      }
+
+      return newData;
+    } catch (error) {
+      console.log("Error scraping URL metadata: ", url);
+      return { title: "", description: "", imageURL: "" };
     }
-
-    return newData;
   }
 
   return {
