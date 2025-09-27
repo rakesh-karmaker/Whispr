@@ -13,7 +13,7 @@ const app = express();
 app.use(errorHandler);
 app.use(
   cors({
-    origin: [config.clientUrl],
+    origin: [config.clientUrl, config.serverUrl],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
