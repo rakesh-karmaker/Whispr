@@ -10,33 +10,28 @@ import type { Option } from "@/components/ui/multiSelectDropdown";
 import { useForm } from "react-hook-form";
 import { useSocketStore } from "@/stores/useSocketStore";
 import { useSelectedContact } from "@/hooks/useSelectContact";
+import ModalHeader from "@/components/ui/modalHeader";
 
 export default function AddParticipant(): React.ReactNode {
-  const [show, setShow] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
   return (
     <>
-      <PrimaryBtn onClick={() => setShow(!show)} isLoading={false}>
+      <PrimaryBtn onClick={() => setOpen(!open)} isLoading={false}>
         <span className="flex items-center text-md">
           <IoMdPersonAdd className="text-xl" />
           <span className="ml-1.5">Add participant</span>
         </span>
       </PrimaryBtn>
       <Modal
-        open={show}
-        onClose={() => setShow(false)}
+        open={open}
+        onClose={() => setOpen(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        className="flex items-center justify-center h-fit min-h-full absolute max-sm:bg-pure-white"
+        className="flex items-center justify-center h-fit min-h-full absolute max-sm:bg-pure-white dark:max-sm:bg-d-dark-gray"
       >
-        <div className="w-full max-w-[28.75em] max-sm:max-w-full min-h-fit max-sm:min-h-screen p-10 rounded-lg max-sm:rounded-none bg-pure-white flex flex-col items-center max-sm:justify-center gap-3 relative">
-          <span
-            className="absolute hidden top-10 right-10 cursor-pointer text-xl font-extrabold w-10 h-10 max-sm:flex items-center justify-center bg-teal text-pure-white rounded-full"
-            onClick={() => setShow(false)}
-          >
-            &#10005;
-          </span>
-          <h2 className="text-2xl font-semibold text-center">Add People</h2>
-          <AddParticipantForm setOpen={setShow} />
+        <div className="w-full max-w-[28.75em] max-sm:max-w-full min-h-fit max-sm:min-h-screen p-7 rounded-lg max-sm:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col items-center max-sm:justify-center gap-3 relative">
+          <ModalHeader title="Add People" onClick={() => setOpen(false)} />
+          <AddParticipantForm setOpen={setOpen} />
         </div>
       </Modal>
     </>

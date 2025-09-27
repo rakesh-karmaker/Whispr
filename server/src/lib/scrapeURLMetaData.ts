@@ -143,7 +143,7 @@ export default async function scrapeURLMetaData(
   if (!data.title || !data.description || !data.imageURL) {
     try {
       // fetch new data with retry logic
-      const { body: html, url: finalUrl } = await fetchWithRetry(url, 2);
+      const { body: html, url: finalUrl } = await fetchWithRetry(url, 0); // 1 attempt NOTE: Reduced retries to 1 to minimize delays
 
       const metadata = await scraper({ html, url: finalUrl });
 

@@ -1,4 +1,8 @@
-import EmojiPicker, { Theme } from "emoji-picker-react";
+import EmojiPicker, {
+  EmojiStyle,
+  SuggestionMode,
+  Theme,
+} from "emoji-picker-react";
 import { useEffect, useState } from "react";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 
@@ -40,6 +44,9 @@ export default function EmojiPickerContainer({
             setMessage((prevMessage) => prevMessage + emoji.emoji)
           }
           theme={Theme.DARK}
+          emojiStyle={EmojiStyle.NATIVE}
+          suggestedEmojisMode={SuggestionMode.FREQUENT}
+          searchDisabled={true}
         />
       </div>
     </div>

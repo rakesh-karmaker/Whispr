@@ -7,6 +7,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { useMutation } from "@tanstack/react-query";
 import { pinContact, unpinContact } from "@/lib/api/contacts";
 import { useContacts } from "@/hooks/useContacts";
+import Tooltip from "@mui/material/Tooltip";
 
 export default function ChatHeader(): React.ReactNode {
   const { selectedContact, isNewSelectedContact, newSelectedContact } =
@@ -23,17 +24,22 @@ export default function ChatHeader(): React.ReactNode {
       {!isNewSelectedContact && (
         <div className="flex gap-4 items-center">
           <PinChatButton />
-          <button
-            type="button"
-            className={`text-2xl w-[44px] h-[44px] rounded-full flex items-center justify-center cursor-pointer hover:bg-white-2 dark:hover:bg-d-white/30 hover:text-black dark:hover:text-d-white transition-all duration-200 ${
-              isSidebarOpen
-                ? " bg-white-2 text-black dark:bg-d-light-dark-gray dark:text-d-white/90"
-                : " text-pure-white bg-teal"
-            }`}
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          <Tooltip
+            title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+            arrow
           >
-            <BsThreeDots />
-          </button>
+            <button
+              type="button"
+              className={`text-2xl w-[44px] h-[44px] rounded-full flex items-center justify-center cursor-pointer hover:bg-white-2 dark:hover:bg-d-white/30 hover:text-black dark:hover:text-d-white transition-all duration-200 ${
+                isSidebarOpen
+                  ? " bg-white-2 text-black dark:bg-d-light-dark-gray dark:text-d-white/90"
+                  : " text-pure-white bg-teal"
+              }`}
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
+              <BsThreeDots />
+            </button>
+          </Tooltip>
         </div>
       )}
     </div>

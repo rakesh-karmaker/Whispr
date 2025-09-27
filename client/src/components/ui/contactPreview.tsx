@@ -48,7 +48,7 @@ export default function ContactPreview({
     <NavLink
       ref={ref ? ref : null}
       className={
-        "w-full h-fit relative flex justify-center items-center border-none outline-none px-[1.375em] py-4.5 bg-pure-white dark:bg-d-dark-gray hover:bg-white-2 dark:hover:bg-d-light-dark-gray focus-within:bg-d-light-dark-gray transition-all duration-200 cursor-pointer" +
+        "w-full h-fit relative flex justify-center items-center border-none outline-none px-[1.375em] py-4.5 bg-pure-white dark:bg-d-dark-gray hover:bg-white-2 dark:hover:bg-d-light-dark-gray focus-within:bg-white-2 dark:focus-within:bg-d-light-dark-gray transition-all duration-200 cursor-pointer" +
         (isActive ? " bg-white-2 dark:bg-d-light-dark-gray" : "")
       }
       to={`/chat/${contactData._id}`}

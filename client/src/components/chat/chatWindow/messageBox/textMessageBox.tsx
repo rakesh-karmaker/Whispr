@@ -1,4 +1,5 @@
 import type { MessageType } from "@/types/messageTypes";
+import Tooltip from "@mui/material/Tooltip";
 import moment from "moment";
 import { RiCheckDoubleLine } from "react-icons/ri";
 
@@ -19,7 +20,7 @@ export default function TextMessageBox({
         isSender ? "rounded-br-none" : "rounded-bl-none"
       }`}
     >
-      <p className="text-[0.93em]/[140%] dark:text-d-white/90">
+      <p className="text-[0.85em]/[150%] dark:text-d-white/90">
         {message.content &&
           message.content.split(" ").map((word, index) => {
             const isLink = linkRegex.test(word);
@@ -43,11 +44,13 @@ export default function TextMessageBox({
           isSender ? "self-end" : "self-start"
         } flex gap-1 items-center`}
       >
-        <p className="text-xs text-gray dark:text-d-white/45">{date}</p>
+        <p className="text-[0.67rem] text-gray dark:text-d-white/45">{date}</p>
         {isSender && (
-          <RiCheckDoubleLine
-            className={`text-sm ${hasSeen ? "text-teal" : "text-gray"}`}
-          />
+          <Tooltip title={hasSeen ? "Seen" : "Delivered"} arrow>
+            <RiCheckDoubleLine
+              className={`text-xs ${hasSeen ? "text-teal" : "text-gray"}`}
+            />
+          </Tooltip>
         )}
       </div>
     </div>

@@ -20,6 +20,7 @@ import type { CreateNewGroupMutationProps } from "@/types/contactTypes";
 import { createNewGroup } from "@/lib/api/contacts";
 import { useContacts } from "@/hooks/useContacts";
 import { useSocketStore } from "@/stores/useSocketStore";
+import ModalHeader from "../ui/modalHeader";
 
 export default function CreateGroup(): React.ReactNode {
   const [open, setOpen] = useState(false);
@@ -41,16 +42,11 @@ export default function CreateGroup(): React.ReactNode {
         aria-describedby="modal-modal-description"
         className="flex items-center justify-center h-fit min-h-full absolute max-sm:bg-pure-white dark:max-sm:bg-d-dark-gray"
       >
-        <div className="w-full max-w-[28.75em] max-sm:max-w-full min-h-fit max-sm:min-h-screen p-10 rounded-lg max-sm:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col items-center max-sm:justify-center gap-3 relative">
-          <span
-            className="absolute hidden top-10 right-10 cursor-pointer text-xl font-extrabold w-10 h-10 max-sm:flex items-center justify-center bg-teal text-pure-white rounded-full"
+        <div className="w-full max-w-[28.75em] max-sm:max-w-full min-h-fit max-sm:min-h-screen p-7 rounded-lg max-sm:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col items-center max-sm:justify-center gap-3 relative">
+          <ModalHeader
+            title="Create a new group"
             onClick={() => setOpen(false)}
-          >
-            &#10005;
-          </span>
-          <h2 className="text-2xl font-semibold text-center dark:text-d-white">
-            Create a new group
-          </h2>
+          />
           <CreateGroupForm setOpen={setOpen} />
         </div>
       </Modal>
@@ -170,7 +166,7 @@ function CreateGroupForm({
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Search Contacts"
+                    label="Search people to add"
                     className="w-full flex relative items-center"
                     value={query}
                     onChange={(e) => {

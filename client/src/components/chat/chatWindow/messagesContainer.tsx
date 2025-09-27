@@ -11,6 +11,7 @@ import ImageViewer from "@/components/ui/imageViewer";
 import Loader from "@/components/ui/Loader/Loader";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { IoArrowDown } from "react-icons/io5";
+import Tooltip from "@mui/material/Tooltip";
 
 export default function MessagesContainer() {
   const { messages } = useMessages();
@@ -312,12 +313,14 @@ export default function MessagesContainer() {
               : "opacity-100 bottom-2"
           }`}
         >
-          <button
-            onClick={bottomClick}
-            className="p-2 rounded-full text-xl text-teal bg-white-2 dark:bg-d-light-dark-gray hover:bg-light-gray dark:hover:bg-d-dark-gray transition-all duration-200 cursor-pointer"
-          >
-            <IoArrowDown />
-          </button>
+          <Tooltip title="Scroll to bottom" arrow placement="top">
+            <button
+              onClick={bottomClick}
+              className="p-2 rounded-full text-xl text-teal bg-white-2 dark:bg-d-light-dark-gray hover:bg-light-gray dark:hover:bg-d-dark-gray transition-all duration-200 cursor-pointer"
+            >
+              <IoArrowDown />
+            </button>
+          </Tooltip>
         </div>
       </div>
       <ImageViewer

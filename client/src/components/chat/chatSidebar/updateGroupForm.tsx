@@ -19,10 +19,10 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import { allowedSocialTypes } from "@/services/data";
 import { RxCross2 } from "react-icons/rx";
-import Modal from "@mui/material/Modal";
 import { FaPlus } from "react-icons/fa6";
-import type { SelectedContact } from "@/types/contactTypes";
 import type { Socket } from "socket.io-client";
+import Tooltip from "@mui/material/Tooltip";
+import DeleteGroupWarning from "./deleteGroupWarning";
 
 export default function UpdateGroupForm({
   setOpen,
@@ -237,83 +237,22 @@ export default function UpdateGroupForm({
   );
 }
 
-function DeleteGroupWarning({
-  warningOpen,
-  setWarningOpen,
-  selectedContact,
-  socket,
-  setOpen,
-}: {
-  warningOpen: boolean;
-  setWarningOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedContact: SelectedContact;
-  socket: Socket;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}): React.ReactNode {
-  const handleDeleteGroup = () => {
-    if (!socket) return;
-    socket.emit("delete-group", selectedContact._id);
-    setWarningOpen(false);
-    setOpen(false);
-  };
-
-  return (
-    <Modal
-      open={warningOpen}
-      onClose={() => setWarningOpen(false)}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-      className="flex items-center justify-center h-fit min-h-full absolute max-sm:bg-pure-white dark:max-sm:bg-d-dark-gray"
-    >
-      <div className="w-full max-w-[28.75em] max-xs:max-w-full min-h-fit max-xs:min-h-screen p-7 rounded-lg max-xs:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col max-xs:justify-center gap-3 relative">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-xl font-semibold dark:text-d-white/90">
-            Delete Group
-          </h2>
-          <p className="text-gray text-sm dark:text-d-white/70">
-            This action cannot be undone. This will permanently delete this
-            group <b>{selectedContact.name}</b> and remove all of its data from
-            our servers. All your images, files, links, and message data will be
-            permanently lost.
-          </p>
-          <p className="bg-red-100 dark:bg-red-200 text-red p-2.5 border-[1px] border-red rounded-md text-sm font-medium">
-            Warning: This action cannot be undone
-          </p>
-          <div className="w-full flex gap-2.5 justify-end items-center mt-2">
-            <button
-              className="bg-white-2 dark:bg-d-light-dark-gray text-gray dark:text-d-white/80 py-2 px-3 rounded-sm border-[1px] dark:border-none border-gray-300 hover:bg-gray-300 hover:text-gray-800 transition-all duration-200 cursor-pointer"
-              onClick={() => setWarningOpen(false)}
-            >
-              Cancel
-            </button>
-            <button
-              className="bg-red text-pure-white py-2 px-3 rounded-sm border-[1px] border-red hover:bg-red-600 hover:text-pure-white transition-all duration-200 cursor-pointer"
-              onClick={handleDeleteGroup}
-            >
-              Delete Group
-            </button>
-          </div>
-        </div>
-      </div>
-    </Modal>
-  );
-}
-
 function AddSocialLinkButton({
   append,
 }: {
   append: (value: { type: string; link: string }) => void;
 }) {
   return (
-    <button
-      className={`min-w-10 min-h-10 max-h-10 max-w-10 flex items-center justify-center bg-white-2 dark:bg-d-light-dark-gray text-teal rounded-full text-xl hover:bg-teal hover:text-pure-white transition-all duration-200 cursor-pointer`}
-      onClick={() => append({ type: "", link: "" })}
-      type="button"
-      aria-label="Add social link"
-      title="Add social link"
-    >
-      <FaPlus />
-    </button>
+    <Tooltip title="Add social link" arrow placement="top">
+      <button
+        className={`min-w-10 min-h-10 max-h-10 max-w-10 flex items-center justify-center bg-white-2 dark:bg-d-light-dark-gray text-teal rounded-full text-xl hover:bg-teal hover:text-pure-white transition-all duration-200 cursor-pointer`}
+        onClick={() => append({ type: "", link: "" })}
+        type="button"
+        aria-label="Add social link"
+      >
+        <FaPlus />
+      </button>
+    </Tooltip>
   );
 }
 
@@ -325,13 +264,15 @@ function RemoveSocialLinkButton({
   index: number;
 }) {
   return (
-    <button
-      className={`min-w-10 min-h-10 max-h-10 max-w-10 flex items-center justify-center bg-white-2 dark:bg-d-light-dark-gray text-red rounded-full text-xl hover:bg-red hover:text-pure-white transition-all duration-200 cursor-pointer`}
-      onClick={() => remove(index)}
-      type="button"
-      aria-label="Remove social link"
-    >
-      <RxCross2 />
-    </button>
+    <Tooltip title="Remove social link" arrow placement="top">
+      <button
+        className={`min-w-10 min-h-10 max-h-10 max-w-10 flex items-center justify-center bg-white-2 dark:bg-d-light-dark-gray text-red rounded-full text-xl hover:bg-red hover:text-pure-white transition-all duration-200 cursor-pointer`}
+        onClick={() => remove(index)}
+        type="button"
+        aria-label="Remove social link"
+      >
+        <RxCross2 />
+      </button>
+    </Tooltip>
   );
 }

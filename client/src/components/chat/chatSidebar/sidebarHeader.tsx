@@ -8,6 +8,8 @@ import { RxCross2 } from "react-icons/rx";
 import { usePreferences } from "@/hooks/usePreferences";
 import UpdateGroupForm from "./updateGroupForm";
 import { useUser } from "@/hooks/useUser";
+import Tooltip from "@mui/material/Tooltip";
+import ModalHeader from "@/components/ui/modalHeader";
 
 export default function SidebarHeader(): React.ReactNode {
   {
@@ -32,14 +34,16 @@ export default function SidebarHeader(): React.ReactNode {
           user &&
           selectedContact.admins.some((admin) => admin._id === user.id) && (
             <>
-              <button
-                type="button"
-                aria-label="open chat settings"
-                onClick={() => setOpen(true)}
-                className="text-gray dark:text-d-gray hover:text-black dark:hover:text-d-white/65 transition-all duration-300 cursor-pointer text-lg"
-              >
-                <FaGear />
-              </button>
+              <Tooltip title="Group settings" arrow placement="left">
+                <button
+                  type="button"
+                  aria-label="open chat settings"
+                  onClick={() => setOpen(true)}
+                  className="text-gray dark:text-d-gray hover:text-black dark:hover:text-d-white/65 transition-all duration-300 cursor-pointer text-lg"
+                >
+                  <FaGear />
+                </button>
+              </Tooltip>
               <Modal
                 open={open}
                 onClose={() => setOpen(false)}
@@ -47,16 +51,11 @@ export default function SidebarHeader(): React.ReactNode {
                 aria-describedby="modal-modal-description"
                 className="flex items-center justify-center h-fit min-h-full absolute max-sm:bg-pure-white dark:max-sm:bg-d-dark-gray"
               >
-                <div className="w-full max-w-[38.75em] max-sm:max-w-full min-h-fit max-sm:min-h-screen p-10 rounded-lg max-sm:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col items-center max-sm:justify-center gap-3 relative">
-                  <span
-                    className="absolute hidden top-10 right-10 cursor-pointer text-xl font-extrabold w-10 h-10 max-sm:flex items-center justify-center bg-teal text-pure-white rounded-full"
+                <div className="w-full max-w-[38.75em] max-sm:max-w-full min-h-fit max-h-[90vh] overflow-auto max-sm:min-h-screen max-sm:max-h-screen p-7 rounded-lg max-sm:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col items-center max-sm:justify-center gap-3 relative">
+                  <ModalHeader
+                    title="Change group info"
                     onClick={() => setOpen(false)}
-                  >
-                    &#10005;
-                  </span>
-                  <h2 className="text-2xl font-semibold text-center dark:text-d-white/90">
-                    Change group info
-                  </h2>
+                  />
                   <UpdateGroupForm setOpen={setOpen} />
                 </div>
               </Modal>

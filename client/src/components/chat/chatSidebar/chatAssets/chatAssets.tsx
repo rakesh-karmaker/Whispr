@@ -18,6 +18,7 @@ export default function ChatAssets(): React.ReactNode {
         subTitle={`${filesCount} files`}
         logo={<FaFile className="text-blue text-2xl" />}
         color="bg-light-blue"
+        count={filesCount}
       >
         <Files />
       </AssetsLayout>
@@ -26,6 +27,7 @@ export default function ChatAssets(): React.ReactNode {
         subTitle={`${imagesCount} files`}
         logo={<PiImageSquareFill className="text-teal text-3xl" />}
         color="bg-light-teal"
+        count={imagesCount}
       >
         <Photos />
       </AssetsLayout>
@@ -34,6 +36,7 @@ export default function ChatAssets(): React.ReactNode {
         subTitle={`${linksCount} urls`}
         logo={<PiLinkSimpleBold className="text-tan text-2xl" />}
         color="bg-light-beige"
+        count={linksCount}
       >
         <Links />
       </AssetsLayout>
@@ -47,12 +50,14 @@ function AssetsLayout({
   subTitle,
   children,
   color = "bg-gray-200",
+  count = 0,
 }: {
   logo: React.ReactNode;
   title: string;
   subTitle: string;
   children: React.ReactNode;
   color?: string;
+  count?: number;
 }): React.ReactNode {
   const [open, setOpen] = useState<boolean>(false);
   const { selectedContact } = useSelectedContact();
@@ -95,7 +100,7 @@ function AssetsLayout({
           open ? "grid-rows-1 pt-1.5" : ""
         }`}
       >
-        {open && children}
+        {count > 0 && open && children}
       </div>
     </div>
   );
