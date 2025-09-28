@@ -26,10 +26,12 @@ export type UpdateGroupFunctionProps = {
   image: string;
   socialLinks: { type: string; link: string }[];
   updatedMessage: {
+    _id: string;
     content: string;
     messageType: string;
     seenBy: string[];
     updatedAt: string;
+    createdAt: string;
     summary: string;
     announcer: string;
     sender: {

@@ -32,6 +32,11 @@ export default function SearchContacts({
   const { selectedContact } = useSelectedContact();
   const [uniqueContacts, setUniqueContacts] = useState<SearchedContact[]>([]);
 
+  // Reset pageNumber to 1 when query changes
+  useEffect(() => {
+    setPageNumber(1);
+  }, [query, setPageNumber]);
+
   const observer = useRef<IntersectionObserver | null>(null);
   const lastElementRef = useCallback(
     (node: HTMLButtonElement) => {

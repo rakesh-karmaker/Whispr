@@ -32,7 +32,7 @@ export default function UpdateGroupForm({
   const [warningOpen, setWarningOpen] = useState<boolean>(false);
   const socket = useSocketStore((s) => s.socket);
   const { selectedContact, setSelectedContact } = useSelectedContact();
-  const { setContacts, setPinnedContacts } = useContacts();
+  // const { setContacts, setPinnedContacts } = useContacts();
   const {
     register,
     handleSubmit,
@@ -58,42 +58,42 @@ export default function UpdateGroupForm({
     },
     onSuccess: (res) => {
       if (res.updatedContact) {
-        setSelectedContact({ ...selectedContact, ...res.updatedContact });
-        setContacts((prevContacts) => {
-          const updatedContacts = prevContacts.map((contact) => {
-            if (contact._id === res.updatedContact._id) {
-              return {
-                ...contact,
-                lastMessages: [
-                  ...contact.lastMessages,
-                  res.updatedContact.updatedMessage,
-                ],
-                contactName: res.updatedContact.name,
-                contactImage: res.updatedContact.image,
-              };
-            }
-            return contact;
-          });
-          return updatedContacts;
-        });
+        // setSelectedContact({ ...selectedContact, ...res.updatedContact });
+        // setContacts((prevContacts) => {
+        //   const updatedContacts = prevContacts.map((contact) => {
+        //     if (contact._id === res.updatedContact._id) {
+        //       return {
+        //         ...contact,
+        //         lastMessages: [
+        //           ...contact.lastMessages,
+        //           res.updatedContact.updatedMessage,
+        //         ],
+        //         contactName: res.updatedContact.name,
+        //         contactImage: res.updatedContact.image,
+        //       };
+        //     }
+        //     return contact;
+        //   });
+        //   return updatedContacts;
+        // });
 
-        setPinnedContacts((prevPinnedContacts) => {
-          const updatedPinnedContacts = prevPinnedContacts.map((contact) => {
-            if (contact._id === res.updatedContact._id) {
-              return {
-                ...contact,
-                lastMessages: [
-                  ...contact.lastMessages,
-                  res.updatedContact.updatedMessage,
-                ],
-                contactName: res.updatedContact.name,
-                contactImage: res.updatedContact.image,
-              };
-            }
-            return contact;
-          });
-          return updatedPinnedContacts;
-        });
+        // setPinnedContacts((prevPinnedContacts) => {
+        //   const updatedPinnedContacts = prevPinnedContacts.map((contact) => {
+        //     if (contact._id === res.updatedContact._id) {
+        //       return {
+        //         ...contact,
+        //         lastMessages: [
+        //           ...contact.lastMessages,
+        //           res.updatedContact.updatedMessage,
+        //         ],
+        //         contactName: res.updatedContact.name,
+        //         contactImage: res.updatedContact.image,
+        //       };
+        //     }
+        //     return contact;
+        //   });
+        //   return updatedPinnedContacts;
+        // });
 
         if (socket) {
           socket.emit("update-group", res.updatedContact);

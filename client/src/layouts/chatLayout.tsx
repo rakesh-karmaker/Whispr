@@ -2,15 +2,19 @@ import ChatLeft from "@/components/chat/chatLeft";
 import { useUser } from "@/hooks/useUser";
 import {
   addContact,
-  addParticipant,
   deleteGroup,
-  makeAdmin,
+  updateContact,
+} from "@/lib/socketActions/contactActions";
+import {
   messageSaw,
   messageSeen,
-  removeParticipant,
   sendMessage,
-  updateContact,
-} from "@/lib/socket/contactActions";
+} from "@/lib/socketActions/messageActions";
+import {
+  addParticipant,
+  makeAdmin,
+  removeParticipant,
+} from "@/lib/socketActions/participantActions";
 import { useSocketStore } from "@/stores/useSocketStore";
 import type { QueriedContact } from "@/types/contactTypes";
 import type { MessageType } from "@/types/messageTypes";
@@ -69,6 +73,10 @@ export default function ChatLayout(): React.ReactNode {
         }
       });
 
+      socket.on("add-participant", (data: AddParticipantFunctionProps) =>
+        addParticipant(data)
+      );
+
       socket.on("make-admin", (data: MakeAdminFunctionProps) => {
         makeAdmin(data);
       });
@@ -95,10 +103,6 @@ export default function ChatLayout(): React.ReactNode {
 
       socket.on("message-saw", (data: MessageSawFunctionProps) =>
         messageSaw(data)
-      );
-
-      socket.on("add-participant", (data: AddParticipantFunctionProps) =>
-        addParticipant(data)
       );
     }
 

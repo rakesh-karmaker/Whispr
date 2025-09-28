@@ -98,7 +98,7 @@ function Photo({
       <LazyLoadImage
         src={image.url}
         alt="image"
-        className="w-full h-full aspect-square object-cover rounded-sm"
+        className="w-full h-full aspect-square object-cover rounded-sm cursor-pointer hover:opacity-80 transition-all duration-200"
         onClick={() => {
           setIndex(index);
           setOpen(true);

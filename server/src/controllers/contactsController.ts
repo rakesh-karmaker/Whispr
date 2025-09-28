@@ -28,7 +28,7 @@ export async function searchContacts(
       req
     );
 
-    const hasMore = allUsers.length > 0;
+    const hasMore = allUsers.length > 4; // Assuming section size is 5
 
     res.status(200).send({
       contacts: allUsers,

@@ -18,11 +18,21 @@ export default function useContactSearch(
   const [contacts, setContacts] = useState<SearchedContact[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(false);
 
+  // Reset contacts when query changes (page reset is handled externally)
   useEffect(() => {
-    setContacts([]); // Reset contacts when query changes
+    setContacts([]);
+    setHasMore(false); // This prevents the unwanted page increment
   }, [query]);
 
   useEffect(() => {
+    // Don't fetch if no query
+    if (!query.trim()) {
+      setLoading(false);
+      setContacts([]);
+      setHasMore(false);
+      return;
+    }
+
     setLoading(true);
     setError(false);
     let cancel: Canceler = () => {};
@@ -30,7 +40,12 @@ export default function useContactSearch(
 
     const fetchData = async () => {
       try {
+        console.log(
+          `Fetching contacts for query: "${query}", page: ${pageNumber}`
+        );
         const data = await searchContacts(query, pageNumber, cancel);
+        console.log(`Fetched ${data.contacts.length} contacts for "${query}"`);
+
         setContacts((prevContacts) => {
           const all = [...prevContacts, ...data.contacts];
           const unique = Array.from(
@@ -42,17 +57,13 @@ export default function useContactSearch(
       } catch (err) {
         if (axios.isCancel(err)) return;
         setError(true);
-        console.log(err);
+        console.error(`Error fetching contacts for "${query}":`, err);
       } finally {
         setLoading(false);
       }
     };
 
-    if (query) {
-      debounceTimeout = setTimeout(fetchData, 300); // 300ms debounce
-    } else {
-      setLoading(false);
-    }
+    debounceTimeout = setTimeout(fetchData, query.length === 1 ? 150 : 300);
 
     return () => {
       clearTimeout(debounceTimeout);

@@ -1,3 +1,4 @@
+import Tooltip from "@mui/material/Tooltip";
 import type React from "react";
 import { GrAttachment } from "react-icons/gr";
 
@@ -8,12 +9,14 @@ export default function Attachment({
 }) {
   return (
     <div>
-      <label
-        htmlFor="files"
-        className="text-md text-gray cursor-pointer hover:text-black dark:hover:text-d-white/90 transition-all duration-200 min-w-10.5 min-h-10.5 max-h-10.5 flex justify-center items-center text-xl bg-white-2 dark:bg-d-light-dark-gray hover:bg-light-gray dark:hover:bg-d-dark-gray rounded-full focus-within:outline-none focus-within:bg-white-2 dark:focus-within:bg-d-dark-gray focus-within:text-black dark:focus-within:text-d-white/90"
-      >
-        <GrAttachment />
-      </label>
+      <Tooltip title="Attach files upto 10MB" placement="top" arrow>
+        <label
+          htmlFor="files"
+          className="text-md text-gray cursor-pointer hover:text-black dark:hover:text-d-white/90 transition-all duration-200 min-w-10.5 min-h-10.5 max-h-10.5 flex justify-center items-center text-xl bg-white-2 dark:bg-d-light-dark-gray hover:bg-light-gray dark:hover:bg-d-dark-gray dark:border-d-dark-gray dark:border-1 dark:hover:border-d-light-dark-gray rounded-full focus-within:outline-none focus-within:bg-white-2 dark:focus-within:bg-d-dark-gray focus-within:text-black dark:focus-within:text-d-white/90"
+        >
+          <GrAttachment />
+        </label>
+      </Tooltip>
       <input
         type="file"
         name="files"
@@ -25,7 +28,7 @@ export default function Attachment({
           const files = Array.from(e.target.files || []);
           const validFiles = files.filter((file) => {
             return (
-              file.size <= 10 * 1024 * 1024 &&
+              file.size <= 10 * 1024 * 1024 && // 10MB
               file.type &&
               !file.type.includes("folder")
             );

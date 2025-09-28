@@ -9,7 +9,7 @@ import { useUser } from "@/hooks/useUser";
 import { useSocketStore } from "@/stores/useSocketStore";
 import type { SelectedContact } from "@/types/contactTypes";
 
-export default memo(function ParticipantPreview({
+export default function ParticipantPreview({
   participant,
   isAdmin,
 }: {
@@ -23,16 +23,22 @@ export default memo(function ParticipantPreview({
     setAnchorEl(event.currentTarget);
   };
 
+  // Memoize the show dropdown condition
+  const showDropdown = useMemo(
+    () => selectedContact && selectedContact.isGroup,
+    [selectedContact]
+  );
+
   return (
-    <div className="w-full flex justify-between items-center gap-5 participant-content">
-      <div className="flex gap-3 items-center flex-1">
+    <div className="w-full flex justify-between items-center gap-5 participant-content participant-list-item">
+      <div className="flex gap-3 items-center flex-1 min-w-0">
         <Avatar
           src={participant.avatar}
           name={participant.name}
           isActive={false}
         />
-        <div className="flex flex-col">
-          <p className="font-medium text-lg dark:text-d-white/90">
+        <div className="flex flex-col min-w-0 flex-1">
+          <p className="font-medium text-lg dark:text-d-white/90 truncate">
             {participant.name}
           </p>
           <p className="text-sm text-gray dark:text-d-white/50">
@@ -40,12 +46,13 @@ export default memo(function ParticipantPreview({
           </p>
         </div>
       </div>
-      {selectedContact && selectedContact.isGroup && (
+      {showDropdown && (
         <>
           <button
             type="button"
-            className="w-8 h-8 rounded-full flex items-center justify-center bg-teal text-pure-white hover:bg-white-2 dark:hover:bg-d-light-dark-gray hover:text-black dark:hover:text-d-white cursor-pointer transition-all duration-200"
+            className="w-8 h-8 rounded-full flex items-center justify-center bg-teal text-pure-white hover:bg-white-2 dark:hover:bg-d-light-dark-gray hover:text-black dark:hover:text-d-white cursor-pointer transition-all duration-200 flex-shrink-0"
             onClick={handleClick}
+            aria-label="Participant options"
           >
             <BsThreeDots />
           </button>
@@ -62,9 +69,9 @@ export default memo(function ParticipantPreview({
       )}
     </div>
   );
-});
+}
 
-const ParticipantDropdown = memo(function ParticipantDropdown({
+const ParticipantDropdown = function ParticipantDropdown({
   participant,
   isAdmin,
   anchorEl,
@@ -150,19 +157,23 @@ const ParticipantDropdown = memo(function ParticipantDropdown({
       transformOrigin={{ horizontal: "right", vertical: "top" }}
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
-      <MenuItem onClick={handleClose} className="!pr-16" key={0}>
-        Message
-      </MenuItem>
+      {participant._id !== user?.id ? (
+        <MenuItem onClick={handleClose} className="!pr-16" key={0}>
+          Message
+        </MenuItem>
+      ) : null}
 
       {isUserAdmin && participant._id !== user?.id && (
         <MenuItem onClick={() => handleAdminClick(!isAdmin)} key={1}>
-          {isAdmin ? "Make member" : "Make admin"}
+          {isAdmin ? "Remove admin" : "Make admin"}
         </MenuItem>
       )}
 
-      <MenuItem onClick={handleRemoveClick} key={2}>
-        {isUserAdmin && participant._id === user?.id ? "Leave" : "Remove"}
-      </MenuItem>
+      {isUserAdmin || participant._id === user?.id ? (
+        <MenuItem onClick={handleRemoveClick} key={2}>
+          {participant._id === user?.id ? "Leave" : "Remove"}
+        </MenuItem>
+      ) : null}
     </Menu>
   );
-});
+};

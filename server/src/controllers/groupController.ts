@@ -148,10 +148,12 @@ export async function updateGroup(req: Request, res: Response): Promise<void> {
         image: group.image,
         socialLinks: group.socialLinks,
         updatedMessage: {
+          _id: updatedMessage._id.toString(),
           content: updatedMessage.content,
           messageType: updatedMessage.messageType,
           seenBy: updatedMessage.seenBy,
           createdAt: updatedMessage.createdAt,
+          updatedAt: updatedMessage.updatedAt,
           summary: updatedMessage.summary,
           announcer: updatedMessage.announcer,
           sender: {

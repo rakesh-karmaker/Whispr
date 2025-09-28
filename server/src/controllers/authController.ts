@@ -36,7 +36,7 @@ export async function register(req: Request, res: Response): Promise<void> {
 
       // upload the avatar image
       try {
-        const data = await uploadFile(req.file, "avatar", 600, 600);
+        const data = await uploadFile(req.file, "avatar", 100, 100);
         avatar = data.url;
         publicId = data.publicId;
       } catch (error) {

@@ -21,20 +21,23 @@ import { createNewGroup } from "@/lib/api/contacts";
 import { useContacts } from "@/hooks/useContacts";
 import { useSocketStore } from "@/stores/useSocketStore";
 import ModalHeader from "../ui/modalHeader";
+import Tooltip from "@mui/material/Tooltip";
 
 export default function CreateGroup(): React.ReactNode {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <button
-        className="min-w-[44px] min-h-[44px] rounded-full bg-teal border-none outline-none flex items-center justify-center cursor-pointer text-pure-white dark:text-d-white transition-all duration-300 hover:bg-white-2 hover:text-black dark:hover:bg-d-light-dark-gray dark:hover:text-d-white"
-        onClick={() => setOpen(true)}
-        type="button"
-        aria-label="Create a new group"
-      >
-        <GoPlus className="text-4xl" />
-      </button>
+      <Tooltip title="Create new group" arrow>
+        <button
+          className="min-w-[44px] min-h-[44px] rounded-full bg-teal border-none outline-none flex items-center justify-center cursor-pointer text-pure-white dark:text-d-white transition-all duration-300 hover:bg-white-2 hover:text-black dark:hover:bg-d-light-dark-gray dark:hover:text-d-white"
+          onClick={() => setOpen(true)}
+          type="button"
+          aria-label="Create a new group"
+        >
+          <GoPlus className="text-4xl" />
+        </button>
+      </Tooltip>
       <Modal
         open={open}
         onClose={() => setOpen(false)}

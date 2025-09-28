@@ -280,3 +280,40 @@ body:has(.chat-layout) {
   backface-visibility: hidden;
   perspective: 1000px;
 }
+
+/* Edge-specific optimizations for virtualization */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  /* Force hardware acceleration in Edge */
+  .participant-list-item,
+  .participant-content {
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* Optimize scrolling in Edge */
+  * {
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+}
+
+/* General virtualization optimizations */
+.virtual-item {
+  /* Optimize for virtual scrolling */
+  contain: strict;
+  will-change: transform;
+}
+
+/* Reduce reflows during scrolling */
+.virtual-container {
+  /* Prevent layout shifts */
+  contain: size layout style paint;
+  /* Optimize scrolling */
+  overflow-anchor: none;
+}
+
+/* Optimize text rendering for virtual lists */
+.virtual-item p {
+  /* Prevent font boosting */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}

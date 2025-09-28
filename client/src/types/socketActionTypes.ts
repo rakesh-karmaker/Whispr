@@ -1,9 +1,10 @@
 export type Announcement = {
   _id: string;
   content: string;
-  messageType: string;
+  messageType: "announcement";
   seenBy: string[];
   updatedAt: string;
+  createdAt: string;
   summary: string;
   announcer: string;
   sender: {
