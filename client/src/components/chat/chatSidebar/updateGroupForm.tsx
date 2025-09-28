@@ -11,7 +11,6 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { updateGroup } from "@/lib/api/contacts";
 import { useSocketStore } from "@/stores/useSocketStore";
-import { useContacts } from "@/hooks/useContacts";
 import { useSelectedContact } from "@/hooks/useSelectContact";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -31,7 +30,7 @@ export default function UpdateGroupForm({
 }) {
   const [warningOpen, setWarningOpen] = useState<boolean>(false);
   const socket = useSocketStore((s) => s.socket);
-  const { selectedContact, setSelectedContact } = useSelectedContact();
+  const { selectedContact } = useSelectedContact();
   // const { setContacts, setPinnedContacts } = useContacts();
   const {
     register,
@@ -58,43 +57,6 @@ export default function UpdateGroupForm({
     },
     onSuccess: (res) => {
       if (res.updatedContact) {
-        // setSelectedContact({ ...selectedContact, ...res.updatedContact });
-        // setContacts((prevContacts) => {
-        //   const updatedContacts = prevContacts.map((contact) => {
-        //     if (contact._id === res.updatedContact._id) {
-        //       return {
-        //         ...contact,
-        //         lastMessages: [
-        //           ...contact.lastMessages,
-        //           res.updatedContact.updatedMessage,
-        //         ],
-        //         contactName: res.updatedContact.name,
-        //         contactImage: res.updatedContact.image,
-        //       };
-        //     }
-        //     return contact;
-        //   });
-        //   return updatedContacts;
-        // });
-
-        // setPinnedContacts((prevPinnedContacts) => {
-        //   const updatedPinnedContacts = prevPinnedContacts.map((contact) => {
-        //     if (contact._id === res.updatedContact._id) {
-        //       return {
-        //         ...contact,
-        //         lastMessages: [
-        //           ...contact.lastMessages,
-        //           res.updatedContact.updatedMessage,
-        //         ],
-        //         contactName: res.updatedContact.name,
-        //         contactImage: res.updatedContact.image,
-        //       };
-        //     }
-        //     return contact;
-        //   });
-        //   return updatedPinnedContacts;
-        // });
-
         if (socket) {
           socket.emit("update-group", res.updatedContact);
         }

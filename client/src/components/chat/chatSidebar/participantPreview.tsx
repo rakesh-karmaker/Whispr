@@ -3,7 +3,7 @@ import type React from "react";
 import { BsThreeDots } from "react-icons/bs";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useState, memo, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useSelectedContact } from "@/hooks/useSelectContact";
 import { useUser } from "@/hooks/useUser";
 import { useSocketStore } from "@/stores/useSocketStore";
