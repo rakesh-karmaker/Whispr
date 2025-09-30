@@ -1,5 +1,4 @@
 import cloudinary from "../config/cloudinary.js";
-import { Response } from "express";
 import getDate from "../utils/getDate.js";
 import { Readable } from "stream";
 import sharp from "sharp";

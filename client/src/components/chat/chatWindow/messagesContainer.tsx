@@ -21,9 +21,6 @@ export default function MessagesContainer() {
   const { selectedContact } = useSelectedContact();
   const lastSeenMessageIdRef = useRef<string | null>(null);
   const seenObserver = useRef<IntersectionObserver | null>(null);
-  const [imageUrls, setImageUrls] = useState<
-    { url: string; publicId: string }[]
-  >([]);
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -115,8 +112,8 @@ export default function MessagesContainer() {
     });
   }, [messages]);
 
-  // Extract image URLs in a separate effect to avoid mutations in memo
-  useEffect(() => {
+  // Optimize imageUrls extraction with useMemo
+  const imageUrls = useMemo(() => {
     const newImageUrls: { url: string; publicId: string }[] = [];
     messages.forEach((message) => {
       if (
@@ -130,7 +127,7 @@ export default function MessagesContainer() {
         });
       }
     });
-    setImageUrls(newImageUrls);
+    return newImageUrls;
   }, [messages]);
 
   // Cleanup observer on unmount
@@ -237,7 +234,6 @@ export default function MessagesContainer() {
   // Detect if chat changed
   useEffect(() => {
     setIsAtBottom(true);
-    setImageUrls([]);
   }, [selectedContact]);
 
   // Scroll to bottom
