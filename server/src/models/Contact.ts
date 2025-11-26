@@ -18,6 +18,19 @@ const ContactSchema = new mongoose.Schema<ContactType>(
         default: [],
       },
     ],
+    joinRequests: [
+      new mongoose.Schema(
+        {
+          user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+          requestedAt: {
+            type: String,
+            set: (v = new Date()) => new Date(v).toISOString(),
+          },
+          requestedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        },
+        { _id: false }
+      ),
+    ],
     image: { type: String },
     publicId: { type: String },
     isActive: { type: Boolean, default: true },

@@ -107,7 +107,6 @@ export const sendMessage = async (
       url: links[0],
       imageURL: metaData.imageURL,
       title: metaData.title,
-      description: metaData.description,
     };
   }
 

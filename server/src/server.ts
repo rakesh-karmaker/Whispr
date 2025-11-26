@@ -12,24 +12,27 @@ mongoose
   .catch((err) => console.error(err));
 
 // TODO: remove this when in a paid hosting
-setInterval(
-  () => {
-    const options = {
-      hostname: config.serverUrl.replace(/^https?:\/\//, ""), // Remove protocol if present
-      port: 443,
-      path: "/",
-      method: "GET",
-      headers: {
-        Origin: config.serverUrl,
-      },
-    };
+// keep the server awake on free hosting like render
+if (!config.serverUrl.includes("localhost")) {
+  setInterval(
+    () => {
+      const options = {
+        hostname: config.serverUrl.replace(/^https?:\/\//, ""), // Remove protocol if present
+        port: 443,
+        path: "/",
+        method: "GET",
+        headers: {
+          Origin: config.serverUrl,
+        },
+      };
 
-    https.get(options).on("error", (e) => {
-      console.error(`Got error: ${e.message}`);
-    });
-  },
-  2 * 60 * 1000
-); // every 2 minutes
+      https.get(options).on("error", (e) => {
+        console.error(`Got error: ${e.message}`);
+      });
+    },
+    2 * 60 * 1000
+  ); // every 2 minutes
+}
 
 // Verify email connection asynchronously (don't block server startup)
 verifyConnection().catch((error) => {

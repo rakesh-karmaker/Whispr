@@ -66,7 +66,6 @@ export async function getAssets(req: Request, res: Response): Promise<void> {
             messageId: message._id.toString(),
             url: message.link.url,
             title: message.link.title ?? "",
-            description: message.link.description ?? "",
             imageURL: message.link.imageURL ?? "",
           });
       }
@@ -93,7 +92,6 @@ export async function getAssets(req: Request, res: Response): Promise<void> {
             messageId: message._id.toString(),
             url: message.link.url,
             title: message.link.title ?? "",
-            description: message.link.description ?? "",
             imageURL: message.link.imageURL ?? "",
           });
       }

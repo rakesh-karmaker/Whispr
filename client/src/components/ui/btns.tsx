@@ -1,4 +1,9 @@
+import Tooltip from "@mui/material/Tooltip";
 import React from "react";
+import { FaPlus } from "react-icons/fa6";
+import { FcGoogle } from "react-icons/fc";
+import { IoMdPersonAdd } from "react-icons/io";
+import { RxCross2 } from "react-icons/rx";
 
 export function FormSubmitBtn({
   children,
@@ -62,5 +67,91 @@ export function PrimaryBtn({
     >
       {children}
     </button>
+  );
+}
+
+export function AddParticipantBtn({
+  setOpen,
+  open,
+}: {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  open: boolean;
+}): React.ReactNode {
+  return (
+    <button
+      onClick={() => setOpen(!open)}
+      className="w-full flex justify-between items-center hover:bg-white-2 dark:hover:bg-d-light-dark-gray transition-all duration-200 rounded-lg cursor-pointer"
+    >
+      <span className="flex items-center gap-2">
+        <span className="min-w-11 min-h-11 max-w-11 max-h-11 rounded-full flex justify-center items-center bg-white-2 text-black dark:bg-d-light-dark-gray dark:text-d-white/90">
+          <IoMdPersonAdd className="text-xl" />
+        </span>
+        <span className="ml-1.5 dark:text-d-white/90">Add participant</span>
+      </span>
+    </button>
+  );
+}
+
+export function AddSocialLinkButton({
+  append,
+}: {
+  append: (value: { type: string; link: string }) => void;
+}) {
+  return (
+    <Tooltip title="Add social link" arrow placement="top">
+      <button
+        className={`min-w-10 min-h-10 max-h-10 max-w-10 flex items-center justify-center bg-white-2 dark:bg-d-light-dark-gray text-teal rounded-full text-xl hover:bg-teal hover:text-pure-white transition-all duration-200 cursor-pointer`}
+        onClick={() => append({ type: "", link: "" })}
+        type="button"
+        aria-label="Add social link"
+      >
+        <FaPlus />
+      </button>
+    </Tooltip>
+  );
+}
+
+export function RemoveSocialLinkButton({
+  remove,
+  index,
+}: {
+  remove: (index: number) => void;
+  index: number;
+}) {
+  return (
+    <Tooltip title="Remove social link" arrow placement="top">
+      <button
+        className={`min-w-10 min-h-10 max-h-10 max-w-10 flex items-center justify-center bg-white-2 dark:bg-d-light-dark-gray text-red rounded-full text-xl hover:bg-red hover:text-pure-white transition-all duration-200 cursor-pointer`}
+        onClick={() => remove(index)}
+        type="button"
+        aria-label="Remove social link"
+      >
+        <RxCross2 />
+      </button>
+    </Tooltip>
+  );
+}
+
+export function GoogleBtn({
+  signupWithGoogle,
+  isLoading,
+  children,
+}: {
+  signupWithGoogle: () => void;
+  isLoading: boolean;
+  children: React.ReactNode;
+}): React.ReactNode {
+  return (
+    <div className="flex flex-col gap-7 w-full">
+      <BtnWithIcon
+        icon={<FcGoogle />}
+        onClick={signupWithGoogle}
+        isLoading={isLoading}
+      >
+        Continue with Google
+      </BtnWithIcon>
+
+      <p className="text-center font-medium text-gray">{children}</p>
+    </div>
   );
 }

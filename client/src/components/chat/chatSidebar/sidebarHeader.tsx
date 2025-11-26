@@ -6,7 +6,7 @@ import { useState } from "react";
 import { FaGear } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import { usePreferences } from "@/hooks/usePreferences";
-import UpdateGroupForm from "./updateGroupForm";
+import UpdateGroupForm from "../../forms/updateGroupForm";
 import { useUser } from "@/hooks/useUser";
 import Tooltip from "@mui/material/Tooltip";
 import ModalHeader from "@/components/ui/modalHeader";

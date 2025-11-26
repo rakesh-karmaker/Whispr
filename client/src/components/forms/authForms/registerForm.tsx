@@ -1,6 +1,6 @@
 import TextField from "@mui/material/TextField";
 import type React from "react";
-import { FormSubmitBtn } from "../ui/btns";
+import { FormSubmitBtn } from "@/components/ui/btns";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { singUpSchema, type SingUpSchema } from "@/lib/zodSchemas/authSchema";

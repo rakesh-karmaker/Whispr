@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TextField from "@mui/material/TextField";
-import { FormSubmitBtn } from "@/components/ui/btns";
+import {
+  AddSocialLinkButton,
+  FormSubmitBtn,
+  RemoveSocialLinkButton,
+} from "@/components/ui/btns";
 import ImageInput from "@/components/ui/imageInput";
 import {
   updateGroupFormSchema,
@@ -17,11 +21,8 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import { allowedSocialTypes } from "@/services/data";
-import { RxCross2 } from "react-icons/rx";
-import { FaPlus } from "react-icons/fa6";
 import type { Socket } from "socket.io-client";
-import Tooltip from "@mui/material/Tooltip";
-import DeleteGroupWarning from "./deleteGroupWarning";
+import DeleteGroupWarning from "../chat/chatSidebar/deleteGroupWarning";
 
 export default function UpdateGroupForm({
   setOpen,
@@ -196,45 +197,5 @@ export default function UpdateGroupForm({
         setOpen={setOpen}
       />
     </>
-  );
-}
-
-function AddSocialLinkButton({
-  append,
-}: {
-  append: (value: { type: string; link: string }) => void;
-}) {
-  return (
-    <Tooltip title="Add social link" arrow placement="top">
-      <button
-        className={`min-w-10 min-h-10 max-h-10 max-w-10 flex items-center justify-center bg-white-2 dark:bg-d-light-dark-gray text-teal rounded-full text-xl hover:bg-teal hover:text-pure-white transition-all duration-200 cursor-pointer`}
-        onClick={() => append({ type: "", link: "" })}
-        type="button"
-        aria-label="Add social link"
-      >
-        <FaPlus />
-      </button>
-    </Tooltip>
-  );
-}
-
-function RemoveSocialLinkButton({
-  remove,
-  index,
-}: {
-  remove: (index: number) => void;
-  index: number;
-}) {
-  return (
-    <Tooltip title="Remove social link" arrow placement="top">
-      <button
-        className={`min-w-10 min-h-10 max-h-10 max-w-10 flex items-center justify-center bg-white-2 dark:bg-d-light-dark-gray text-red rounded-full text-xl hover:bg-red hover:text-pure-white transition-all duration-200 cursor-pointer`}
-        onClick={() => remove(index)}
-        type="button"
-        aria-label="Remove social link"
-      >
-        <RxCross2 />
-      </button>
-    </Tooltip>
   );
 }

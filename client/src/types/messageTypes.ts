@@ -17,7 +17,6 @@ export type MessageType = {
     url: string;
     imageURL?: string;
     title?: string;
-    description?: string;
   };
   seenBy: string[];
   summary?: string;
@@ -40,7 +39,6 @@ export type LinkMessageType = {
   messageId: string;
   url: string;
   title: string;
-  description: string;
   imageURL: string;
 };
 

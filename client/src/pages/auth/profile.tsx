@@ -1,4 +1,4 @@
-import AuthProfileFrom from "@/components/auth/profileFrom";
+import AuthProfileFrom from "@/components/forms/authForms/profileFrom";
 import Loader from "@/components/ui/Loader/Loader";
 import { AuthForm } from "@/layouts/authPageLayout";
 import { getTempUser } from "@/lib/api/auth";

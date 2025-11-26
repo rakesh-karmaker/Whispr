@@ -160,7 +160,7 @@ function Participants({
   }
 
   return (
-    <div className="w-full h-full flex flex-col gap-3.5">
+    <div className="w-full h-full flex flex-col gap-2.5">
       {displayedParticipants.map((participant) => (
         <div key={participant._id} className="participant-list-item">
           <ParticipantPreview

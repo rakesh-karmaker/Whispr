@@ -1,5 +1,5 @@
 import type React from "react";
-import { FormSubmitBtn } from "../ui/btns";
+import { FormSubmitBtn } from "../../ui/btns";
 import { AuthForm } from "@/layouts/authPageLayout";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";

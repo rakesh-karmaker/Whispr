@@ -4,14 +4,13 @@ import scraper from "../config/scraper.js";
 
 export type URLMetaData = {
   title: string;
-  description: string;
   imageURL: string;
 };
 
 // Array of realistic User-Agents to rotate through
 const USER_AGENTS = [
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0",
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15",
 ];
@@ -104,7 +103,7 @@ async function fetchWithRetry(
 export default async function scrapeURLMetaData(
   url: string
 ): Promise<URLMetaData> {
-  if (!url) return { title: "", description: "", imageURL: "" };
+  if (!url) return { title: "", imageURL: "" };
 
   // Validate URL format
   try {
@@ -121,18 +120,17 @@ export default async function scrapeURLMetaData(
       urlObj.hostname === "broadcasthost" ||
       urlObj.hostname === "local"
     ) {
-      console.log(`Skipping internal/localhost URL: ${url}`);
-      return { title: "", description: "", imageURL: "" };
+      return { title: "", imageURL: "" };
     }
 
     // Skip non-HTTP/HTTPS protocols
     if (!["http:", "https:"].includes(urlObj.protocol)) {
       console.log(`Skipping non-HTTP URL: ${url}`);
-      return { title: "", description: "", imageURL: "" };
+      return { title: "", imageURL: "" };
     }
   } catch (error) {
     console.log(`Invalid URL format: ${url}`);
-    return { title: "", description: "", imageURL: "" };
+    return { title: "", imageURL: "" };
   }
 
   // check if url data exists
@@ -140,21 +138,20 @@ export default async function scrapeURLMetaData(
     (await redisClient.get(`url_data:${url}`)) || "{}"
   );
 
-  if (!data.title || !data.description || !data.imageURL) {
+  if (!data.title || !data.imageURL) {
     try {
       // fetch new data with retry logic
-      const { body: html, url: finalUrl } = await fetchWithRetry(url, 0); // 1 attempt NOTE: Reduced retries to 1 to minimize delays
+      const { body: html, url: finalUrl } = await fetchWithRetry(url, 1); // 1 attempt NOTE: Reduced retries to 1 to minimize delays
 
       const metadata = await scraper({ html, url: finalUrl });
 
       const newData: URLMetaData = {
         title: metadata.title ?? "",
-        description: metadata.description ?? "",
         imageURL: metadata.image ?? "",
       };
 
       // Only cache if we got meaningful data
-      if (newData.title || newData.description || newData.imageURL) {
+      if (newData.title || newData.imageURL) {
         await redisClient.set(`url_data:${url}`, JSON.stringify(newData));
         await redisClient.expire(`url_data:${url}`, 60 * 60 * 24 * 3); // 3 days
       }
@@ -162,13 +159,12 @@ export default async function scrapeURLMetaData(
       return newData;
     } catch (error) {
       console.log("Error scraping URL metadata: ", url);
-      return { title: "", description: "", imageURL: "" };
+      return { title: "", imageURL: "" };
     }
   }
 
   return {
     title: data.title ?? "",
-    description: data.description ?? "",
     imageURL: data.imageURL ?? "",
   };
 }

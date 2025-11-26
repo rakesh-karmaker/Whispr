@@ -6,9 +6,9 @@ import {
   type AuthProfileSchema,
 } from "@/lib/zodSchemas/authSchema";
 import { useForm } from "react-hook-form";
-import ImageInput from "../ui/imageInput";
+import ImageInput from "@/components/ui/imageInput";
 import TextField from "@mui/material/TextField";
-import { FormSubmitBtn } from "../ui/btns";
+import { FormSubmitBtn } from "@/components/ui/btns";
 import { useMutation } from "@tanstack/react-query";
 import type { RegisterDataType, UserType } from "@/types/authTypes";
 import { registerUser } from "@/lib/api/auth";

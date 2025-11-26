@@ -102,7 +102,6 @@ export function sendMessage(data: MessageType) {
         messageId: data._id,
         url: data.link?.url || "",
         title: data.link?.title || "",
-        description: data.link?.description || "",
         imageURL: data.link?.imageURL || "",
       },
     ]);

@@ -1,7 +1,7 @@
-import ForgotPasswordForm from "@/components/auth/forgotPasswordForm";
-import ForgotPasswordSuccess from "@/components/auth/forgotPasswordSuccess";
-import ResetPasswordForm from "@/components/auth/resetPasswordForm";
-import VerifyOtpForm from "@/components/auth/verifyOtpForm";
+import ForgotPasswordForm from "@/components/forms/forgotPasswordForms/forgotPasswordForm";
+import ForgotPasswordSuccess from "@/components/forgotPasswordSuccess";
+import ResetPasswordForm from "@/components/forms/forgotPasswordForms/resetPasswordForm";
+import VerifyOtpForm from "@/components/forms/forgotPasswordForms/verifyOtpForm";
 import type React from "react";
 import { useState } from "react";
 

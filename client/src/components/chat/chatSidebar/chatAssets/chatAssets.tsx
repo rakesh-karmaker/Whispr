@@ -11,7 +11,7 @@ import Files from "./files";
 export default function ChatAssets(): React.ReactNode {
   const { imagesCount, linksCount, filesCount } = useContactAssets();
   return (
-    <div className="w-full h-full flex flex-col gap-4 relative mt-5">
+    <div className="w-full h-full flex flex-col gap-4 relative mt-3.5">
       <div className="absolute -top-5 w-full h-[1px] bg-[#D8D8D8]/70 dark:bg-d-light-dark-gray/90 transition-all duration-200" />
       <AssetsLayout
         title="Documents"

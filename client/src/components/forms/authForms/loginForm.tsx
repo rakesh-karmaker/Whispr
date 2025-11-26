@@ -7,7 +7,7 @@ import type { AxiosError } from "axios";
 import type React from "react";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
-import { FormSubmitBtn } from "../ui/btns";
+import { FormSubmitBtn } from "@/components/ui/btns";
 import type { UserType } from "@/types/authTypes";
 import { useUser } from "@/hooks/useUser";
 

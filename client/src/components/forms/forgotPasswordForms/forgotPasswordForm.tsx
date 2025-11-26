@@ -10,7 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import type React from "react";
 import { useForm } from "react-hook-form";
-import { FormSubmitBtn } from "../ui/btns";
+import { FormSubmitBtn } from "../../ui/btns";
 import { NavLink } from "react-router-dom";
 
 export default function ForgotPasswordForm({

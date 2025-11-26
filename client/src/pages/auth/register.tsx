@@ -1,10 +1,10 @@
 import { AuthForm } from "@/layouts/authPageLayout";
 import type React from "react";
-import RegisterForm from "@/components/auth/registerForm";
+import RegisterForm from "@/components/forms/authForms/registerForm";
 import OrLine from "@/components/ui/orLineBreaker";
 import useGoogleOAuth from "@/hooks/useGoogleOAuth";
-import GoogleBtn from "@/components/auth/googleBtn";
 import { NavLink } from "react-router-dom";
+import { GoogleBtn } from "@/components/ui/btns";
 
 export default function Register(): React.ReactNode {
   const { authFunc, isOAuthLoading } = useGoogleOAuth();

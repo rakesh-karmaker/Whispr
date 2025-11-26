@@ -28,6 +28,11 @@ export interface ContactType {
   isGroup: boolean;
   participants: mongoose.Types.ObjectId[];
   admins: mongoose.Types.ObjectId[];
+  joinRequests: {
+    user: mongoose.Types.ObjectId;
+    requestedAt: string;
+    requestedBy: mongoose.Types.ObjectId;
+  }[];
   image: string;
   publicId: string | null;
   isActive: boolean;
@@ -54,7 +59,6 @@ export interface MessageType {
     url: string;
     imageURL?: string;
     title?: string;
-    description?: string;
   };
   seenBy: mongoose.Types.ObjectId[];
   reactions: {
