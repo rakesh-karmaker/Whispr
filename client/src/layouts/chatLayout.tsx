@@ -130,9 +130,11 @@ export default function ChatLayout(): React.ReactNode {
   }, [mode, prefersDarkMode]);
 
   return (
-    <div className="h-screen max-w-screen flex gap-4 p-4 bg-white-3 dark:bg-black chat-layout">
-      <ChatLeft />
-      <Outlet />
+    <div className="h-screen w-screen flex justify-center chat-layout">
+      <div className="h-screen w-screen max-w-[2400px]  flex gap-4 p-4 max-mid:p-2 bg-white-3 dark:bg-black">
+        <ChatLeft />
+        <Outlet />
+      </div>
     </div>
   );
 }

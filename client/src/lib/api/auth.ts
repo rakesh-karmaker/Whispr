@@ -43,6 +43,11 @@ export async function loginUser(data: LoginSchema) {
   return response;
 }
 
+export async function logoutUser() {
+  const { data: response } = await api.get("/auth/logout");
+  return response;
+}
+
 export async function getUser() {
   const { data: response } = await api.get("/auth/get-user");
   return response;

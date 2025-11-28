@@ -17,7 +17,7 @@ export default function ImageMessageBox({
 }) {
   return (
     <div
-      className={`w-full flex flex-col gap-2 min-h-70 ${
+      className={`w-full flex flex-col gap-2 min-h-0 max-sm:min-h-auto ${
         isSender ? "items-end" : "items-start"
       }`}
     >
@@ -52,7 +52,7 @@ function FormatImages({
   if (imageLength <= 2 || (imageLength == 3 && errorIndexes.length > 0)) {
     return (
       <div
-        className="w-full grid grid-cols-2 grid-rows-1 gap-2 min-h-70 max-h-70 max-w-100"
+        className="w-full grid grid-cols-2 grid-rows-1 gap-2 max-h-70 max-w-100"
         style={
           errorIndexes.length > 0 || imageLength === 1
             ? {
@@ -91,7 +91,7 @@ function FormatImages({
 
   if (imageLength == 3) {
     return (
-      <div className="w-full grid grid-cols-4 grid-rows-2 gap-2 min-h-70 max-h-70 max-w-100">
+      <div className="w-full grid grid-cols-4 grid-rows-2 gap-2 max-h-70 max-w-100">
         <img
           key={images[0].publicId}
           src={images[0].url}
@@ -126,7 +126,7 @@ function FormatImages({
   }
 
   return (
-    <div className="w-full grid grid-cols-4 grid-rows-2 gap-2 min-h-70 max-h-70 max-w-100">
+    <div className="w-full grid grid-cols-4 grid-rows-2 gap-2 max-h-70 max-w-100">
       <img
         key={images[0].publicId}
         src={images[0].url}

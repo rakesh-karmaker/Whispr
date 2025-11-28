@@ -8,7 +8,7 @@ import MessagesContainer from "./messagesContainer";
 import { useSelectedContact } from "@/hooks/useSelectContact";
 
 export default function ChatWindow(): React.ReactNode {
-  const { isSidebarOpen } = usePreferences();
+  const { isSidebarOpen, isChatOpen } = usePreferences();
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const { selectedContact } = useSelectedContact();
@@ -43,11 +43,14 @@ export default function ChatWindow(): React.ReactNode {
   return (
     <div
       key={selectedContact?._id}
-      className={`flex-1 flex flex-col w-full h-full gap-4`}
+      className={`flex-1 flex flex-col w-full max-w-full h-full gap-4 max-mid:gap-2 max-mid:absolute max-mid:z-9 max-mid:max-w-[calc(100vw-1rem)] max-mid:left-2 max-mid:top-2 max-mid:max-h-[calc(100vh-1rem)]`}
+      // style={{
+      //   maxWidth: isSidebarOpen
+      //     ? `calc(100vw - (((25.75em + 2rem) * 2)))`
+      //     : `calc(100vw - ((25.75em + 3rem)))`,
+      // }}
       style={{
-        maxWidth: isSidebarOpen
-          ? `calc(100vw - (((25.75em + 2rem) * 2)))`
-          : `calc(100vw - ((25.75em + 3rem)))`,
+        display: isChatOpen || window.innerWidth > 768 ? "flex" : "none",
       }}
     >
       <ChatHeader />

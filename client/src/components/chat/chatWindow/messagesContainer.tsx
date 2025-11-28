@@ -82,6 +82,7 @@ export default function MessagesContainer() {
     let lastChainId = "";
     return messages.map((message, i) => {
       const messageDate = moment(message.createdAt).format("YYYY-MM-DD");
+      const prevMessage = i > 0 ? messages[i - 1] : null;
       const prevDate =
         i > 0 ? moment(messages[i - 1].createdAt).format("YYYY-MM-DD") : null;
       const isNewDay = messageDate !== prevDate;
@@ -93,9 +94,12 @@ export default function MessagesContainer() {
           moment(nextMessage.createdAt),
           "hour"
         ) &&
-        nextMessage.senderDetails._id === message.senderDetails._id;
+        nextMessage.senderDetails._id === message.senderDetails._id &&
+        nextMessage.messageType !== "announcement";
 
-      const isNewChain = lastChainId !== message.senderDetails._id && willChain;
+      const isNewChain =
+        lastChainId !== message.senderDetails._id ||
+        prevMessage?.messageType === "announcement";
 
       if (willChain) {
         lastChainId = message.senderDetails._id;
@@ -103,11 +107,17 @@ export default function MessagesContainer() {
         lastChainId = "";
       }
 
+      const needSpace =
+        message.messageType === "announcement" &&
+        !isNewDay &&
+        prevMessage?.messageType !== "announcement";
+
       return {
         message,
         isNewDay,
         willChain,
         isNewChain,
+        needSpace,
       };
     });
   }, [messages]);
@@ -149,11 +159,13 @@ export default function MessagesContainer() {
         isNewDay,
         isNewChain,
         willChain,
+        needSpace,
       }: {
         message: MessageType;
         isNewDay: boolean;
         isNewChain: boolean;
         willChain: boolean;
+        needSpace: boolean;
       }
     ) => {
       const isLastMessage = index === computedMessages.length - 1;
@@ -169,6 +181,7 @@ export default function MessagesContainer() {
             willChain={willChain}
             isNewChain={isNewChain}
             isNewDay={isNewDay}
+            needSpace={needSpace}
             lastElementRef={isLastMessage ? lastElementRef : null}
             onImageClick={handleImageClick}
           />
@@ -206,7 +219,7 @@ export default function MessagesContainer() {
           }, 100);
           setTimeout(() => {
             setIsLoading(false);
-          }, 600);
+          }, 0);
         });
       }
     }

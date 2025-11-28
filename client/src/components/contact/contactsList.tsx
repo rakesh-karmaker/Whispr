@@ -42,7 +42,7 @@ export default function ContactsList(): React.ReactNode {
           isLoading={isLoading}
         />
       </div>
-      <div className="absolute bottom-0 w-full h-30 bg-gradient-to-t from-pure-white dark:from-d-dark-gray to-transparent pointer-events-none" />
+      {/* <div className="absolute bottom-0 w-full h-30 bg-gradient-to-t from-pure-white dark:from-d-dark-gray to-transparent pointer-events-none" /> */}
     </div>
   );
 }

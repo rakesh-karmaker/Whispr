@@ -20,12 +20,16 @@ export default function SidebarHeader(): React.ReactNode {
 
     return (
       <div className="w-full flex justify-between items-center gap-3.5">
-        <button
-          className="hidden max-sm:flex cursor-pointer text-xl text-gray dark:text-d-gray hover:text-black dark:hover:text-d-light-dark-gray transition-all duration-300"
-          onClick={() => setIsSidebarOpen(false)}
-        >
-          <RxCross2 />
-        </button>
+        <Tooltip title="Close sidebar" arrow placement="right">
+          <button
+            className={`min-w-8.5 min-h-8.5 max-h-8.5 max-w-8.5 flex items-center justify-center bg-white-2 dark:bg-d-light-dark-gray text-red rounded-full text-xl hover:bg-red hover:text-pure-white transition-all duration-200 cursor-pointer`}
+            onClick={() => setIsSidebarOpen(false)}
+            type="button"
+            aria-label="Remove participant"
+          >
+            <RxCross2 />
+          </button>
+        </Tooltip>
 
         <p className="text-gray font-medium dark:text-d-gray">
           {moment(selectedContact.createdAt).format("DD MMM YYYY")}
@@ -51,7 +55,7 @@ export default function SidebarHeader(): React.ReactNode {
                 aria-describedby="modal-modal-description"
                 className="flex items-center justify-center h-fit min-h-full absolute max-sm:bg-pure-white dark:max-sm:bg-d-dark-gray"
               >
-                <div className="w-full max-w-[38.75em] max-sm:max-w-full min-h-fit max-h-[90vh] overflow-auto max-sm:min-h-screen max-sm:max-h-screen p-7 rounded-lg max-sm:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col items-center max-sm:justify-center gap-3 relative">
+                <div className="w-full max-w-[38.75em] max-sm:max-w-full min-h-fit max-h-[calc(100vh-4rem)] max-md:max-h-screen overflow-auto max-sm:min-h-screen max-sm:max-h-screen p-7 rounded-lg max-sm:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col items-center gap-3 relative">
                   <ModalHeader
                     title="Change group info"
                     onClick={() => setOpen(false)}

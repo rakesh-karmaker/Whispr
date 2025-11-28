@@ -7,6 +7,7 @@ import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelectedContact } from "@/hooks/useSelectContact";
 import formatLastMessage from "@/utils/formateLastMessage";
+import { usePreferences } from "@/hooks/usePreferences";
 
 export default function ContactPreview({
   contactData,
@@ -19,6 +20,7 @@ export default function ContactPreview({
 
   const [showLine, setShowLine] = useState<boolean>(true);
   const [isActive, setIsActive] = useState<boolean>(false);
+  const { setIsChatOpen } = usePreferences();
 
   const { user } = useUser();
   let unseen = 0;
@@ -64,8 +66,9 @@ export default function ContactPreview({
       onBlur={() => {
         !isActive && setShowLine(true);
       }}
+      onClick={() => setIsChatOpen(true)}
     >
-      <div className="w-full h-fit flex gap-2.5 relative">
+      <div className="w-full h-fit flex gap-2.5 relative items-center">
         <Avatar
           src={contactData.contactImage}
           name={contactData.contactName}
@@ -73,7 +76,7 @@ export default function ContactPreview({
         />
         <div className="w-full flex flex-col">
           <div className="flex justify-between items-center gap-2.5">
-            <h4 className="font-medium text-md line-clamp-1 dark:text-d-white/90">
+            <h4 className="font-medium text-[0.93rem] line-clamp-1 break-all dark:text-d-white/90">
               {contactData.contactName}
             </h4>
             <p className="font-medium text-xs text-gray min-w-fit dark:text-d-white/50">
@@ -81,7 +84,7 @@ export default function ContactPreview({
             </p>
           </div>
           <p className="flex justify-between gap-2.5">
-            <span className="text-sm text-gray line-clamp-1 dark:text-d-white/50">
+            <span className="text-sm text-gray line-clamp-1 break-all dark:text-d-white/50">
               {lastMessage}
             </span>
             {unseen > 0 && (

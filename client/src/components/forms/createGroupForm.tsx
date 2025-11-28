@@ -1,49 +1,82 @@
-import Autocomplete from "@mui/material/Autocomplete";
-import SearchContacts from "../contact/searchContacts";
-import type { Option } from "../ui/multiSelectDropdown";
-import TextField from "@mui/material/TextField";
-import { FormSubmitBtn } from "../ui/btns";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useSelectedContact } from "@/hooks/useSelectContact";
-import { useSocketStore } from "@/stores/useSocketStore";
 import AddedPeopleList from "../ui/addedPeopleList";
+import ImageInput from "@/components/ui/imageInput";
+import { useForm } from "react-hook-form";
+import {
+  createGroupFormSchema,
+  type CreateGroupFormSchema,
+} from "@/lib/zodSchemas/contactSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import TextField from "@mui/material/TextField";
+import { useNavigate } from "react-router-dom";
+import type { Option } from "@/components/ui/multiSelectDropdown";
+import Autocomplete from "@mui/material/Autocomplete";
+import { FormSubmitBtn } from "@/components/ui/btns";
+import { useMutation } from "@tanstack/react-query";
+import type { CreateNewGroupMutationProps } from "@/types/contactTypes";
+import { createNewGroup } from "@/lib/api/contacts";
+import { useContacts } from "@/hooks/useContacts";
+import { useSocketStore } from "@/stores/useSocketStore";
+import { useState } from "react";
+import SearchContacts from "../contact/searchContacts";
 
-export default function AddParticipantForm({
+export default function CreateGroupForm({
   setOpen,
 }: {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }): React.ReactNode {
+  const navigate = useNavigate();
+
   const [query, setQuery] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [selected, setSelected] = useState<Option[]>([]);
+  const { setContacts } = useContacts();
   const socket = useSocketStore((e) => e.socket);
-  const { selectedContact } = useSelectedContact();
+
+  const createGroupMutation = useMutation({
+    mutationFn: (data: CreateNewGroupMutationProps) => createNewGroup(data),
+    onSuccess: (res) => {
+      if (res.groupData) {
+        if (socket) {
+          socket.emit("add-contact", res.groupData);
+        }
+        setContacts((prev) => [res.groupData, ...prev]);
+        navigate(`/chat/${res.groupData._id.toString()}`);
+        setOpen(false);
+      }
+    },
+  });
 
   const {
+    register,
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: zodResolver(createGroupFormSchema),
+    defaultValues: {
+      name: "",
+      groupImage: "",
+    },
+  });
 
-  function onSubmit() {
+  function onSubmit(data: CreateGroupFormSchema) {
+    if (!data.groupImage || data.groupImage.length == 0) {
+      setError("groupImage", { message: "Image is required" });
+      return;
+    }
+
     if (selected.length === 0) {
       setError("root", {
-        message: "No participants selected",
+        message: "At least one contact is required",
       });
       return;
     }
 
-    if (socket) {
-      socket.emit("add-participants", {
-        participants: selected,
-        contactId: selectedContact._id,
-      });
-    }
-    setOpen(false);
-    if (selected.length > 0) {
-      setSelected([]);
-    }
+    createGroupMutation.mutate({
+      name: data.name,
+      groupImage: data.groupImage,
+      selectedUsers: selected,
+    });
   }
 
   return (
@@ -52,7 +85,22 @@ export default function AddParticipantForm({
         onSubmit={handleSubmit(onSubmit)}
         className="w-full h-full flex flex-col gap-4 items-center"
       >
+        <ImageInput
+          register={{ ...register("groupImage") }}
+          errorMessage={errors.groupImage?.message as string}
+        />
+
         <div className="w-full flex flex-col gap-5 items-center">
+          <TextField
+            {...register("name")}
+            label="Group Name"
+            variant="outlined"
+            error={!!errors.name}
+            helperText={errors.name?.message}
+            className="w-full"
+            autoComplete="off"
+          />
+
           <div className={`w-full relative`}>
             <SearchContacts
               selected={selected}
@@ -60,7 +108,6 @@ export default function AddParticipantForm({
               query={query}
               pageNumber={pageNumber}
               setPageNumber={setPageNumber}
-              addPeople={true}
               className="w-full h-fit absolute max-h-100 z-40"
             >
               <Autocomplete
@@ -84,7 +131,7 @@ export default function AddParticipantForm({
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Search Contacts"
+                    label="Search people to add"
                     className="w-full flex relative items-center"
                     value={query}
                     onChange={(e) => {
@@ -101,8 +148,8 @@ export default function AddParticipantForm({
         <AddedPeopleList selected={selected} setSelected={setSelected} />
 
         <div className="w-full flex flex-col gap-1.5 justify-center">
-          <FormSubmitBtn isLoading={false} className={"text-lg"}>
-            Add
+          <FormSubmitBtn isLoading={createGroupMutation.isPending}>
+            Create Group
           </FormSubmitBtn>
           {errors.root && <p className="text-red-500">{errors.root.message}</p>}
         </div>

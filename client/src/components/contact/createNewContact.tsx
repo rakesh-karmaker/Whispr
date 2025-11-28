@@ -53,7 +53,7 @@ export default function CreateNewContact(): React.ReactNode {
       query={query}
       pageNumber={pageNumber}
       setPageNumber={setPageNumber}
-      className="w-full h-fit absolute top-28 z-50"
+      className="w-full h-fit absolute max-h-100 top-22 z-50"
       open={open}
     >
       <div className="w-full flex relative items-center">
@@ -62,7 +62,7 @@ export default function CreateNewContact(): React.ReactNode {
           name="contact-search"
           id="contact-search"
           placeholder="Search"
-          className="w-full h-[44px] rounded-4xl border-[0.5px] dark:border-none dark:bg-d-light-dark-gray border-light-gray pl-10 placeholder:text-gray dark:placeholder:text-d-gray/60 text-sm dark:text-d-white/80 outline-none"
+          className="w-full h-10 rounded-4xl border-[0.5px] dark:border-none dark:bg-d-light-dark-gray border-light-gray pl-10 placeholder:text-gray dark:placeholder:text-d-gray/60 text-sm dark:text-d-white/80 outline-none"
           onChange={(e) => {
             setQuery(e.target.value);
             setPageNumber(1);
@@ -70,7 +70,7 @@ export default function CreateNewContact(): React.ReactNode {
           }}
           value={query}
         />
-        <FaSearch className="absolute left-4 text-gray dark:text-d-gray text-md" />
+        <FaSearch className="absolute left-4 text-gray dark:text-d-gray" />
       </div>
     </SearchContacts>
   );

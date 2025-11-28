@@ -168,6 +168,23 @@ export async function login(req: Request, res: Response): Promise<void> {
   }
 }
 
+export async function logout(req: Request, res: Response): Promise<void> {
+  try {
+    // clear the cookie
+    res.clearCookie("token", {
+      secure: true,
+      sameSite: "none",
+    });
+
+    res.status(200).send({ message: "Logged out successfully" });
+  } catch (err) {
+    console.log("Error logging out user - ", getDate(), "\n---\n", err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    res.status(500).send({ message: "Server error", error: errorMessage });
+    return;
+  }
+}
+
 export async function getUser(req: Request, res: Response): Promise<void> {
   try {
     const id = req.userId;

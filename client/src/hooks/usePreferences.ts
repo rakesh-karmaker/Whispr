@@ -7,10 +7,15 @@ export const usePreferences = () => {
   const setIsSidebarOpen = usePreferencesStore(
     (state) => state.setIsSidebarOpen
   );
+  const isChatOpen = usePreferencesStore((state) => state.isChatOpen);
+  const setIsChatOpen = usePreferencesStore((state) => state.setIsChatOpen);
+
   return {
     theme,
     setTheme,
     isSidebarOpen,
     setIsSidebarOpen,
+    isChatOpen,
+    setIsChatOpen,
   };
 };

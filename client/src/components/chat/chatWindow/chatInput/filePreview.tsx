@@ -36,7 +36,7 @@ export default function FilePreview({
       <Tooltip title="Remove file" placement="top" arrow>
         <button
           type="button"
-          className="min-w-4 max-w-4 min-h-4 max-h-4 aspect-square rounded-full absolute top-0 right-0 translate-x-[40%] -translate-y-[40%] bg-red text-pure-white flex items-center justify-center text-md cursor-pointer hover:bg-white dark:hover:bg-d-light-dark-gray hover:text-red transition-all duration-200"
+          className="min-w-4 max-w-4 min-h-4 max-h-4 aspect-square rounded-full absolute top-0 right-0 translate-x-[40%] -translate-y-[40%] bg-red text-pure-white flex items-center justify-center cursor-pointer hover:bg-white dark:hover:bg-d-light-dark-gray hover:text-red transition-all duration-200"
           onClick={() => removeFile(index)}
           title="Remove file"
           aria-label="Remove file"

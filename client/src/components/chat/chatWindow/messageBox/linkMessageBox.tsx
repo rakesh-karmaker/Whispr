@@ -29,6 +29,11 @@ export default function LinkMessageBox({
     img.onerror = () => setIsImageUrlValid(false);
   }
 
+  const getValidUrl = (url: string) =>
+    url.startsWith("http://") || url.startsWith("https://")
+      ? url
+      : `https://${url}`;
+
   return (
     <div
       className={`w-full flex flex-col gap-2 ${
@@ -36,10 +41,10 @@ export default function LinkMessageBox({
       }`}
     >
       <a
-        href={message.link.url}
+        href={getValidUrl(message.link.url)}
         target="_blank"
         rel="noopener noreferrer"
-        className={`flex flex-col gap-2 w-full max-w-80 h-fit p-2 rounded-lg text-gray dark:text-d-white/45 hover:text-teal transition-all duration-200 bg-white-2 dark:bg-d-light-dark-gray ${
+        className={`flex flex-col gap-2 max-w-80 max-sm:max-w-full w-[300px] max-sm:w-[250px] max-xs:w-[200px] h-fit p-2 rounded-lg text-gray dark:text-d-white/45 hover:text-teal transition-all duration-200 bg-white-2 dark:bg-d-light-dark-gray ${
           isSender ? "rounded-br-none" : "rounded-bl-none"
         }`}
       >
@@ -50,7 +55,7 @@ export default function LinkMessageBox({
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
-            className="w-full rounded-md aspect-[16/9] object-cover object-center min-w-[304px] min-h-[171px]"
+            className="w-full rounded-md aspect-[16/9] object-cover object-center min-w-[304px] max-sm:min-w-0 min-h-[171px] max-sm:min-h-auto"
           />
         )}
         <div className="w-full flex justify-between gap-4">

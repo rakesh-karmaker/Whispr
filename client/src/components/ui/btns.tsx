@@ -1,3 +1,4 @@
+import { cn } from "@/utils/cn";
 import Tooltip from "@mui/material/Tooltip";
 import React from "react";
 import { FaPlus } from "react-icons/fa6";
@@ -8,13 +9,18 @@ import { RxCross2 } from "react-icons/rx";
 export function FormSubmitBtn({
   children,
   isLoading = false,
+  className,
 }: {
   children: React.ReactNode;
   isLoading: boolean;
+  className?: string;
 }): React.ReactNode {
   return (
     <button
-      className="w-full h-fit bg-teal hover:bg-white-2 dark:hover:bg-d-light-dark-gray text-pure-white hover:text-black dark:hover:text-d-white/90 transition-all duration-300 text-xl max-lg:text-lg font-medium p-3 max-lg:py-3 py-4 rounded-4xl cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-teal disabled:hover:text-pure-white disabled:opacity-60"
+      className={cn(
+        "w-full h-fit text-pure-white font-medium [padding:0.7em_1.2em!important] bg-teal rounded-4xl flex items-center justify-center cursor-pointer btn border-none outline-none hover:bg-white-2 dark:hover:bg-d-light-dark-gray hover:text-black dark:hover:text-d-white transition-all duration-300 disabled:cursor-not-allowed disabled:hover:bg-teal disabled:hover:text-pure-white disabled:opacity-60",
+        className
+      )}
       type="submit"
       disabled={isLoading}
     >

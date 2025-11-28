@@ -36,15 +36,17 @@ export default function useGoogleOAuth(): {
       const response: OAuthResponse = event.data.user;
       setIsOAuthLoading(false);
 
-      if (response.new) {
+      // If new user, navigate to profile setup
+      if (response.new == true) {
         navigate(`/auth/profile?id=${response.redisId}`);
       } else {
+        // Existing user, verify session and log them in
         const sessionId = response.sessionId;
         if (sessionId) {
+          // Verify session and get user data
           const res = await verifySession(sessionId);
-          if (res.success) {
-            setUser(res.data.user);
-            console.log("User verified:", res.data);
+          if (res && res.user) {
+            setUser(res.user);
             navigate(`/chat`, { replace: true });
           }
         }

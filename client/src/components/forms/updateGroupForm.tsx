@@ -23,6 +23,7 @@ import InputLabel from "@mui/material/InputLabel";
 import { allowedSocialTypes } from "@/services/data";
 import type { Socket } from "socket.io-client";
 import DeleteGroupWarning from "../chat/chatSidebar/deleteGroupWarning";
+import { cn } from "@/utils/cn";
 
 export default function UpdateGroupForm({
   setOpen,
@@ -107,7 +108,7 @@ export default function UpdateGroupForm({
             className="w-full"
           />
 
-          <div className="w-full h-full flex flex-col gap-3">
+          <div className="w-full h-full flex flex-col gap-3 max-sm:gap-7">
             {fields.length === 0 && (
               <div className="w-full flex items-center justify-between flex-wrap gap-3">
                 <p className="text-gray text-sm">
@@ -119,7 +120,7 @@ export default function UpdateGroupForm({
             {fields.map((field, index) => (
               <div
                 key={field.id}
-                className="w-full h-full flex gap-1 items-center max-sm:flex-col"
+                className="w-full h-full flex gap-1 max-sm:gap-3 items-center max-sm:flex-col"
               >
                 <div className="w-[40%] flex justify-between max-sm:w-full max-sm:gap-3 items-center">
                   <FormControl className="w-full max-sm:w-1/2 max-xs:w-full">
@@ -172,13 +173,18 @@ export default function UpdateGroupForm({
         <div className="w-full flex flex-col gap-2">
           <div className="w-full flex flex-col gap-1.5 justify-center">
             <div className="w-full flex items-center justify-center gap-2 max-sm:flex-col-reverse">
-              <FormSubmitBtn isLoading={updateGroupMutation.isPending}>
+              <FormSubmitBtn
+                isLoading={updateGroupMutation.isPending}
+                className="text-xl p-3 max-lg:!py-3 !py-4"
+              >
                 Save
               </FormSubmitBtn>
               <button
                 type="button"
                 onClick={() => setWarningOpen(true)}
-                className="w-full h-fit bg-red text-pure-white transition-all duration-300 text-xl max-lg:text-lg font-medium p-3 max-lg:py-3 py-4 rounded-4xl cursor-pointer hover:bg-gray hover:text-pure-white"
+                className={cn(
+                  "w-full h-fit bg-red text-pure-white transition-all duration-300 text-xl max-lg:text-lg font-medium p-3 max-lg:py-3 py-4 rounded-4xl cursor-pointer hover:bg-gray hover:text-pure-white"
+                )}
               >
                 Delete Group
               </button>

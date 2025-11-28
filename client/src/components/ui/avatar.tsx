@@ -1,11 +1,15 @@
+import { cn } from "@/utils/cn";
+
 export default function Avatar({
   src,
   isActive,
   name,
+  className,
 }: {
   src: string;
   isActive: boolean;
   name: string;
+  className?: string;
 }) {
   if (!src) return null;
   return (
@@ -13,9 +17,10 @@ export default function Avatar({
       <img
         src={src}
         alt={`Pic of ${name}`}
-        className={
-          "min-w-11 min-h-11 max-w-11 max-h-11 rounded-full object-cover object-center"
-        }
+        className={cn(
+          "min-w-11 min-h-11 max-w-11 max-h-11 rounded-full object-cover object-center",
+          className ? className : ""
+        )}
         referrerPolicy="no-referrer"
       />
       {isActive && (

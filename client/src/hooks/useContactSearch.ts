@@ -40,11 +40,7 @@ export default function useContactSearch(
 
     const fetchData = async () => {
       try {
-        console.log(
-          `Fetching contacts for query: "${query}", page: ${pageNumber}`
-        );
         const data = await searchContacts(query, pageNumber, cancel);
-        console.log(`Fetched ${data.contacts.length} contacts for "${query}"`);
 
         setContacts((prevContacts) => {
           const all = [...prevContacts, ...data.contacts];

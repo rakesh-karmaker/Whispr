@@ -58,6 +58,7 @@
   --color-d-white: var(--d-white);
 
   --breakpoint-xs: 25rem; /* 400px */
+  --breakpoint-mid: 50rem; /* 800px */
 }
 
 /* width */

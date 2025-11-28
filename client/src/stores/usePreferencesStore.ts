@@ -6,6 +6,9 @@ export type PreferencesStateType = {
 
   isSidebarOpen: boolean;
   setIsSidebarOpen: (isSidebarOpen: boolean) => void;
+
+  isChatOpen: boolean;
+  setIsChatOpen: (isChatOpen: boolean) => void;
 };
 
 export const usePreferencesStore = create<PreferencesStateType>((set) => ({
@@ -14,4 +17,7 @@ export const usePreferencesStore = create<PreferencesStateType>((set) => ({
 
   isSidebarOpen: true,
   setIsSidebarOpen: (isSidebarOpen) => set({ isSidebarOpen }),
+
+  isChatOpen: false,
+  setIsChatOpen: (isChatOpen) => set({ isChatOpen }),
 }));

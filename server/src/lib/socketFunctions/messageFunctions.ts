@@ -8,6 +8,7 @@ import { MessageType } from "../../types/messageTypes";
 import getMessageType from "../../utils/getMessageType.js";
 import getMessageSummary from "../../utils/getMessageSummary.js";
 import scrapeURLMetaData from "../scrapeURLMetaData.js";
+import { urlReacher } from "../../utils/urlReacher.js";
 
 export const sendMessage = async (
   data: SendMessageFunctionProps,
@@ -33,16 +34,25 @@ export const sendMessage = async (
       },
     ],
   });
-
   if (!contact) return;
 
+  // Find the sender
   const sender = await User.findById(userId);
-
   if (!sender) return;
 
   // check if link is present in the message
-  const linkRegex = /https?:\/\/[^\s]+/g;
+  const linkRegex = /(?:https?:\/\/|www\.)[^\s)\]}]+?\.[^\s)\]}]+/g; // Regex to match URLs
   const links = data.message.match(linkRegex);
+
+  // check if the link is valid
+  if (links && links.length > 0) {
+    const isUrlReachable = await urlReacher(
+      links[0].startsWith("www.") ? "http://" + links[0] : links[0]
+    );
+    if (!isUrlReachable) {
+      links.length = 0; // if not reachable, remove the links
+    }
+  }
 
   const messageType = getMessageType(
     data.files.images.length > 0,
@@ -102,7 +112,9 @@ export const sendMessage = async (
 
   // get the meta tags if url exists
   if (links && links.length > 0) {
-    const metaData = await scrapeURLMetaData(links[0]);
+    const metaData = await scrapeURLMetaData(
+      links[0].startsWith("www.") ? "http://" + links[0] : links[0]
+    );
     formattedMessage.link = {
       url: links[0],
       imageURL: metaData.imageURL,

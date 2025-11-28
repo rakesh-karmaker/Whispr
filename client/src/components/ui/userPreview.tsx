@@ -1,14 +1,29 @@
-import type { SearchedContact } from "@/types/contactTypes";
 import type React from "react";
 import Avatar from "./avatar";
+import { cn } from "@/utils/cn";
+
+type UserPreviewProps = {
+  contactData: {
+    _id: string;
+    name: string;
+    email: string;
+    avatar: string;
+    isActive: boolean;
+  };
+  className?: string;
+};
 
 export default function UserPreview({
   contactData,
-}: {
-  contactData: SearchedContact;
-}): React.ReactNode {
+  className,
+}: UserPreviewProps): React.ReactNode {
   return (
-    <div className="w-full h-full flex p-3 items-center transition-all duration-200 hover:bg-white-2 dark:hover:bg-d-light-dark-gray focus-within:bg-white-2 dark:focus-within:bg-d-light-dark-gray">
+    <div
+      className={cn(
+        "w-full h-full flex p-3 items-center transition-all duration-200 hover:bg-white-2 dark:hover:bg-d-light-dark-gray focus-within:bg-white-2 dark:focus-within:bg-d-light-dark-gray",
+        className
+      )}
+    >
       <div className="flex gap-2.5 items-center relative">
         <Avatar
           src={contactData.avatar}

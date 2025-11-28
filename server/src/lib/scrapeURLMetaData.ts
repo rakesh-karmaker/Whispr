@@ -130,6 +130,7 @@ export default async function scrapeURLMetaData(
     }
   } catch (error) {
     console.log(`Invalid URL format: ${url}`);
+    console.log(error);
     return { title: "", imageURL: "" };
   }
 

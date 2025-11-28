@@ -8,6 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import { pinContact, unpinContact } from "@/lib/api/contacts";
 import { useContacts } from "@/hooks/useContacts";
 import Tooltip from "@mui/material/Tooltip";
+import { FaArrowLeft } from "react-icons/fa";
 
 export default function ChatHeader(): React.ReactNode {
   const { selectedContact, isNewSelectedContact, newSelectedContact } =
@@ -15,7 +16,7 @@ export default function ChatHeader(): React.ReactNode {
   const { isSidebarOpen, setIsSidebarOpen } = usePreferences();
 
   return (
-    <div className="w-full min-h-14 max-h-[5.5em] p-[1.375em] bg-pure-white dark:bg-d-dark-gray rounded-xl flex-1 flex justify-between items-center gap-5">
+    <div className="w-full min-h-14 max-h-[4.75em] px-[1.375em] bg-pure-white dark:bg-d-dark-gray rounded-xl flex-1 flex justify-between items-center gap-5">
       <ChatHeaderInfo
         selectedContact={selectedContact}
         isNewSelectedContact={isNewSelectedContact}
@@ -30,7 +31,7 @@ export default function ChatHeader(): React.ReactNode {
           >
             <button
               type="button"
-              className={`text-2xl w-[44px] h-[44px] rounded-full flex items-center justify-center cursor-pointer hover:bg-white-2 dark:hover:bg-d-white/30 hover:text-black dark:hover:text-d-white transition-all duration-200 ${
+              className={`text-xl w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:bg-white-2 dark:hover:bg-d-white/30 hover:text-black dark:hover:text-d-white transition-all duration-200 ${
                 isSidebarOpen
                   ? " bg-white-2 text-black dark:bg-d-light-dark-gray dark:text-d-white/90"
                   : " text-pure-white bg-teal"
@@ -103,7 +104,7 @@ function PinChatButton(): React.ReactNode {
   return (
     <button
       type="button"
-      className="font-medium text-lg text-pure-white w-27 h-11 rounded-4xl bg-black dark:bg-d-light-dark-gray flex items-center justify-center cursor-pointer hover:bg-white-2 dark:hover:bg-d-white/30 hover:text-black dark:hover:text-d-white transition-all duration-200 disabled:cursor-not-allowed disabled:hover:bg-black disabled:hover:text-pure-white disabled:opacity-60"
+      className="font-medium text-normal text-pure-white w-24 h-10 rounded-4xl bg-black dark:bg-d-light-dark-gray flex items-center justify-center cursor-pointer hover:bg-white-2 dark:hover:bg-d-white/30 hover:text-black dark:hover:text-d-white transition-all duration-200 disabled:cursor-not-allowed disabled:hover:bg-black disabled:hover:text-pure-white disabled:opacity-60"
       onClick={() => {
         pinContactMutation.mutate({
           chatId: selectedContact._id,
@@ -142,14 +143,27 @@ function ChatHeaderInfo({
     ? "Online"
     : "Offline";
 
+  const { setIsChatOpen } = usePreferences();
+
   return (
     <div className="flex items-center gap-2.5">
+      <button
+        className={`min-w-11 min-h-11 max-h-11 max-w-11 flex items-center justify-center bg-white-2 dark:bg-d-light-dark-gray text-black dark:text-d-white rounded-full text-xl hover:bg-light-gray/30 dark:hover:bg-d-light-dark-gray/50 hover:text-black/80 dark:hover:text-pure-white/60 transition-all duration-200 cursor-pointer`}
+        onClick={() => setIsChatOpen(false)}
+        type="button"
+        aria-label="Go back to contacts"
+      >
+        <FaArrowLeft />
+      </button>
+
       <Avatar src={data.image || ""} name={data.name} isActive={isActive} />
       <div className="flex flex-col">
-        <h2 className="font-medium text-lg line-clamp-1 dark:text-d-white/90">
+        <h2 className="font-medium text-normal line-clamp-1 dark:text-d-white/90">
           {data.name}
         </h2>
-        <p className="text-sm text-gray dark:text-d-white/45">{subHeading}</p>
+        <p className="text-[0.85rem] text-gray dark:text-d-white/45">
+          {subHeading}
+        </p>
       </div>
     </div>
   );

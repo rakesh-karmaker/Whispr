@@ -17,8 +17,11 @@ export default function AddParticipant(): React.ReactNode {
         aria-describedby="modal-modal-description"
         className="flex items-center justify-center h-fit min-h-full absolute max-sm:bg-pure-white dark:max-sm:bg-d-dark-gray"
       >
-        <div className="w-full max-w-[28.75em] max-sm:max-w-full min-h-fit max-sm:min-h-screen p-7 rounded-lg max-sm:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col items-center max-sm:justify-center gap-3 relative">
-          <ModalHeader title="Add People" onClick={() => setOpen(false)} />
+        <div className="w-full max-w-[28.75em] max-sm:max-w-full min-h-99 max-sm:min-h-screen p-7 rounded-lg max-sm:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col items-center gap-3 relative">
+          <ModalHeader
+            title="Add Participants"
+            onClick={() => setOpen(false)}
+          />
           <AddParticipantForm setOpen={setOpen} />
         </div>
       </Modal>

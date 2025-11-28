@@ -13,13 +13,15 @@ export default function Message({
   willChain,
   isNewDay,
   isNewChain,
+  needSpace,
   onImageClick,
 }: {
   message: MessageType;
   lastElementRef?: ((node: HTMLDivElement) => void) | null;
   willChain: boolean;
   isNewDay: boolean;
-  isNewChain?: boolean;
+  isNewChain: boolean;
+  needSpace: boolean;
   onImageClick: (publicId: string) => void;
 }): React.ReactNode {
   const { user } = useUser();
@@ -31,7 +33,9 @@ export default function Message({
         ref={(node) => {
           if (lastElementRef) lastElementRef(node as HTMLDivElement);
         }}
-        className="w-full flex flex-col gap-2 text-center text-gray-500 dark:text-d-white/50 text-xs py-1"
+        className={`w-full flex flex-col gap-2 text-center text-gray-500 dark:text-d-white/50 text-xs py-1.5 ${
+          needSpace ? "pt-12" : ""
+        }`}
       >
         {isNewDay && <DateBox data={message.createdAt} />}
         <span>
@@ -50,17 +54,17 @@ export default function Message({
     >
       {isNewDay && <DateBox data={message.createdAt} />}
       <div
-        className={`w-fit max-w-[60%] h-fit flex gap-3.5 ${
+        className={`w-fit max-w-[60%] max-sm:max-w-[80%] min-w-[360px] max-sm:min-w-[200px] h-fit flex gap-2 ${
           isSender ? "self-end flex-row-reverse" : "self-start"
         } ${!isSender && isNewChain ? "mt-6" : "mt-3"}`}
       >
         {willChain ? (
-          <div className="min-w-10 max-w-10 min-h-10 max-h-10" />
+          <div className="min-w-7.75 max-w-7.75 min-h-7.75 max-h-7.75" />
         ) : (
           <img
             src={message.senderDetails.avatar}
             alt={message.senderDetails.name}
-            className="min-w-10 max-w-10 min-h-10 max-h-10 aspect-square rounded-full object-cover object-center self-end"
+            className="min-w-7.75 max-w-7.75 min-h-7.75 max-h-7.75 aspect-square rounded-full object-cover object-center self-end"
           />
         )}
         <MessageBox
@@ -97,14 +101,13 @@ function MessageBox({
 }): React.ReactNode {
   return (
     <div className="w-fit flex flex-col gap-1">
-      {!isSender &&
-        isNewChain && ( //TODO: fix this
-          <p
-            className={`text-gray text-sm ml-1 text-left dark:text-d-white/50`}
-          >
-            {message.senderDetails.name.split(" ")[0]}
-          </p>
-        )}
+      {!isSender && isNewChain && (
+        <p
+          className={`text-gray text-[0.7rem] ml-1 text-left dark:text-d-white/50`}
+        >
+          {message.senderDetails.name.split(" ")[0]}
+        </p>
+      )}
       <div className="flex flex-col gap-2">
         <MessageContent
           message={message}
