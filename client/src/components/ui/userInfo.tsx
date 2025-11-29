@@ -3,18 +3,18 @@ import Avatar from "./avatar";
 import { useUser } from "@/hooks/useUser";
 import { FaGear } from "react-icons/fa6";
 import { useColorScheme } from "@mui/material/styles";
-import { logoutUser } from "@/lib/api/auth";
+// import { logoutUser } from "@/lib/api/auth";
 
 export default function UserInfo(): React.ReactNode {
   const { user } = useUser();
   const { mode, setMode } = useColorScheme();
 
-  async function toggleButton() {
-    const res = await logoutUser();
-    if (res) {
-      window.location.reload();
-    }
-  }
+  // async function toggleButton() {
+  //   const res = await logoutUser();
+  //   if (res) {
+  //     window.location.reload();
+  //   }
+  // }
 
   return (
     <div className="relative w-full px-[1.375em] h-[4.75em] bg-pure-white dark:bg-d-dark-gray rounded-xl max-mid:rounded-none flex gap-3 items-center justify-center border-t-2 border-gray/20 dark:border-d-white/10">

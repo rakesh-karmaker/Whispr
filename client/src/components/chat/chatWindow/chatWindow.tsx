@@ -2,7 +2,7 @@ import type React from "react";
 import ChatHeader from "./chatHeader";
 import { useEffect, useState } from "react";
 import ChatInputContainer from "./chatInput/chatInputContainer";
-import { usePreferences } from "@/hooks/usePreferences";
+// import { usePreferences } from "@/hooks/usePreferences";
 import FileDrag from "./fileDrag";
 import MessagesContainer from "./messagesContainer";
 import { useSelectedContact } from "@/hooks/useSelectContact";
