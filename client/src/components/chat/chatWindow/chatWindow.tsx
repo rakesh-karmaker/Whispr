@@ -8,7 +8,7 @@ import MessagesContainer from "./messagesContainer";
 import { useSelectedContact } from "@/hooks/useSelectContact";
 
 export default function ChatWindow(): React.ReactNode {
-  const { isSidebarOpen, isChatOpen } = usePreferences();
+  // const { isSidebarOpen, isChatOpen } = usePreferences();
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const { selectedContact } = useSelectedContact();
@@ -43,18 +43,18 @@ export default function ChatWindow(): React.ReactNode {
   return (
     <div
       key={selectedContact?._id}
-      className={`flex-1 flex flex-col w-full max-w-full h-full gap-4 max-mid:gap-2 max-mid:absolute max-mid:z-9 max-mid:max-w-[calc(100vw-1rem)] max-mid:left-2 max-mid:top-2 max-mid:max-h-[calc(100vh-1rem)]`}
+      className={`flex-1 flex flex-col w-full max-w-full h-full gap-4 max-mid:gap-0 max-mid:min-w-screen max-mid:min-h-screen max-mid:max-w-screen max-mid:max-h-screen max-mid:rounded-none`}
       // style={{
       //   maxWidth: isSidebarOpen
       //     ? `calc(100vw - (((25.75em + 2rem) * 2)))`
       //     : `calc(100vw - ((25.75em + 3rem)))`,
       // }}
-      style={{
-        display: isChatOpen || window.innerWidth > 768 ? "flex" : "none",
-      }}
+      // style={{
+      //   display: isChatOpen || window.innerWidth > 800 ? "flex" : "none",
+      // }}
     >
       <ChatHeader />
-      <div className="relative w-full h-full bg-pure-white dark:bg-d-dark-gray flex-1 flex flex-col pt-0 rounded-xl gap-3">
+      <div className="relative w-full h-full bg-pure-white dark:bg-d-dark-gray flex-1 flex flex-col pt-0 rounded-xl max-mid:rounded-none gap-3">
         <MessagesContainer />
         <ChatInputContainer files={files} setFiles={setFiles} />
         <FileDrag

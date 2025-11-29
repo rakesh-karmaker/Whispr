@@ -35,12 +35,12 @@ export default function EmojiPickerContainer({
           type="button"
           aria-label="Choose emoji"
           onClick={() => setOpen(!open)}
-          className="text-gray cursor-pointer hover:text-black dark:hover:text-d-white/90 transition-all duration-200 min-w-10.5 min-h-10.5 max-h-10.5 flex justify-center items-center text-xl bg-white-2 dark:bg-d-light-dark-gray hover:bg-light-gray dark:hover:bg-d-dark-gray dark:border-d-dark-gray dark:border-1 dark:hover:border-d-light-dark-gray rounded-full focus-within:outline-none focus-within:bg-white-2 dark:focus-within:bg-d-dark-gray focus-within:text-black dark:focus-within:text-d-white/90"
+          className="text-gray cursor-pointer hover:text-black dark:hover:text-d-white/90 transition-all duration-200 min-w-10.5 min-h-10.5 max-h-10.5 max-mid:min-w-9 max-mid:min-h-9 max-mid:max-h-9 flex justify-center items-center text-xl bg-white-2 dark:bg-d-light-dark-gray hover:bg-light-gray dark:hover:bg-d-dark-gray dark:border-d-dark-gray dark:border-1 dark:hover:border-d-light-dark-gray rounded-full focus-within:outline-none focus-within:bg-white-2 dark:focus-within:bg-d-dark-gray focus-within:text-black dark:focus-within:text-d-white/90"
         >
           <MdOutlineEmojiEmotions />
         </button>
       </Tooltip>
-      <div className="absolute bottom-full right-full">
+      <div className="absolute bottom-full right-full max-sm:-right-[130%]">
         <EmojiPicker
           open={open}
           onEmojiClick={(emoji) =>
@@ -50,6 +50,7 @@ export default function EmojiPickerContainer({
           emojiStyle={EmojiStyle.NATIVE}
           suggestedEmojisMode={SuggestionMode.FREQUENT}
           searchDisabled={true}
+          width={window.innerWidth < 450 ? 270 : 350}
         />
       </div>
     </div>

@@ -28,7 +28,7 @@ export default function ContactsList(): React.ReactNode {
     [isLoading, hasMore]
   );
   return (
-    <div className="w-full h-full relative overflow-y-hidden bg-pure-white dark:bg-d-dark-gray rounded-xl flex-1">
+    <div className="w-full h-full relative overflow-y-hidden bg-pure-white dark:bg-d-dark-gray rounded-xl max-mid:rounded-none flex-1">
       <div className="w-full h-full relative overflow-y-auto flex flex-col gap-5">
         <ContentsSection
           title="Pinned"

@@ -91,7 +91,7 @@ export default function ChatInputContainer({
           type="submit"
           aria-label="Send message"
           onClick={handleMessageSubmit}
-          className="min-w-10.5 min-h-10.5 max-h-10.5 flex justify-center items-center cursor-pointer text-xl bg-teal text-pure-white hover:text-black dark:hover:text-d-white/90 dark:hover:bg-light-dark-gray hover:bg-white-2 transition-all duration-200 rounded-full focus-within:outline-none focus-within:bg-white-2 focus-within:text-black disabled:opacity-30 disabled:cursor-not-allowed disabled:bg-white-2 disabled:text-black"
+          className="min-w-10.5 min-h-10.5 max-h-10.5 max-mid:min-w-9 max-mid:min-h-9 max-mid:max-h-9 flex justify-center items-center cursor-pointer text-xl bg-teal text-pure-white hover:text-black dark:hover:text-d-white/90 dark:hover:bg-light-dark-gray hover:bg-white-2 transition-all duration-200 rounded-full focus-within:outline-none focus-within:bg-white-2 focus-within:text-black disabled:opacity-30 disabled:cursor-not-allowed disabled:bg-white-2 disabled:text-black"
           disabled={isMessageSending}
         >
           <RiSendPlaneFill className="-ml-0.5 -mb-0.25" />

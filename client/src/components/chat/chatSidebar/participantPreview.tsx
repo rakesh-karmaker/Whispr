@@ -38,7 +38,7 @@ export default function ParticipantPreview({
           isActive={false}
         />
         <div className="flex flex-col min-w-0 flex-1">
-          <p className="font-medium text-lg dark:text-d-white/90 truncate">
+          <p className="font-medium text-lg max-mid:text-base dark:text-d-white/90 truncate">
             {participant.name}
           </p>
           <p className="text-sm text-gray dark:text-d-white/50">

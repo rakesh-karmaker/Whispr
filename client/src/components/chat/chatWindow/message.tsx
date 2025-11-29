@@ -33,8 +33,8 @@ export default function Message({
         ref={(node) => {
           if (lastElementRef) lastElementRef(node as HTMLDivElement);
         }}
-        className={`w-full flex flex-col gap-2 text-center text-gray-500 dark:text-d-white/50 text-xs py-1.5 ${
-          needSpace ? "pt-12" : ""
+        className={`w-full flex flex-col gap-2 text-center text-gray-500 dark:text-d-white/50 text-xs max-mid:text-[0.67rem] py-1.5 max-mid:py-1 ${
+          needSpace ? "pt-12 max-mid:pt-9" : ""
         }`}
       >
         {isNewDay && <DateBox data={message.createdAt} />}

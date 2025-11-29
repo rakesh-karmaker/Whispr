@@ -39,7 +39,7 @@ export default function ChatInput({
     <div className="w-full h-fit rounded-3xl border-[0.5px] border-light-gray dark:border-none dark:bg-d-light-dark-gray flex items-center gap-1.5 px-3">
       <textarea
         ref={textareaRef}
-        className="w-full min-h-6 max-h-32 resize-none border-none outline-none overflow-hidden bg-transparent py-2.5 text-sm dark:placeholder:text-d-gray/60 dark:text-d-white/80"
+        className="w-full min-h-9 max-h-32 resize-none border-none outline-none overflow-hidden bg-transparent py-2.5 max-mid:py-2 text-sm max-mid:text-[0.83rem] dark:placeholder:text-d-gray/60 dark:text-d-white/80"
         placeholder="Type a message..."
         value={message}
         onChange={handleMessageChange}

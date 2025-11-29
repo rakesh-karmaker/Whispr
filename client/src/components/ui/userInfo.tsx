@@ -17,7 +17,7 @@ export default function UserInfo(): React.ReactNode {
   }
 
   return (
-    <div className="relative w-full px-[1.375em] h-[4.75em] bg-pure-white dark:bg-d-dark-gray rounded-xl flex gap-3 items-center justify-center">
+    <div className="relative w-full px-[1.375em] h-[4.75em] bg-pure-white dark:bg-d-dark-gray rounded-xl max-mid:rounded-none flex gap-3 items-center justify-center border-t-2 border-gray/20 dark:border-d-white/10">
       <div className="w-full flex gap-2.5 justify-between items-center">
         <div className="w-full flex items-center gap-2.5">
           <Avatar

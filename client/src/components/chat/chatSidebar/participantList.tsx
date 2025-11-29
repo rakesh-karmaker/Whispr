@@ -25,7 +25,9 @@ export default function ParticipantList(): React.ReactNode {
       <div className="absolute -top-5 w-full h-[1px] bg-[#D8D8D8]/70 dark:bg-d-light-dark-gray/90 transition-all duration-200" />
 
       <div className="w-full h-fit flex justify-between items-center">
-        <p className="font-medium text-gray dark:text-d-gray">Members</p>
+        <p className="font-medium text-gray dark:text-d-gray">
+          {selectedContact.participantCount} Members
+        </p>
         {selectedContact.participantCount > 8 && (
           <button
             type="button"

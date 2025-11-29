@@ -5,15 +5,15 @@ import { Link } from "react-router-dom";
 export default function ChatInfo(): React.ReactNode {
   const { selectedContact } = useSelectedContact();
   return (
-    <div className="flex gap-5 items-center">
+    <div className="flex gap-5 items-center max-xs:flex-col max-xs:text-center max-xs:gap-3">
       <img
         src={selectedContact.image}
         alt={selectedContact.name}
         className="w-23 h-23 rounded-full object-cover object-center"
       />
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 max-xs:items-center">
         <h2
-          className="font-semibold text-xl line-clamp-3 dark:text-d-white/90"
+          className="font-semibold text-xl max-sm:text-lg/[145%] line-clamp-3 dark:text-d-white/90"
           title={selectedContact.name}
         >
           {selectedContact.name}

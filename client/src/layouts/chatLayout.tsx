@@ -1,4 +1,5 @@
 import ChatLeft from "@/components/chat/chatLeft";
+import { usePreferences } from "@/hooks/usePreferences";
 import { useUser } from "@/hooks/useUser";
 import {
   addContact,
@@ -118,6 +119,8 @@ export default function ChatLayout(): React.ReactNode {
     };
   }, [socket]);
 
+  const { isChatOpen } = usePreferences();
+
   // handle dark mode
   const { mode } = useColorScheme();
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
@@ -131,9 +134,16 @@ export default function ChatLayout(): React.ReactNode {
 
   return (
     <div className="h-screen w-screen flex justify-center chat-layout">
-      <div className="h-screen w-screen max-w-[2400px]  flex gap-4 p-4 max-mid:p-2 bg-white-3 dark:bg-black">
-        <ChatLeft />
-        <Outlet />
+      <div className="h-screen w-screen max-w-[2400px] max-mid:max-w-screen max-mid:overflow-x-hidden p-4 max-mid:p-0 bg-white-3 dark:bg-black">
+        <div
+          className="w-full h-screen transition-all duration-300 ease-in-out flex gap-4 max-mid:gap-0"
+          style={{
+            transform: `translateX(${isChatOpen ? -100 : 0}%)`,
+          }}
+        >
+          <ChatLeft />
+          <Outlet />
+        </div>
       </div>
     </div>
   );
