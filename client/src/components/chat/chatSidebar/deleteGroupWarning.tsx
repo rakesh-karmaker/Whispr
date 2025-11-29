@@ -30,7 +30,7 @@ export default function DeleteGroupWarning({
       aria-describedby="modal-modal-description"
       className="flex items-center justify-center h-fit min-h-full absolute max-sm:bg-pure-white dark:max-sm:bg-d-dark-gray"
     >
-      <div className="w-full max-w-[28.75em] max-xs:max-w-full min-h-fit max-xs:min-h-screen p-7 rounded-lg max-xs:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col max-xs:justify-center gap-3 relative">
+      <div className="w-full max-w-[28.75em] max-xs:max-w-full min-h-fit max-xs:min-h-[100svh] p-7 rounded-lg max-xs:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col max-xs:justify-center gap-3 relative">
         <div className="flex flex-col gap-2">
           <h2 className="text-xl font-semibold dark:text-d-white/90">
             Delete Group

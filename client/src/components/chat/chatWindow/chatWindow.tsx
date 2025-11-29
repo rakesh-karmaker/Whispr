@@ -43,11 +43,11 @@ export default function ChatWindow(): React.ReactNode {
   return (
     <div
       key={selectedContact?._id}
-      className={`flex-1 flex flex-col w-full max-w-full h-full gap-4 max-mid:gap-0 max-mid:min-w-screen max-mid:min-h-screen max-mid:max-w-screen max-mid:max-h-screen max-mid:rounded-none`}
+      className={`flex-1 flex flex-col w-full max-w-full h-full gap-4 max-mid:gap-0 max-mid:min-w-[100svw] max-mid:min-h-[100svh] max-mid:max-w-[100svw] max-mid:max-h-[100svh] max-mid:rounded-none`}
       // style={{
       //   maxWidth: isSidebarOpen
-      //     ? `calc(100vw - (((25.75em + 2rem) * 2)))`
-      //     : `calc(100vw - ((25.75em + 3rem)))`,
+      //     ? `calc(100svw - (((25.75em + 2rem) * 2)))`
+      //     : `calc(100svw - ((25.75em + 3rem)))`,
       // }}
       // style={{
       //   display: isChatOpen || window.innerWidth > 800 ? "flex" : "none",

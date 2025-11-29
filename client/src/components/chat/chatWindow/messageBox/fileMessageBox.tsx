@@ -46,7 +46,7 @@ export default function FileMessageBox({
         return (
           <button
             type="button"
-            className="bg-white-2 dark:bg-d-light-dark-gray p-1 w-full max-w-65 h-full flex rounded-lg text-left cursor-pointer"
+            className="bg-white-2 dark:bg-d-light-dark-gray p-1 w-full max-w-65 max-xs:max-w-50 h-full flex rounded-lg text-left cursor-pointer"
             key={file.publicId}
             onClick={() => handleDownload(file)}
             rel="noopener noreferrer"
@@ -54,8 +54,13 @@ export default function FileMessageBox({
             <div className="w-fit flex items-center justify-center rounded-md px-3 pr-4">
               <FaFile className="text-blue text-2xl" />
             </div>
-            <div className="flex flex-col gap-2 justify-between bg-pure-white dark:bg-d-dark-gray p-2 rounded-md w-full min-w-40 rounded-tl-none rounded-bl-none hover:bg-white-2 dark:hover:bg-d-light-dark-gray transition-all duration-200">
-              <span className="text-sm font-medium text-black line-clamp-2 dark:text-d-white/90">
+            <div className="flex flex-col gap-2 justify-between bg-pure-white dark:bg-d-dark-gray p-2 rounded-md w-full min-w-40 max-xs:min-w-30 rounded-tl-none rounded-bl-none hover:bg-white-2 dark:hover:bg-d-light-dark-gray transition-all duration-200">
+              <span
+                className="text-sm font-medium text-black line-clamp-2 dark:text-d-white/90"
+                style={{
+                  wordBreak: "break-word",
+                }}
+              >
                 {title}
               </span>
               <div className="w-full flex justify-between items-center gap-4">

@@ -133,12 +133,15 @@ export default function ChatLayout(): React.ReactNode {
   }, [mode, prefersDarkMode]);
 
   return (
-    <div className="h-screen w-screen flex justify-center chat-layout">
-      <div className="h-screen w-screen max-w-[2400px] max-mid:max-w-screen max-mid:overflow-x-hidden p-4 max-mid:p-0 bg-white-3 dark:bg-black">
+    <div className="h-[100svh] w-[100svw] flex justify-center chat-layout">
+      <div className="h-[100svh] w-[100svw] max-w-[2400px] max-mid:max-w-[100svw] max-mid:overflow-x-hidden p-4 max-mid:p-0 bg-white-3 dark:bg-black">
         <div
-          className="w-full h-screen transition-all duration-300 ease-in-out flex gap-4 max-mid:gap-0"
+          className="w-full h-[100svh] transition-all duration-300 ease-in-out flex gap-4 max-mid:gap-0"
           style={{
-            transform: `translateX(${isChatOpen ? -100 : 0}%)`,
+            transform:
+              window.innerWidth < 800
+                ? `translateX(${isChatOpen ? -100 : 0}%)`
+                : `translateX(0%)`,
           }}
         >
           <ChatLeft />

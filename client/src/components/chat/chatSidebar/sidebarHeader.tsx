@@ -55,7 +55,7 @@ export default function SidebarHeader(): React.ReactNode {
                 aria-describedby="modal-modal-description"
                 className="flex items-center justify-center h-fit min-h-full absolute max-sm:bg-pure-white dark:max-sm:bg-d-dark-gray"
               >
-                <div className="w-full max-w-[38.75em] max-sm:max-w-full min-h-fit max-h-[calc(100vh-4rem)] max-md:max-h-screen overflow-auto max-sm:min-h-screen max-sm:max-h-screen p-7 rounded-lg max-sm:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col items-center gap-3 relative">
+                <div className="w-full max-w-[38.75em] max-sm:max-w-full min-h-fit max-h-[calc(100svh-4rem)] max-md:max-h-[100svh] overflow-auto max-sm:min-h-[100svh] max-sm:max-h-[100svh] p-7 rounded-lg max-sm:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col items-center gap-3 relative">
                   <ModalHeader
                     title="Change group info"
                     onClick={() => setOpen(false)}

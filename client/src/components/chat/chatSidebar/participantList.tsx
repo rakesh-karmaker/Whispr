@@ -50,7 +50,7 @@ export default function ParticipantList(): React.ReactNode {
         aria-describedby="modal-modal-description"
         className="flex items-center justify-center h-fit min-h-full absolute max-sm:bg-pure-white dark:max-sm:bg-d-dark-gray"
       >
-        <div className="w-full max-w-[28.75em] max-h-[calc(100vh-4rem)] max-md:max-h-screen max-sm:max-w-full min-h-fit max-sm:min-h-screen p-7 rounded-lg max-sm:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col items-center gap-3 relative">
+        <div className="w-full max-w-[28.75em] max-h-[calc(100svh-4rem)] max-md:max-h-[100svh] max-sm:max-w-full min-h-fit max-sm:min-h-[100svh] p-7 rounded-lg max-sm:rounded-none bg-pure-white dark:bg-d-dark-gray flex flex-col items-center gap-3 relative">
           <ModalHeader
             title="All Participants"
             onClick={() => setShowAll(false)}
@@ -102,7 +102,7 @@ function ParticipantsList({
   return (
     <div
       ref={scrollRef}
-      className="w-full h-full max-h-120 max-sm:max-h-screen overflow-auto"
+      className="w-full h-full max-h-120 max-sm:max-h-[100svh] overflow-auto"
     >
       <div
         className="relative w-full virtual-container"
