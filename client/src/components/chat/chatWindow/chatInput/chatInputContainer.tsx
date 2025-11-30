@@ -79,7 +79,7 @@ export default function ChatInputContainer({
           ))}
         </ul>
       )}
-      <div className="w-full h-full flex items-end gap-2 mb-[1.375em]">
+      <div className="w-full h-full flex items-end gap-2 mb-[1.375em] max-mid:mb-3">
         <Attachment setFiles={setFiles} />
         <ChatInput
           message={message}

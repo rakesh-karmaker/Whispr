@@ -17,7 +17,7 @@ export default function ChatHeader(): React.ReactNode {
   const { isSidebarOpen, setIsSidebarOpen } = usePreferences();
 
   return (
-    <div className="w-full min-h-14 max-h-[4.75em] max-mid:max-h-[4em] px-[1.375em] bg-pure-white dark:bg-d-dark-gray rounded-xl max-mid:rounded-none flex-1 flex justify-between items-center gap-5">
+    <div className="w-full min-h-14 max-mid:fixed max-mid:top-0 max-mid:z-99 max-h-[4.75em] max-mid:max-h-[4em] px-[1.375em] bg-pure-white dark:bg-d-dark-gray rounded-xl max-mid:rounded-none flex-1 flex justify-between items-center gap-5">
       <ChatHeaderInfo
         selectedContact={selectedContact}
         isNewSelectedContact={isNewSelectedContact}

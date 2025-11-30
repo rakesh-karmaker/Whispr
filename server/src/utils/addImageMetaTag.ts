@@ -1,4 +1,4 @@
-import scrapeURLMetaData from "../lib/scrapeURLMetaData.js";
+import getUrlMetaData from "../lib/getUrlMetaData.js";
 import { MessageType } from "../types/modelType.js";
 
 export default async function addMetaTag(messages: MessageType[]) {
@@ -9,23 +9,10 @@ export default async function addMetaTag(messages: MessageType[]) {
         message.link &&
         message.link.url
       ) {
-        // Normalize the URL to ensure it has a protocol
-        let normalizedUrl = message.link.url;
-        // Ensure protocol
-        if (!/^https?:\/\//i.test(normalizedUrl)) {
-          normalizedUrl = "https://" + normalizedUrl;
-        }
-        // Ensure www if not present and not a subdomain
-        const urlObj = new URL(normalizedUrl);
-        if (
-          !/^www\./i.test(urlObj.hostname) &&
-          urlObj.hostname.split(".").length === 2 // e.g., example.com
-        ) {
-          urlObj.hostname = "www." + urlObj.hostname;
-          normalizedUrl = urlObj.toString();
-        }
+        const url = message.link.url;
 
-        const metaData = await scrapeURLMetaData(normalizedUrl);
+        // Fetch metadata from redis
+        const metaData = await getUrlMetaData(url);
 
         return {
           ...message,

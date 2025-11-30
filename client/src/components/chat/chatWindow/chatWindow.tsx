@@ -53,7 +53,7 @@ export default function ChatWindow(): React.ReactNode {
   return (
     <div
       key={selectedContact?._id}
-      className={`flex-1 flex flex-col w-full max-w-full h-full gap-4 max-mid:gap-0 max-mid:min-w-[100svw] max-mid:min-h-[100svh] max-mid:max-w-[100svw] max-mid:max-h-[100svh] max-mid:rounded-none`}
+      className={`flex-1 flex flex-col w-full max-w-full h-full max-mid:pt-14 gap-4 max-mid:gap-0 max-mid:min-w-[100svw] max-mid:min-h-[100svh] max-mid:max-w-[100svw] max-mid:max-h-[100svh] max-mid:rounded-none`}
       // style={{
       //   maxWidth: isSidebarOpen
       //     ? `calc(100svw - (((25.75em + 2rem) * 2)))`

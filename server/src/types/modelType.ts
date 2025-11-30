@@ -70,3 +70,10 @@ export interface MessageType {
   createdAt: Date;
   updatedAt: string;
 }
+
+export interface URLType {
+  _id: mongoose.Types.ObjectId;
+  url: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

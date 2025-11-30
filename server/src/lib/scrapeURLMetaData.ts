@@ -1,6 +1,7 @@
 import got from "got";
 import redisClient from "../config/redis/client.js";
 import scraper from "../config/scraper.js";
+import URLList from "../models/URL.js";
 
 export type URLMetaData = {
   title: string;
@@ -154,7 +155,10 @@ export default async function scrapeURLMetaData(
       // Only cache if we got meaningful data
       if (newData.title || newData.imageURL) {
         await redisClient.set(`url_data:${url}`, JSON.stringify(newData));
-        await redisClient.expire(`url_data:${url}`, 60 * 60 * 24 * 3); // 3 days
+        await redisClient.expire(`url_data:${url}`, 60 * 60 * 24 * 7); // 7 days
+
+        // add the link in the main url set
+        await URLList.create({ url });
       }
 
       return newData;
@@ -169,3 +173,44 @@ export default async function scrapeURLMetaData(
     imageURL: data.imageURL ?? "",
   };
 }
+
+// fetch and store url metadata everyday
+setInterval(
+  async () => {
+    try {
+      const urls = await URLList.find({});
+      let fetchCount = 0;
+
+      for (const urlEntry of urls) {
+        const url = urlEntry.url;
+        const data: URLMetaData = JSON.parse(
+          (await redisClient.get(`url_data:${url}`)) || "{}"
+        );
+        if (!data.title || !data.imageURL) {
+          // fetch new data
+          const { body: html, url: finalUrl } = await fetchWithRetry(url, 1); // 1 attempt
+          const metadata = await scraper({ html, url: finalUrl });
+
+          const newData: URLMetaData = {
+            title: metadata.title ?? "",
+            imageURL: metadata.image ?? "",
+          };
+          // Only cache if we got meaningful data
+          if (newData.title || newData.imageURL) {
+            await redisClient.set(`url_data:${url}`, JSON.stringify(newData));
+            await redisClient.expire(`url_data:${url}`, 60 * 60 * 24 * 7); // 7 days
+          }
+
+          fetchCount++;
+        }
+      }
+
+      console.log(
+        `Scheduled URL metadata fetch completed. Fetched data for ${fetchCount} URLs.`
+      );
+    } catch (error) {
+      console.error("Error in scheduled URL metadata fetch:", error);
+    }
+  },
+  24 * 60 * 60 * 1000
+); // 24 hours in milliseconds

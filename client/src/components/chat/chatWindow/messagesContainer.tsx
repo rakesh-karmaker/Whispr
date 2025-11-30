@@ -268,7 +268,7 @@ export default function MessagesContainer() {
           maxHeight: `100%`,
         }}
       >
-        <div className="absolute top-0 left-0 h-20 rounded-tl-xl rounded-tr-xl w-full bg-gradient-to-b from-pure-white dark:from-d-dark-gray to-transparent pointer-events-none z-10" />
+        <div className="absolute top-0 left-0 h-10 rounded-tl-xl rounded-tr-xl w-full bg-gradient-to-b from-pure-white dark:from-d-dark-gray to-transparent pointer-events-none z-10" />
         <div
           className={`w-full h-full absolute z-20 bg-pure-white dark:bg-d-dark-gray rounded-xl bottom-0 left-0 flex justify-center items-center ${
             isLoading ? "opacity-100" : "opacity-0 pointer-events-none"

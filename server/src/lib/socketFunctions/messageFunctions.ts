@@ -9,6 +9,7 @@ import getMessageType from "../../utils/getMessageType.js";
 import getMessageSummary from "../../utils/getMessageSummary.js";
 import scrapeURLMetaData from "../scrapeURLMetaData.js";
 import { urlReacher } from "../../utils/urlReacher.js";
+import URLList from "../../models/URL.js";
 
 export const sendMessage = async (
   data: SendMessageFunctionProps,
@@ -44,20 +45,26 @@ export const sendMessage = async (
   const linkRegex = /(?:https?:\/\/|www\.)[^\s)\]}]+?\.[^\s)\]}]+/g; // Regex to match URLs
   const links = data.message.match(linkRegex);
 
+  // Normalize links
+  let link: string | undefined =
+    links && links.length > 0
+      ? links[0].startsWith("http://") || links[0].startsWith("https://")
+        ? links[0].replace("www.", "")
+        : "http://" + links[0].replace("www.", "")
+      : undefined;
+
   // check if the link is valid
-  if (links && links.length > 0) {
-    const isUrlReachable = await urlReacher(
-      links[0].startsWith("www.") ? "http://" + links[0] : links[0]
-    );
+  if (link) {
+    const isUrlReachable = await urlReacher(link);
     if (!isUrlReachable) {
-      links.length = 0; // if not reachable, remove the links
+      link = undefined; // if not reachable, set link to undefined
     }
   }
 
   const messageType = getMessageType(
     data.files.images.length > 0,
     data.files.files.length > 0,
-    !!links && links.length > 0
+    !!link
   );
 
   // Handle message sending logic here
@@ -67,7 +74,7 @@ export const sendMessage = async (
     content: data.message,
     messageType,
     link: {
-      url: links && links.length > 0 ? links[0] : null,
+      url: link || undefined,
     },
     files: [
       ...data.files.images.map((image) => ({
@@ -111,12 +118,10 @@ export const sendMessage = async (
   }
 
   // get the meta tags if url exists
-  if (links && links.length > 0) {
-    const metaData = await scrapeURLMetaData(
-      links[0].startsWith("www.") ? "http://" + links[0] : links[0]
-    );
+  if (link) {
+    const metaData = await scrapeURLMetaData(link);
     formattedMessage.link = {
-      url: links[0],
+      url: link,
       imageURL: metaData.imageURL,
       title: metaData.title,
     };
