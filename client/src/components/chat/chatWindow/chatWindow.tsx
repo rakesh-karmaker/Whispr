@@ -30,6 +30,15 @@ export default function ChatWindow(): React.ReactNode {
       setIsDragging(false);
     }
 
+    function setAppHeight() {
+      document.documentElement.style.setProperty(
+        "--app-height",
+        `${window.innerHeight}px`
+      );
+    }
+    setAppHeight();
+
+    window.addEventListener("resize", setAppHeight);
     window.addEventListener("dragover", handleDragOver);
     window.addEventListener("drop", handleDrop);
     window.addEventListener("dragend", handleDragEnd);
@@ -38,6 +47,7 @@ export default function ChatWindow(): React.ReactNode {
       window.removeEventListener("dragover", handleDragOver);
       window.removeEventListener("drop", handleDrop);
       window.removeEventListener("dragend", handleDragEnd);
+      window.removeEventListener("resize", setAppHeight);
     };
   }, []);
   return (
@@ -52,6 +62,9 @@ export default function ChatWindow(): React.ReactNode {
       // style={{
       //   display: isChatOpen || window.innerWidth > 800 ? "flex" : "none",
       // }}
+      style={{
+        maxHeight: "var(--app-height)",
+      }}
     >
       <ChatHeader />
       <div className="relative w-full h-full bg-pure-white dark:bg-d-dark-gray flex-1 flex flex-col pt-0 rounded-xl max-mid:rounded-none gap-3">

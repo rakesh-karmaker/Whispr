@@ -24,7 +24,7 @@ export default function ChatSidebar(): React.ReactNode {
 
   return (
     <section
-      className="w-full flex-1 h-full min-w-[25.75em] max-lg:min-w-[22rem] max-mid:min-w-0 max-w-[25.75em] max-xl:max-w-[calc(100svw-(22rem+3rem))] max-xl:absolute max-xl:z-999 max-xl:max-h-[calc(100svh-2rem)] overflow-y-auto rounded-xl bg-pure-white dark:bg-d-dark-gray p-[1.375em] flex flex-col gap-7 max-mid:absolute max-mid:z-99 max-mid:max-w-[100svw] max-mid:left-[100svh] max-mid:top-0 max-mid:max-h-[100svh] max-mid:rounded-none transition-all duration-200 ease-in-out"
+      className="w-full flex-1 h-full min-w-[25.75em] max-lg:min-w-[22rem] max-mid:min-w-0 max-w-[25.75em] max-xl:max-w-[calc(100svw-(22rem+3rem))] max-xl:absolute max-xl:z-999 max-xl:max-h-[calc(100svh-2rem)] overflow-y-auto rounded-xl bg-pure-white dark:bg-d-dark-gray p-[1.375em] flex flex-col gap-7 max-mid:absolute max-mid:z-99 max-mid:max-w-[100svw] max-mid:left-[100svw] max-mid:top-0 max-mid:max-h-[100svh] max-mid:rounded-none transition-all duration-200 ease-in-out"
       style={{
         transform:
           window.innerWidth < 800

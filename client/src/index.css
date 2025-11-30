@@ -26,6 +26,8 @@
   --d-light-dark-gray: #303030;
   --d-gray: #bdbdbd;
   --d-white: #fafafa;
+
+  --app-height: 100svh;
 }
 
 @theme inline {
